@@ -1,14 +1,172 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
+}
+
+enum Role {
+  foodie
+  owner
+  admin
+}
+
+enum Gender {
+  L
+  P
+}
+
+model User {
+  id              String  @id @default(auto()) @map("_id") @db.ObjectId
+  email           String  @unique
+  password        String
+  isActive        Boolean @default(true)
+  role            Role    @default(foodie)
+  name            String
+  gender          Gender?
+  description     String?
+  image           String?
+  backgroundImage String?
+
+  ownerPlaces Place[]
+
+  placeReviews PlaceReview[]
+
+  menuReviews MenuReview[]
+
+  conversations   Conversation[] @relation(fields: [conversationIds], references: [id])
+  conversationIds String[]       @db.ObjectId
+
+  seenMessageIds String[]  @db.ObjectId
+  seenMessages   Message[] @relation("Seen", fields: [seenMessageIds], references: [id])
+
+  messages Message[]
+
+  following UserFollow[] @relation("UserFollowing")
+  followers UserFollow[] @relation("UserFollowers")
+}
+
+model UserFollow {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  follower    User   @relation("UserFollowers", fields: [followerId], references: [id])
+  followerId  String @db.ObjectId
+  following   User   @relation("UserFollowing", fields: [followingId], references: [id])
+  followingId String @db.ObjectId
+
+  @@unique([followerId, followingId])
+}
+
+model Subdistrict {
+  id    String  @id @default(auto()) @map("_id") @db.ObjectId
+  name  String
+  Place Place[]
+}
+
+model Place {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  slug          String         @unique
+  name          String
+  description   String?
+  address       String
+  location      Json
+  openingHours  OpeningHours[]
+  websiteUri    String?
+  takeout       Boolean        @default(true)
+  delivery      Boolean        @default(false)
+  liveMusic     Boolean        @default(false)
+  restRoom      Boolean        @default(false)
+  cashOnly      Boolean        @default(true)
+  servesCoffee  Boolean        @default(true)
+  phoneNumber   String
+  photos        Photo[]
+  subdistrict   Subdistrict    @relation(fields: [subdistrictId], references: [id])
+  subdistrictId String         @db.ObjectId
+  owner         User?          @relation(fields: [ownerId], references: [id])
+  ownerId       String?        @db.ObjectId
+
+  menus   Menu[]
+  reviews PlaceReview[]
+}
+
+type OpeningHours {
+  day        String
+  openHours  String
+  closeHours String
+}
+
+model PlaceReview {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  star      Int
+  review    String
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  placeId   String   @db.ObjectId
+  place     Place    @relation(fields: [placeId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ImageType {
+  gallery
+  menu
+  thumbanail
+}
+
+model Photo {
+  id      String    @id @default(auto()) @map("_id") @db.ObjectId
+  url     String
+  type    ImageType
+  place   Place     @relation(fields: [placeId], references: [id])
+  placeId String    @db.ObjectId
+}
+
+model Menu {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  price       Int
+  description String
+  place       Place        @relation(fields: [placeId], references: [id])
+  placeId     String       @db.ObjectId
+  MenuReview  MenuReview[]
+}
+
+model MenuReview {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  star      Int
+  review    String
+  menuId    String   @db.ObjectId
+  menu      Menu     @relation(fields: [menuId], references: [id])
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Conversation {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt     DateTime  @default(now())
+  lastMessageAt DateTime  @default(now())
+  isGroup       Boolean?
+  messagesIds   String[]  @db.ObjectId
+  messages      Message[]
+  userIds       String[]  @db.ObjectId
+  users         User[]    @relation(fields: [userIds], references: [id])
+}
+
+model Message {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  body      String?
+  image     String?
+  createdAt DateTime @default(now())
+
+  seenIds String[] @db.ObjectId
+  seen    User[]   @relation("Seen", fields: [seenIds], references: [id])
+
+  conversationId String       @db.ObjectId
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  senderId String @db.ObjectId
+  sender   User   @relation(fields: [senderId], references: [id], onDelete: Cascade)
 }
