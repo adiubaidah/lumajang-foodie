@@ -9,6 +9,9 @@ import { SubdistrictModule } from './subdistrict/subdistrict.module';
 import { PlaceModule } from './place/place.module';
 import { join } from 'path';
 import { UserFollowModule } from './user-follow/user-follow.module';
+import { MenuModule } from './menu/menu.module';
+import { MessageModule } from './message/message.module';
+import { ConversationModule } from './conversation/conversation.module';
 
 @Module({
   imports: [
@@ -21,6 +24,10 @@ import { UserFollowModule } from './user-follow/user-follow.module';
     SubdistrictModule,
     PlaceModule,
     UserFollowModule,
+    MenuModule,
+    MessageModule,
+    ConversationModule,
+    // MessageEventModule,
   ],
   controllers: [AppController],
   providers: [AppService],

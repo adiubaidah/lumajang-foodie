@@ -1,5 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { Request } from 'express';
+import { MAX_PROFILE_PICTURE_SIZE_IN_BYTES } from 'src/constant';
 
 export const fileFilter = (
   req: Request,
@@ -12,7 +13,7 @@ export const fileFilter = (
     return callback(new BadRequestException('Invalid file type'), false);
   }
 
-  if (file.size > 1500000) {
+  if (file.size > MAX_PROFILE_PICTURE_SIZE_IN_BYTES) {
     return callback(new BadRequestException('File is too large'), false);
   }
 

@@ -80,12 +80,12 @@ model Place {
   cashOnly      Boolean        @default(true)
   servesCoffee  Boolean        @default(true)
   phoneNumber   String
-  photos        Photo[]
   subdistrict   Subdistrict    @relation(fields: [subdistrictId], references: [id])
   subdistrictId String         @db.ObjectId
   owner         User?          @relation(fields: [ownerId], references: [id])
   ownerId       String?        @db.ObjectId
 
+  photos  PlacePhoto[]
   menus   Menu[]
   reviews PlaceReview[]
 }
@@ -106,30 +106,42 @@ model PlaceReview {
   place     Place    @relation(fields: [placeId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([userId, placeId])
 }
 
-enum ImageType {
+enum PlacePhotoType {
   gallery
   menu
-  thumbanail
+  thumbnail
 }
 
-model Photo {
-  id      String    @id @default(auto()) @map("_id") @db.ObjectId
+model PlacePhoto {
+  id      String         @id @default(auto()) @map("_id") @db.ObjectId
   url     String
-  type    ImageType
-  place   Place     @relation(fields: [placeId], references: [id])
-  placeId String    @db.ObjectId
+  type    PlacePhotoType
+  place   Place          @relation(fields: [placeId], references: [id])
+  placeId String         @db.ObjectId
 }
 
 model Menu {
-  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  slug        String  @unique
   name        String
   price       Int
-  description String
-  place       Place        @relation(fields: [placeId], references: [id])
-  placeId     String       @db.ObjectId
-  MenuReview  MenuReview[]
+  description String?
+  place       Place   @relation(fields: [placeId], references: [id])
+  placeId     String  @db.ObjectId
+
+  reviews MenuReview[]
+  photos  MenuPhoto[]
+}
+
+model MenuPhoto {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  url    String
+  menuId String @db.ObjectId
+  menu   Menu   @relation(fields: [menuId], references: [id])
 }
 
 model MenuReview {
@@ -142,17 +154,16 @@ model MenuReview {
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([menuId, userId])
 }
 
 model Conversation {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt     DateTime  @default(now())
-  lastMessageAt DateTime  @default(now())
-  isGroup       Boolean?
-  messagesIds   String[]  @db.ObjectId
-  messages      Message[]
-  userIds       String[]  @db.ObjectId
-  users         User[]    @relation(fields: [userIds], references: [id])
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  isGroup     Boolean   @default(false)
+  messages    Message[]
+  userIds     String[]  @db.ObjectId
+  users       User[]    @relation(fields: [userIds], references: [id])
 }
 
 model Message {

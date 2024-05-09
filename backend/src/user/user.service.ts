@@ -22,7 +22,7 @@ export class UserService {
   async update(
     id: string,
     payload: UserDto,
-    { image, backgroundImage }: { image: string; backgroundImage: string },
+    { image, backgroundImage }: { image?: string; backgroundImage?: string },
   ) {
     return await this.prismaService.user.update({
       where: {
@@ -30,8 +30,8 @@ export class UserService {
       },
       data: {
         ...payload,
-        image,
-        backgroundImage,
+        image: image || undefined,
+        backgroundImage: backgroundImage || undefined,
       },
     });
   }

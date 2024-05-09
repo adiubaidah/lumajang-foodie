@@ -97,7 +97,7 @@ export class ScrappingService {
 
           await Promise.all(
             _.forEach(item.images, async (image) => {
-              await this.prismaService.photo.create({
+              await this.prismaService.placePhoto.create({
                 data: {
                   type: 'gallery',
                   url: image,

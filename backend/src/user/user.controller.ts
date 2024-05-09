@@ -43,7 +43,7 @@ export class UserController {
       {
         fileFilter: fileFilter,
         storage: diskStorage({
-          destination: 'public/img',
+          destination: 'public/img/user',
           filename: (req, file, cb) => {
             cb(null, Date.now() + '-' + file.originalname);
           },
@@ -67,8 +67,8 @@ export class UserController {
       : null;
 
     await this.userService.update(req['user'].id, body, {
-      image: imageFile.path,
-      backgroundImage: backgroundImageFile.path,
+      image: imageFile && imageFile.path,
+      backgroundImage: backgroundImageFile && backgroundImageFile.path,
     });
 
     return true;

@@ -1,4 +1,12 @@
-import { Controller, Get, Query, Post, Body, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Query,
+  Post,
+  Body,
+  UseGuards,
+  Param,
+} from '@nestjs/common';
 
 import { Role as RoleEnum } from '@prisma/client';
 import { JwtGuard } from 'src/auth/jwt.guard';
@@ -22,9 +30,10 @@ export class PlaceController {
     @Query('restRoom') restRoom: number,
     @Query('cashOnly') cashOnly: number,
     @Query('servesCoffe') servesCoffe: number,
+    @Query('openNow') openNow: number,
   ) {
     return await this.placeService.all(
-      perPage || 2,
+      perPage || 6,
       page || 1,
       q,
       taketout,
@@ -33,6 +42,7 @@ export class PlaceController {
       restRoom,
       cashOnly,
       servesCoffe,
+      openNow,
     );
   }
   @Role([RoleEnum.foodie])
@@ -40,5 +50,15 @@ export class PlaceController {
   @Post()
   async create(@Body() body: PlaceDto) {
     return await this.placeService.create(body);
+  }
+
+  @Get(':slug')
+  async find(@Param('slug') slug: string) {
+    return await this.placeService.find(slug);
+  }
+
+  @Get('by-owner/:ownerId')
+  async placeByOwner(@Param('ownerId') ownerId: string) {
+    return await this.placeService.placeByOwner(ownerId);
   }
 }
