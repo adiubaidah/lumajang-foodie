@@ -23,6 +23,7 @@ model User {
   email           String  @unique
   password        String
   isActive        Boolean @default(true)
+  isPrivate       Boolean @default(false)
   role            Role    @default(foodie)
   name            String
   gender          Gender?
@@ -159,17 +160,16 @@ model MenuReview {
 }
 
 model Conversation {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  isGroup     Boolean   @default(false)
-  messages    Message[]
-  userIds     String[]  @db.ObjectId
-  users       User[]    @relation(fields: [userIds], references: [id])
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  isGroup  Boolean   @default(false)
+  messages Message[]
+  userIds  String[]  @db.ObjectId
+  users    User[]    @relation(fields: [userIds], references: [id])
 }
 
 model Message {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  body      String?
-  image     String?
+  body      String
   createdAt DateTime @default(now())
 
   seenIds String[] @db.ObjectId

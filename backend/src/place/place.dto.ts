@@ -36,9 +36,6 @@ export class PlaceDto {
   @IsString({ message: 'Nama tempat makan diperlukan' })
   name: string;
 
-  @IsString({ message: 'Slug diperlukan' })
-  slug: string;
-
   @IsOptional()
   @IsString({ message: 'Deskripsi tidak valid' })
   description: string;

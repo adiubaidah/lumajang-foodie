@@ -1,9 +1,11 @@
-import React from 'react'
-
+import { Suspense } from "react";
+import Client from "./client";
 function Register() {
   return (
-    <div>Register</div>
-  )
+    <Suspense>
+      <Client />
+    </Suspense>
+  );
 }
 
-export default Register
+export default Register;

@@ -7,6 +7,7 @@ import {
   UploadedFiles,
   UseInterceptors,
   Body,
+  Query,
 } from '@nestjs/common';
 import { Role as RoleEnum } from '@prisma/client';
 import { Request as RequestExpress } from 'express';
@@ -28,8 +29,20 @@ export class UserController {
   @Role([RoleEnum.admin])
   @UseGuards(JwtGuard, RoleGuard)
   @Get()
-  async all() {
-    return await this.userService.all();
+  async all(
+    @Query('perPage') perPage: number,
+    @Query('page') page: number,
+    @Query('q') query: string,
+    @Query('isActive') isActive: number,
+    @Query('role') role: RoleEnum,
+  ) {
+    return await this.userService.all({
+      perPage: perPage || 10,
+      page: page || 1,
+      q: query,
+      isActive,
+      role,
+    });
   }
 
   @Role([RoleEnum.foodie, RoleEnum.admin, RoleEnum.owner])

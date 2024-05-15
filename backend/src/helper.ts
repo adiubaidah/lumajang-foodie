@@ -1,5 +1,4 @@
 import { UnauthorizedException } from '@nestjs/common';
-import { customAlphabet } from 'nanoid';
 // const
 import { Request } from 'express';
 
@@ -17,8 +16,21 @@ export function slugify(text: string) {
     text
       .toLowerCase()
       .replace(/ /g, '-')
-      .replace(/[^\W-]+/g, '') +
+      .replace(/[^a-z0-9-]/g, '') +
     '-' +
-    customAlphabet('12345678abcd', 5)
+    makeid(5)
   );
+}
+
+export function makeid(length: number) {
+  let result = '';
+  const characters =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+  let counter = 0;
+  while (counter < length) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    counter += 1;
+  }
+  return result;
 }

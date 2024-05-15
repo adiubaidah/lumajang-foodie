@@ -29,6 +29,7 @@ export class MessageEvent implements OnModuleInit {
   server: Server;
 
   users = {};
+  conversation = new Map<string, string[]>()
 
   onModuleInit() {
     this.server.on('connection', (socket) => {
@@ -43,6 +44,10 @@ export class MessageEvent implements OnModuleInit {
     @ConnectedSocket() client: Socket,
   ) {
     this.users[userId] = client.id;
+  }
+@SubscribeMessage('joinConversation')
+  onJoinConversation(@MessageBody("userId") userId: string) {
+    // this.conversation.
   }
 
   @SubscribeMessage('sendMessage')

@@ -1,4 +1,35 @@
 @tailwind base;
-  @tailwind components;
-  @tailwind utilities;
-  
+@tailwind components;
+@tailwind utilities;
+
+.hamburger-line {
+  @apply my-2 block h-[2px] w-[30px] bg-black transition duration-500 ease-in-out;
+}
+
+.hamburger-active > span:nth-child(1) {
+  @apply origin-top-left rotate-45;
+}
+.hamburger-active > span:nth-child(2) {
+  @apply scale-0;
+}
+.hamburger-active > span:nth-child(3) {
+  @apply origin-bottom-left -rotate-45;
+}
+
+.hamburger-active > span:nth-child(1) {
+  @apply origin-top-left rotate-45;
+}
+.hamburger-active > span:nth-child(2) {
+  @apply scale-0;
+}
+.hamburger-active > span:nth-child(3) {
+  @apply origin-bottom-left -rotate-45;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}

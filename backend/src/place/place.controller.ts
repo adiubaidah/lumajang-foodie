@@ -6,6 +6,8 @@ import {
   Body,
   UseGuards,
   Param,
+  Req,
+  ForbiddenException,
 } from '@nestjs/common';
 
 import { Role as RoleEnum } from '@prisma/client';
@@ -14,6 +16,7 @@ import { RoleGuard } from 'src/role/role.guard';
 import { Role } from 'src/role/role.decorator';
 import { PlaceService } from './place.service';
 import { PlaceDto } from './place.dto';
+import { Request as RequestExpress } from 'express';
 
 @Controller('place')
 export class PlaceController {
@@ -45,10 +48,20 @@ export class PlaceController {
       openNow,
     );
   }
-  @Role([RoleEnum.foodie])
+  @Role([RoleEnum.owner, RoleEnum.admin])
   @UseGuards(JwtGuard, RoleGuard)
   @Post()
-  async create(@Body() body: PlaceDto) {
+  async create(@Body() body: PlaceDto, @Req() req: RequestExpress) {
+    const user = req['user'];
+
+    // if(user.role ===)
+    if (user.role === 'owner') {
+      if (body.ownerId) {
+        throw new ForbiddenException('Tindakan hanya untuk admin');
+      }
+      body.ownerId = user.id;
+    }
+
     return await this.placeService.create(body);
   }
 

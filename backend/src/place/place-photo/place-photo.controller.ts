@@ -32,7 +32,7 @@ export class PlacePhotoController {
       storage: diskStorage({
         destination: 'public/img/place',
         filename: (req, file, cb) => {
-          cb(null, Date.now() + '-' + file.originalname);
+          cb(null, Date.now() + '-' + file.originalname.replace(/\//g, '/'));
         },
       }),
     }),

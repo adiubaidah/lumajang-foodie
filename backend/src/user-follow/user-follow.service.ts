@@ -6,7 +6,6 @@ export class UserFollowService {
   constructor(private prismaService: PrismaService) {}
 
   async follower(userId: string) {
-    console.log(userId);
     return await this.prismaService.userFollow.findMany({
       where: {
         followingId: userId,

@@ -3,6 +3,7 @@ import * as moment from 'moment';
 import { PrismaService } from 'src/prisma.service';
 import { PlaceDto } from './place.dto';
 import { CountResult } from 'src/constant';
+import { slugify } from 'src/helper';
 
 @Injectable()
 export class PlaceService {
@@ -211,9 +212,12 @@ export class PlaceService {
 
   async create(body: PlaceDto) {
     const { subdistrictId, location, ownerId, ...rest } = body;
+    // console.log(slugify(body.name))
+    // return slugify(body.name);
     return await this.prismaService.place.create({
       data: {
         ...rest,
+        slug: slugify(body.name),
         location: {
           type: 'Point',
           coordinates: [location.longitude, location.latitude],
