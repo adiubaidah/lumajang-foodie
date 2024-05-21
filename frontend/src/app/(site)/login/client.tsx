@@ -101,7 +101,7 @@ function Client() {
               <p>
                 Belum registrasi ?{" "}
                 <Link
-                  href="/auth/register"
+                  href="/register"
                   className="hover:text-primary duration-200"
                 >
                   Registrasi

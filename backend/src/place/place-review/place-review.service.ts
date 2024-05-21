@@ -55,6 +55,14 @@ export class PlaceReviewService {
           userId,
         }),
       },
+      include: {
+        user: {
+          select: {
+            image: true,
+            name: true,
+          },
+        },
+      },
       skip,
       take: perPage,
     });

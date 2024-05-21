@@ -10,8 +10,8 @@ import MapGL, {
 import { Location as LocationType } from "~/types";
 
 type MapMarkerProps = {
-  marker: LngLat | null;
-  setMarker: React.Dispatch<React.SetStateAction<LngLat | null>>;
+  marker: LocationType | null;
+  setMarker: React.Dispatch<React.SetStateAction<LocationType | null>>;
   onChange: (marker: LocationType) => void;
 };
 
@@ -23,7 +23,9 @@ const MapMarker = ({ marker, setMarker, onChange }: MapMarkerProps) => {
   });
 
   const handleClick = (event: MapLayerMouseEvent) => {
-    const { lngLat } = event;
+    const {
+      lngLat: { lat, lng },
+    } = event;
     if (marker) {
       setMarker(null); // Jika marker sudah ada, hapus marker
       onChange({
@@ -31,10 +33,10 @@ const MapMarker = ({ marker, setMarker, onChange }: MapMarkerProps) => {
         longitude: 0,
       });
     } else {
-      setMarker(lngLat); // Jika marker belum ada, tambahkan marker
+      setMarker({ latitude: lat, longitude: lng }); // Jika marker belum ada, tambahkan marker
       onChange({
-        latitude: lngLat.lat,
-        longitude: lngLat.lng,
+        latitude: lat,
+        longitude: lng,
       });
     }
   };
@@ -48,8 +50,8 @@ const MapMarker = ({ marker, setMarker, onChange }: MapMarkerProps) => {
       style={{ width: "100%", height: 400 }}
       mapStyle="mapbox://styles/mapbox/streets-v11"
     >
-      {marker && (
-        <Marker longitude={marker.lng} latitude={marker.lat}>
+      {!!marker && (
+        <Marker longitude={marker.longitude} latitude={marker.latitude}>
           <MapPin color="#e61919" size={40} />
         </Marker>
       )}

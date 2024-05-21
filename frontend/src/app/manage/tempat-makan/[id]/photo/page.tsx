@@ -15,9 +15,10 @@ import SkeletonImage from "~/components/ready-use/skeleton-image";
 import { ModalCrud, PlacePhoto } from "~/types";
 import { Button } from "~/components/ui/button";
 import Add from "./components/add";
-import { imageFromBackend } from "~/lib/utils";
+import { axiosInstance, imageFromBackend } from "~/lib/utils";
 import { Pencil, Trash2 } from "lucide-react";
 import Delete from "./components/delete";
+import { useQuery } from "@tanstack/react-query";
 
 export interface DataModal {
   data?: PlacePhoto;
@@ -26,7 +27,16 @@ export interface DataModal {
 
 function Image() {
   const params = useParams<{ id: string }>();
-  const photos = usePlacePhoto({ place: params.id });
+  const { data, isLoading } = useQuery({
+    queryKey: ["place-photo", { place: params.id }],
+    queryFn: async () => {
+      return axiosInstance
+        .get(`/place-photo?place=${params.id}`)
+        .then((data) => data.data);
+    },
+    enabled: !!params.id,
+    staleTime: 1000 * 60 * 5,
+  });
   const [dataModal, setDataModal] = useState<DataModal>({
     operation: "delete",
   });
@@ -59,39 +69,43 @@ function Image() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {photos.map((photo) => (
-              <TableRow key={photo.id}>
-                <TableCell>
-                  <SkeletonImage
-                    src={photo.url}
-                    alt="photo"
-                    height={400}
-                    className="w-64 aspect-video"
-                    skeletonStyle={{ width: 256, aspectRatio: 16 / 9 }}
-                    width={400}
-                  />
-                </TableCell>
-                <TableCell>{photo.type}</TableCell>
-                <TableCell className="space-x-3">
-                  <Button size={"icon"}>
-                    <Pencil />
-                  </Button>
-                  <Button
-                    variant={"destructive"}
-                    type="button"
-                    onClick={() => {
-                      setDataModal({
-                        operation: "delete",
-                      });
-                      setOpenModal(true);
-                    }}
-                    size={"icon"}
-                  >
-                    <Trash2 />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {isLoading
+              ? "Loading"
+              : data.result.length > 0
+              ? data.result.map((photo: PlacePhoto) => (
+                  <TableRow key={photo.id}>
+                    <TableCell>
+                      <SkeletonImage
+                        src={photo.url}
+                        alt="photo"
+                        height={400}
+                        className="w-64 aspect-video"
+                        skeletonStyle={{ width: 256, aspectRatio: 16 / 9 }}
+                        width={400}
+                      />
+                    </TableCell>
+                    <TableCell>{photo.type}</TableCell>
+                    <TableCell className="space-x-3">
+                      <Button size={"icon"}>
+                        <Pencil />
+                      </Button>
+                      <Button
+                        variant={"destructive"}
+                        type="button"
+                        onClick={() => {
+                          setDataModal({
+                            operation: "delete",
+                          });
+                          setOpenModal(true);
+                        }}
+                        size={"icon"}
+                      >
+                        <Trash2 />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              : "Data tidak ditemukan"}
           </TableBody>
         </Table>
       </div>

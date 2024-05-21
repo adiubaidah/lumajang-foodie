@@ -63,7 +63,7 @@ export function SubdistrictComboBox({
               {data.map((subdistrict) => (
                 <CommandItem
                   key={subdistrict.id}
-                  onSelect={(currentValue) => {
+                  onSelect={() => {
                     setValue(subdistrict.id);
                     setOpen(false);
                     onChange(subdistrict.id);

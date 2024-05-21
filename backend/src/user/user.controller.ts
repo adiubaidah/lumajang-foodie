@@ -8,6 +8,8 @@ import {
   UseInterceptors,
   Body,
   Query,
+  Param,
+  ForbiddenException,
 } from '@nestjs/common';
 import { Role as RoleEnum } from '@prisma/client';
 import { Request as RequestExpress } from 'express';
@@ -43,6 +45,18 @@ export class UserController {
       isActive,
       role,
     });
+  }
+
+  @Role([RoleEnum.admin, RoleEnum.foodie, RoleEnum.owner])
+  @UseGuards(JwtGuard, RoleGuard)
+  @Get(':id')
+  async find(@Param('id') id: string, @Req() req: RequestExpress) {
+    const user = req['user'];
+
+    if (user.id !== id && user.role !== RoleEnum.admin) {
+      throw new ForbiddenException();
+    }
+    return await this.userService.find(id);
   }
 
   @Role([RoleEnum.foodie, RoleEnum.admin, RoleEnum.owner])

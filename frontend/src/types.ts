@@ -42,3 +42,11 @@ export type ModalProps<T> = {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
 };
+
+export type Pagination = {
+  prev: number | null;
+  next: number | null;
+  page: number;
+  total: number;
+  pageCount: number;
+};

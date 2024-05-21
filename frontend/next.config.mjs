@@ -5,6 +5,9 @@ const nextConfig = {
       {
         hostname: "localhost",
       },
+      {
+        hostname: "lh3.googleusercontent.com"
+      }
     ],
   },
 };

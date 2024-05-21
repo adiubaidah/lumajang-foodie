@@ -46,8 +46,16 @@ export class PlacePhotoController {
   }
 
   @Get()
-  async all(@Query('place') placeId: string) {
-    return await this.placePhotoService.all(placeId);
+  async all(
+    @Query('place') placeId: string,
+    @Query('perPage') perPage: number,
+    @Query('page') page: number,
+  ) {
+    return await this.placePhotoService.all({
+      perPage: perPage || 35,
+      page: page || 1,
+      placeId,
+    });
   }
 
   @Delete(':id')

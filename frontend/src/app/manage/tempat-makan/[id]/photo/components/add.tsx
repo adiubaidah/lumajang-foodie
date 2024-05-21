@@ -87,7 +87,7 @@ function Add({
     },
     onSettled: () => {
       setIsOpen(false);
-      form.reset();
+      form.reset({ placeId });
       setImage(null);
     },
     onError: () => {
@@ -145,9 +145,9 @@ function Add({
               {image ? (
                 <Image
                   src={image ? URL.createObjectURL(image) : ""}
-                  width={224}
-                  height={224}
-                  className="h-auto w-auto"
+                  width={180}
+                  height={180}
+                  className="w-[180px]"
                   alt="Image"
                 />
               ) : (

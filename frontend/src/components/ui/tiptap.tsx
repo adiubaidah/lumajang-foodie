@@ -1,10 +1,7 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Heading from "@tiptap/extension-heading";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { Toolbar } from "./toolbar";
-import OrderedList from "@tiptap/extension-ordered-list";
-import ListItem from "@tiptap/extension-list-item";
 import { useEffect } from "react";
 
 export default function Tiptap({
@@ -52,6 +49,7 @@ export default function Tiptap({
       onChange(editor.getHTML());
     },
   });
+
 
   useEffect(() => {
     if (defaultValue) {

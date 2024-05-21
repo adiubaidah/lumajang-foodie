@@ -28,7 +28,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <span className="hamburger-line"></span>
         <span className="hamburger-line origin-bottom-left"></span>
       </button>
-      <section>{children}</section>
+      <section className="container">{children}</section>
     </main>
   );
 }

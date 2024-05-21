@@ -35,3 +35,12 @@ export const imageFromBackend = (url: string) => {
     ? (process.env.NEXT_PUBLIC_SERVER_URL as string) + "/" + url
     : url;
 };
+
+export const createQueryString = (params: Object) => {
+  return Object.entries(params)
+    .map(
+      ([key, value]) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+    )
+    .join("&");
+};

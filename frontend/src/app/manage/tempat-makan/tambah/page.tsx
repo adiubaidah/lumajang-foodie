@@ -21,12 +21,12 @@ import { Switch } from "~/components/ui/switch";
 import { axiosInstance } from "~/lib/utils";
 import { placeSchema } from "~/schema";
 import { days } from "~/constant";
-import { NewPlace } from "~/types";
+import { NewPlace, Location as LocationType } from "~/types";
 import Tiptap from "~/components/ui/tiptap";
 import { SubdistrictComboBox } from "~/components/ready-use/subdistrict-combobox";
 import { Button } from "~/components/ui/button";
 import MapMarker from "~/components/ready-use/map-marker";
-import { LngLat, ViewState } from "react-map-gl";
+// import { LngLat, ViewState } from "react-map-gl";
 import toast from "react-hot-toast";
 
 function Tambah() {
@@ -58,7 +58,7 @@ function Tambah() {
     },
   });
   const [subdistrict, setSubdistrict] = useState("");
-  const [marker, setMarker] = useState<LngLat | null>(null);
+  const [marker, setMarker] = useState<LocationType | null>(null);
   const { fields } = useFieldArray({
     name: "openingHours",
     control: form.control,

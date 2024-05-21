@@ -90,6 +90,7 @@ export class UserService {
         },
       },
       select: {
+        id: true,
         name: true,
         backgroundImage: true,
         email: true,

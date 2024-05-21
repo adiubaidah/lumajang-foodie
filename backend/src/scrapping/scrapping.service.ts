@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import { PrismaService } from 'src/prisma.service';
 import { indoDays } from 'src/constant';
 import { SubdistrictService } from 'src/subdistrict/subdistrict.service';
+import { slugify } from 'src/helper';
 
 @Injectable()
 export class ScrappingService {
@@ -88,7 +89,7 @@ export class ScrappingService {
                 coordinates: item.location.coordinates.reverse(),
               },
               name: item.name,
-              slug: item.name,
+              slug: slugify(item.name),
               phoneNumber: item.phoneNumber,
               subdistrictId: item.subdistrict.id,
               openingHours: item.operational,
@@ -96,10 +97,10 @@ export class ScrappingService {
           });
 
           await Promise.all(
-            _.forEach(item.images, async (image) => {
+            _.forEach(item.images, async (image, index: number) => {
               await this.prismaService.placePhoto.create({
                 data: {
-                  type: 'gallery',
+                  type: index === 1 ? 'thumbnail' : 'gallery',
                   url: image,
                   placeId: resultInsert.id,
                 },

@@ -84,7 +84,7 @@ export const placeSchema = z.object({
 export const placePhotoSchema = z.object({
   type: z.enum(PlacePhotoType),
   placeId: z.string().min(3, { message: "Tempat dibutuhkan" }),
-})
+});
 export const placeReviewSchema = z.object({
   star: z.number().min(1, { message: "Rating bintang tidak valid" }),
   review: z.string().min(3, { message: "Review dibutuhkan" }),

@@ -27,7 +27,12 @@ function SkeletonImage({
 
   return (
     <>
-      {!loaded && <Skeleton style={skeletonStyle} />}
+      {!loaded && (
+        <Skeleton
+          style={{ width: "100%", height: "100%", zIndex: -10, ...skeletonStyle }}
+          containerClassName="w-full h-full"
+        />
+      )}
       <Image
         src={imageFromBackend(src)}
         alt={alt}

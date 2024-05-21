@@ -4,22 +4,42 @@ import { PrismaService } from 'src/prisma.service';
 import { PlaceDto } from './place.dto';
 import { CountResult } from 'src/constant';
 import { slugify } from 'src/helper';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class PlaceService {
   constructor(private prismaService: PrismaService) {}
 
   async all(
-    perPage: number,
-    page: number,
-    query: string,
-    takeout: number,
-    delivery: number,
-    liveMusic: number,
-    restRoom: number,
-    cashOnly: number,
-    servesCoffe: number,
-    openNow: number,
+    {
+      perPage,
+      page,
+      query,
+      takeout,
+      delivery,
+      liveMusic,
+      restRoom,
+      cashOnly,
+      servesCoffe,
+      openNow,
+      longitude,
+      latitude,
+      sort,
+    }: {
+      perPage: number;
+      page: number;
+      query: string;
+      takeout: number;
+      delivery: number;
+      liveMusic: number;
+      restRoom: number;
+      cashOnly: number;
+      servesCoffe: number;
+      openNow: number;
+      longitude: number;
+      latitude: number;
+      sort: string;
+    },
     // popularSort: number,
   ) {
     const skip = (page - 1) * perPage;
@@ -36,108 +56,133 @@ export class PlaceService {
     const dayName = now.format('dddd'); // Contoh output: "Senin"
     const currentTime = now.format('HH:mm');
 
-    // let pipeline: Prisma.InputJsonArray =
+    const pipeline: Prisma.JsonValue[] = [];
+
+    if (longitude && latitude) {
+      // console.log(longitude, latitude);
+      pipeline.push({
+        $geoNear: {
+          near: { type: 'Point', coordinates: [longitude, latitude] },
+          distanceField: 'distance',
+          spherical: true,
+        },
+      });
+    }
+
+    const match = {
+      $match: {
+        name: query ? { $regex: query, $options: 'i' } : undefined,
+        ...filterOptions,
+        ...(openNow === 1 && {
+          openingHours: {
+            $elemMatch: {
+              day: dayName,
+              openHours: {
+                $lte: currentTime,
+              },
+              closeHours: {
+                $gte: currentTime,
+              },
+            },
+          },
+        }),
+      },
+    };
+
+    pipeline.push(match);
+
+    const lookupClause = [
+      {
+        $lookup: {
+          from: 'Subdistrict',
+          let: { subdistrictId: '$subdistrictId' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ['$_id', '$$subdistrictId'],
+                },
+              },
+            },
+          ],
+          as: 'subdistrict',
+        },
+      },
+      {
+        $lookup: {
+          from: 'PlacePhoto',
+          let: { placeId: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ['$placeId', '$$placeId'] },
+                    { $eq: ['$type', 'thumbnail'] },
+                  ],
+                },
+              },
+            },
+            { $limit: 1 },
+          ],
+          as: 'photoForThumbnail',
+        },
+      },
+
+      {
+        $lookup: {
+          from: 'PlaceReview',
+          let: { placeId: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ['$placeId', '$$placeId'],
+                },
+              },
+            },
+            {
+              $group: {
+                _id: null,
+                averageStar: { $avg: '$star' },
+              },
+            },
+          ],
+          as: 'averageStar',
+        },
+      },
+      {
+        $addFields: {
+          photoForThumbnail: { $arrayElemAt: ['$photoForThumbnail', 0] },
+          // averageStar: '$reviews.averageStar'
+          averageStar: { $arrayElemAt: ['$averageStar.averageStar', 0] },
+          subdistrict: { $arrayElemAt: ['$subdistrict.name', 0] },
+        },
+      },
+    ];
+
+    pipeline.push(...lookupClause);
+
+    const sortOptions = {
+      'name:asc': { name: 1 },
+      'name:desc': { name: -1 },
+      popular: { averageStar: -1 },
+      distance: { distance: 1 },
+    };
+
+    const sortBy = sortOptions[sort] || sortOptions['name:asc'];
+
+    pipeline.push(
+      ...[{ $sort: { ...sortBy } }, { $skip: skip }, { $limit: perPage }],
+    );
+    // return pipeline;
 
     const result = await this.prismaService.place.aggregateRaw({
-      pipeline: [
-        {
-          $match: {
-            name: query ? { $regex: query, $options: 'i' } : undefined,
-            ...filterOptions,
-            ...(openNow === 1 && {
-              openingHours: {
-                $elemMatch: {
-                  day: dayName,
-                  openHours: {
-                    $lte: currentTime,
-                  },
-                  closeHours: {
-                    $gte: currentTime,
-                  },
-                },
-              },
-            }),
-          },
-        },
-        {
-          $lookup: {
-            from: 'PlacePhoto',
-            let: { placeId: '$_id' },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $and: [
-                      { $eq: ['$placeId', '$$placeId'] },
-                      { $eq: ['$type', 'thumbnail'] },
-                    ],
-                  },
-                },
-              },
-              { $limit: 1 },
-            ],
-            as: 'photoForThumbnail',
-          },
-        },
-        {
-          $lookup: {
-            from: 'PlaceReview',
-            let: { placeId: '$_id' },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $eq: ['$placeId', '$$placeId'],
-                  },
-                },
-              },
-              {
-                $group: {
-                  _id: null,
-                  averageStar: { $avg: '$star' },
-                },
-              },
-            ],
-            as: 'averageStar',
-          },
-        },
-        {
-          $addFields: {
-            photoForThumbnail: { $arrayElemAt: ['$photoForThumbnail', 0] },
-            // averageStar: '$reviews.averageStar'
-            averageStar: { $arrayElemAt: ['$averageStar.averageStar', 0] },
-          },
-        },
-        {
-          $sort: {
-            averageStar: -1,
-          },
-        },
-        { $skip: skip },
-        { $limit: perPage },
-      ],
+      pipeline,
     });
     const count = (await this.prismaService.place.aggregateRaw({
       pipeline: [
-        {
-          $match: {
-            name: query ? { $regex: query, $options: 'i' } : undefined,
-            ...filterOptions,
-            ...(openNow === 1 && {
-              openingHours: {
-                $elemMatch: {
-                  day: dayName,
-                  openHours: {
-                    $lte: currentTime,
-                  },
-                  closeHours: {
-                    $gte: currentTime,
-                  },
-                },
-              },
-            }),
-          },
-        },
+        match,
         {
           $count: 'total',
         },
@@ -180,10 +225,15 @@ export class PlaceService {
     });
   }
 
-  async find(slug: string) {
+  async find({ slug, id }: { slug?: string; id?: string }) {
     const result = await this.prismaService.place.findUnique({
       where: {
-        slug,
+        ...(slug && {
+          slug,
+        }),
+        ...(id && {
+          id,
+        }),
       },
       include: {
         menus: true,
@@ -207,7 +257,10 @@ export class PlaceService {
       },
     });
 
-    return { result, rate };
+    return {
+      ...result,
+      rate,
+    };
   }
 
   async create(body: PlaceDto) {
@@ -218,6 +271,37 @@ export class PlaceService {
       data: {
         ...rest,
         slug: slugify(body.name),
+        location: {
+          type: 'Point',
+          coordinates: [location.longitude, location.latitude],
+        },
+        owner: {
+          connect: {
+            id: ownerId,
+          },
+        },
+        subdistrict: {
+          connect: {
+            id: subdistrictId,
+          },
+        },
+      },
+    });
+  }
+
+  async put(id: string, body: PlaceDto) {
+    const { subdistrictId, location, ownerId, ...rest } = body;
+    const check = await this.find({ id });
+
+    return await this.prismaService.place.update({
+      where: {
+        id,
+      },
+      data: {
+        ...rest,
+        ...(check.name !== body.name && {
+          slug: slugify(body.name),
+        }),
         location: {
           type: 'Point',
           coordinates: [location.longitude, location.latitude],

@@ -20,12 +20,44 @@ export class PlacePhotoService {
     });
   }
 
-  async all(placeId: string) {
-    return await this.prismaService.placePhoto.findMany({
+  async all({
+    placeId,
+    perPage,
+    page,
+  }: {
+    placeId: string;
+    perPage: number;
+    page: number;
+  }) {
+    const skip = (page - 1) * perPage;
+    const result = await this.prismaService.placePhoto.findMany({
+      where: {
+        placeId,
+      },
+      skip,
+      take: perPage,
+    });
+
+    const total = await this.prismaService.placePhoto.count({
       where: {
         placeId,
       },
     });
+
+    const pageCount = Math.ceil(total / perPage);
+    const prev = page > 1 ? page - 1 : null;
+    const next = page < pageCount ? page + 1 : null;
+
+    return {
+      result,
+      pagination: {
+        prev,
+        page,
+        total,
+        pageCount,
+        next,
+      },
+    };
   }
 
   async delete(id: string) {
