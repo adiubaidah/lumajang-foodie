@@ -3,6 +3,7 @@ import {
   loginSchema,
   menuSchema,
   messageSchema,
+  openingHourSchema,
   placePhotoSchema,
   placeReviewSchema,
   placeSchema,
@@ -14,6 +15,7 @@ export type Login = z.infer<typeof loginSchema>;
 export type Register = z.infer<typeof registerSchema>;
 export type NewUser = z.infer<typeof userSchema>;
 export type User = NewUser & { id: string };
+export type OpeningHours = z.infer<typeof openingHourSchema>
 
 export type Location = { latitude: number; longitude: number };
 export type NewPlace = z.infer<typeof placeSchema>;

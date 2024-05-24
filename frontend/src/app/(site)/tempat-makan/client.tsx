@@ -19,6 +19,7 @@ type PlaceComplete = Place & {
   photoForThumbnail?: PlacePhoto;
   averageStar: number;
   subdistrict: string;
+  distance?: number;
 };
 
 function Client() {
@@ -66,7 +67,7 @@ function Client() {
   }, [searchParams]);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["places", filter, page],
+    queryKey: ["places", filter, page, location],
     queryFn: async () => {
       const queryString = createQueryString({
         longitude: location.longitude,
@@ -89,7 +90,7 @@ function Client() {
   };
 
   return (
-    <div>
+    <main className="container max-w-full">
       <h1>Daftar Tempat Makan</h1>
       <div className="flex items-center gap-x-3">
         <Filter
@@ -131,6 +132,7 @@ function Client() {
                 title={place.name}
                 rate={place.averageStar}
                 subdistrict={place.subdistrict}
+                distance={place.distance}
               />
             ))
           : "Data tidak ditemukan"}
@@ -145,7 +147,7 @@ function Client() {
           />
         )}
       </div>
-    </div>
+    </main>
   );
 }
 

@@ -26,6 +26,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 }
+
+//explain this code
 export const config = {
   matcher: ["/manage/:path*"],
 };

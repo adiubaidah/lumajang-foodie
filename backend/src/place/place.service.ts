@@ -252,6 +252,9 @@ export class PlaceService {
       where: {
         placeId: result.id,
       },
+      _count: {
+        id: true,
+      },
       _avg: {
         star: true,
       },
