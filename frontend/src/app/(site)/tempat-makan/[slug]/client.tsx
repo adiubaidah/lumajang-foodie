@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 
+import { BadgeRate } from "~/components/ready-use/badge-rate";
 import { Review, Photo, Overview } from "./components";
 import SkeletonImage from "~/components/ready-use/skeleton-image";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
@@ -12,6 +13,7 @@ import {
   getOpeningTime,
   isOpen,
   cn,
+  imageFromBackend,
 } from "~/lib/utils";
 import { useMediaQuery } from "~/hooks";
 import {
@@ -19,12 +21,13 @@ import {
   CarouselContent,
   CarouselItem,
 } from "~/components/ui/carousel";
+import { Badge } from "~/components/ui/badge";
 
 function Client() {
   const { slug } = useParams();
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  const [photoPage, setPhotoPage] = useState(0);
-  const [reviewPage, setReviewPage] = useState(0);
+  const [photoPage, setPhotoPage] = useState(1);
+  const [reviewPage, setReviewPage] = useState(1);
   const { data: detail } = useQuery({
     queryKey: ["place", slug],
     queryFn: async () => {
@@ -57,7 +60,7 @@ function Client() {
               <CarouselContent className="h-[300px]">
                 <CarouselItem>
                   <SkeletonImage
-                    src={imagePreview.result[0].url}
+                    src={imageFromBackend(imagePreview.result[0].url)}
                     height={500}
                     width={500}
                     className="w-full h-full object-cover"
@@ -66,7 +69,7 @@ function Client() {
                 </CarouselItem>
                 <CarouselItem>
                   <SkeletonImage
-                    src={imagePreview.result[1].url}
+                    src={imageFromBackend(imagePreview.result[1].url)}
                     height={500}
                     width={500}
                     className="w-full h-full object-cover"
@@ -75,7 +78,7 @@ function Client() {
                 </CarouselItem>
                 <CarouselItem>
                   <SkeletonImage
-                    src={imagePreview.result[2].url}
+                    src={imageFromBackend(imagePreview.result[2].url)}
                     height={500}
                     width={500}
                     className="w-full h-full object-cover"
@@ -84,7 +87,7 @@ function Client() {
                 </CarouselItem>
                 <CarouselItem>
                   <SkeletonImage
-                    src={imagePreview.result[3].url}
+                    src={imageFromBackend(imagePreview.result[3].url)}
                     height={500}
                     width={500}
                     className="w-full h-full object-cover"
@@ -97,7 +100,7 @@ function Client() {
             <div className="w-full h-[350px] flex items-center space-x-2">
               <div className="h-full w-3/5">
                 <SkeletonImage
-                  src={imagePreview.result[0].url}
+                  src={imageFromBackend(imagePreview.result[0].url)}
                   height={500}
                   width={500}
                   className="w-full h-full object-cover"
@@ -107,14 +110,14 @@ function Client() {
               <div className="w-2/5 h-full items-center flex gap-x-2">
                 <div className="w-1/2 h-full flex flex-col gap-y-2">
                   <SkeletonImage
-                    src={imagePreview.result[1].url}
+                    src={imageFromBackend(imagePreview.result[1].url)}
                     height={500}
                     width={500}
                     className="h-1/2"
                     alt="preview-1"
                   />
                   <SkeletonImage
-                    src={imagePreview.result[2].url}
+                    src={imageFromBackend(imagePreview.result[2].url)}
                     height={500}
                     width={500}
                     className="h-1/2"
@@ -123,7 +126,7 @@ function Client() {
                 </div>
                 <div className="w-1/2 h-full">
                   <SkeletonImage
-                    src={imagePreview.result[3].url}
+                    src={imageFromBackend(imagePreview.result[3].url)}
                     height={500}
                     width={500}
                     className="h-full object-cover"
@@ -137,8 +140,15 @@ function Client() {
       )}
 
       <div className="mt-4 space-y-2">
-        <div className="flex">
+        <div className="flex items-center justify-between">
           <h1 className="text-4xl font-normal">{detail.name}</h1>
+          <div className="flex items-center gap-x-2">
+            <BadgeRate rate={detail.rate._avg.star} />
+            <div className="flex flex-col">
+              <span className="text-davy">{detail.rate._count.id}</span>
+              <span className="font-light text-davy">Ulasan</span>
+            </div>
+          </div>
         </div>
         <p className="font-light text-2xl text-davy">{detail.address}</p>
         <div className="text-davy font-light flex gap-x-2">
@@ -201,6 +211,7 @@ function Client() {
           <Overview detail={detail} />
         </TabsContent>
         <TabsContent value="review">
+          <h2 className="text-3xl font-normal mb-3">Review</h2>
           <Review
             page={reviewPage}
             setPage={setReviewPage}

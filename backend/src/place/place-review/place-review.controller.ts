@@ -25,8 +25,8 @@ export class PlaceReviewController {
   @Role([RoleEnum.foodie, RoleEnum.owner])
   @UseGuards(JwtGuard, RoleGuard)
   @Put()
-  async create(@Body() payload: PlaceReviewDto, @Req() req: RequestExpress) {
-    return await this.placeReviewService.create(payload, req['user'].id);
+  async update(@Body() payload: PlaceReviewDto, @Req() req: RequestExpress) {
+    return await this.placeReviewService.update(payload, req['user'].id);
   }
 
   @Get()
@@ -35,17 +35,28 @@ export class PlaceReviewController {
     @Query('perPage') perPage: number,
     @Query('page') page: number,
     @Query('user') userId: string,
+    @Query('current-user') currentUser: string,
   ) {
-    if (userId && placeId) {
-      //cari reviewnya user
-      return await this.placeReviewService.findByPlaceAndUser(placeId, userId);
-    }
     //cari keseluruhan
     return await this.placeReviewService.all({
       page: page || 1,
       perPage: perPage || 5,
       placeId,
       userId,
+      currentUser,
     });
+  }
+
+  @Role([RoleEnum.foodie, RoleEnum.owner])
+  @UseGuards(JwtGuard, RoleGuard)
+  @Get()
+  async currentUser(
+    @Query('place') placeId: string,
+    @Req() req: RequestExpress,
+  ) {
+    const user = req['user'];
+    if (placeId && user.id) {
+      return await this.placeReviewService.findByPlaceAndUser(placeId, user.id);
+    }
   }
 }

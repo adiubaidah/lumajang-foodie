@@ -29,12 +29,17 @@ function SkeletonImage({
     <>
       {!loaded && (
         <Skeleton
-          style={{ width: "100%", height: "100%", zIndex: -10, ...skeletonStyle }}
+          style={{
+            width: "100%",
+            height: "100%",
+            zIndex: -10,
+            ...skeletonStyle,
+          }}
           containerClassName="w-full h-full"
         />
       )}
       <Image
-        src={imageFromBackend(src)}
+        src={src}
         alt={alt}
         className={className?.toString()}
         style={{ visibility: !loaded ? "hidden" : "visible" }}

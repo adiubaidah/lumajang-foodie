@@ -1,7 +1,7 @@
 "use client";
-import { useUser } from "~/hooks";
+import { useAuth } from "~/hooks";
 function Client() {
-  const user = useUser();
+  const user = useAuth();
   return (
     <div>
       <h1>Selamat Datang {user?.name}</h1>

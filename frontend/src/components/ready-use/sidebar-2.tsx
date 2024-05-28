@@ -7,7 +7,7 @@ import { Role } from "~/constant";
 import { useMutation } from "@tanstack/react-query";
 
 import { axiosInstance, rgbToHex } from "~/lib/utils";
-import { useUser } from "~/hooks";
+import { useAuth } from "~/hooks";
 
 interface SidebarProps {
   toggled: boolean;
@@ -45,7 +45,7 @@ export const links: Links[] = [
 function Sidebar({ toggled, setToggled, setBroken }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const user = useUser();
+  const user = useAuth();
 
   const logoutMutation = useMutation({
     mutationKey: ["logout"],

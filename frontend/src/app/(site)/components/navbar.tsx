@@ -12,24 +12,39 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { Input } from "~/components/ui/input";
 import { User, Heart } from "lucide-react";
-import { cn, imageFromBackend } from "~/lib/utils";
-import { useScrollPosition, useUser } from "~/hooks";
+import { axiosInstance, cn, imageFromBackend } from "~/lib/utils";
+import { useScrollPosition, useAuth } from "~/hooks";
 import { Button } from "~/components/ui/button";
 import SkeletonImage from "~/components/ready-use/skeleton-image";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 function Navbar() {
-  const user = useUser();
+  const user = useAuth();
   const path = usePathname();
   const yAxis = useScrollPosition();
+
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      return (await axiosInstance.post("/auth/logout")).data;
+    },
+    onSuccess: () => {
+      window.location.reload();
+    },
+    onError: () => {
+      toast.error("Gagal logout");
+    },
+  });
+
   return (
     <header
       className={cn(
-        "container bg-poteh max-w-full flex flex-col md:flex-row items-center justify-between uppercase font-semibold pt-5 pb-3 z-[999]",
+        "container bg-poteh max-w-full flex flex-col md:flex-row items-center justify-between uppercase font-semibold pt-5 pb-3 z-20",
         yAxis > 10 &&
           "fixed shadow-md -top-12 transition duration-500 translate-y-[48px] max-w-full",
-        (path === "/register" || path === "/login") && 'hidden'
+        (path === "/register" || path === "/login") && "hidden"
       )}
     >
       <Image
@@ -45,11 +60,11 @@ function Navbar() {
           type="text"
           placeholder="Cari makanan atau tempat makan"
           className="w-full outline-none placeholder:text-stroke placeholder:font-thin"
-        /> 
+        />
       </div>
 
       <ul className="hidden md:flex gap-x-5">
-        {!!user.id ? (
+        {user ? (
           <li>
             <DropdownMenu>
               <DropdownMenuTrigger className="flex items-center gap-x-3">
@@ -61,18 +76,24 @@ function Navbar() {
                   height={100}
                   width={100}
                   className="rounded-full w-10 h-10"
-                  skeletonStyle={{ width: 40, height: 40, borderRadius: "100%" }}
+                  skeletonStyle={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: "100%",
+                  }}
                 />
                 <ChevronDown />
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent className="z-30">
                 <DropdownMenuItem asChild>
-                  <Link href={`/users/${user.id}`}>Profil</Link>
+                  <Link href={"/my-profile"}>Profil</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>Ulasan</DropdownMenuItem>
                 <DropdownMenuItem>Pesan</DropdownMenuItem>
                 <DropdownMenuItem>Koneksi Saya</DropdownMenuItem>
-                <DropdownMenuItem>Logout</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => logoutMutation.mutate()}>
+                  Logout
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </li>

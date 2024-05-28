@@ -244,6 +244,11 @@ export class PlaceService {
             id: true,
             name: true,
             image: true,
+            _count: {
+              select: {
+                followers: true,
+              },
+            },
           },
         },
       },

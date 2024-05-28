@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import axios from "axios";
 import moment from "moment";
+import "moment/locale/id";
 import { days } from "~/constant";
 import { OpeningHours } from "~/types";
 
@@ -87,11 +88,16 @@ export function getClosingTime(openingHours: OpeningHours[]) {
   return todayOpeningHours.closeHours;
 }
 
-
 export const betterToKm = (distance: number): string => {
   if (distance <= 1000) {
     return Math.round(distance) + " m";
   } else {
     return (distance / 1000).toFixed(2) + " km";
   }
+};
+
+export const humanizeIdTime = (date: string) => {
+  let localId = moment(date);
+  localId.locale("id");
+  return localId.fromNow();
 };

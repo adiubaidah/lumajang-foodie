@@ -8,11 +8,11 @@ export class MenuService {
   constructor(private prismaService: PrismaService) {}
 
   async create(payload: MenuDto) {
-    const { placeId, name, description, price } = payload;
+    const { placeId, name, jenis, price } = payload;
     return await this.prismaService.menu.create({
       data: {
         name,
-        description,
+        jenis,
         price,
         slug: slugify(name),
         place: {
@@ -70,14 +70,14 @@ export class MenuService {
   }
 
   async update(payload: MenuDto, menuId: string) {
-    const { placeId, name, description, price } = payload;
+    const { placeId, name, jenis, price } = payload;
     return await this.prismaService.menu.update({
       where: {
         id: menuId,
       },
       data: {
         name,
-        description,
+        jenis,
         price,
         slug: slugify(name),
         place: {

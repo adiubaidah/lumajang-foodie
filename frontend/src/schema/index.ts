@@ -38,6 +38,10 @@ export const userSchema = z.object({
   role: z.enum(Role),
   name: z.string().min(2, { message: "Nama diperlukan" }),
   gender: gender.optional(),
+  subdistrictId: z
+    .string()
+    .min(2, { message: "Kecamatan tidak valid" })
+    .optional(),
   description: z
     .string()
     .min(5, { message: "Deskripsi terlalu singkat" })

@@ -99,6 +99,7 @@ export class UserService {
         image: true,
         role: true,
         isPrivate: true,
+        subdistrict: true,
         _count: {
           select: {
             placeReviews: true,
@@ -110,9 +111,6 @@ export class UserService {
       },
     });
 
-    if (result.isPrivate) {
-      throw new ForbiddenException('Akun di privasi');
-    }
     return result;
   }
 

@@ -52,7 +52,6 @@ export class UserController {
   @Get(':id')
   async find(@Param('id') id: string, @Req() req: RequestExpress) {
     const user = req['user'];
-
     if (user.id !== id && user.role !== RoleEnum.admin) {
       throw new ForbiddenException();
     }
@@ -84,20 +83,23 @@ export class UserController {
     @Body() body: UserDto,
     @UploadedFiles()
     files: {
-      image?: Express.Multer.File[];
-      backgroundImage?: Express.Multer.File[];
+      image?: Express.Multer.File;
+      backgroundImage?: Express.Multer.File;
     },
   ) {
-    const imageFile = files.image ? files.image[0] : null;
-    const backgroundImageFile = files.backgroundImage
-      ? files.backgroundImage[0]
-      : null;
+    let imageFile: Express.Multer.File;
+    let backgroundImageFile: Express.Multer.File;
 
-    await this.userService.update(req['user'].id, body, {
+    if (!!files) {
+      imageFile = files.image ? files.image[0] : null;
+      backgroundImageFile = files.backgroundImage
+        ? files.backgroundImage[0]
+        : null;
+    }
+
+    return await this.userService.update(req['user'].id, body, {
       image: imageFile && imageFile.path,
       backgroundImage: backgroundImageFile && backgroundImageFile.path,
     });
-
-    return true;
   }
 }

@@ -1,4 +1,12 @@
-import { Controller, Param, Post, Req, UseGuards, Get } from '@nestjs/common';
+import {
+  Controller,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+  Get,
+  Query,
+} from '@nestjs/common';
 import { Request as RequestExpress } from 'express';
 import { Role as RoleEnum } from '@prisma/client';
 import { UserFollowService } from './user-follow.service';
@@ -28,5 +36,16 @@ export class UserFollowController {
   @Post(':userId')
   async follow(@Param('userId') userId: string, @Req() req: RequestExpress) {
     return await this.userFollowService.create(userId, req['user'].id);
+  }
+
+  @Role([RoleEnum.foodie, RoleEnum.owner])
+  @UseGuards(JwtGuard, RoleGuard)
+  @Get('check-follow')
+  async checkFollow(@Query('user') user: string, @Req() req: RequestExpress) {
+    const currentUser = req['user'];
+    return this.userFollowService.checkFollow({
+      user: user,
+      currentUser: currentUser.id,
+    });
   }
 }

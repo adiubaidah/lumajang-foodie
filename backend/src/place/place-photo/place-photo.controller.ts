@@ -52,7 +52,7 @@ export class PlacePhotoController {
     @Query('page') page: number,
   ) {
     return await this.placePhotoService.all({
-      perPage: perPage || 35,
+      perPage: perPage || 5,
       page: page || 1,
       placeId,
     });

@@ -40,6 +40,25 @@ export class UserFollowService {
     });
   }
 
+  async checkFollow({
+    user,
+    currentUser,
+  }: {
+    user: string;
+    currentUser: string;
+  }) {
+    const result = await this.prismaService.userFollow.findUnique({
+      where: {
+        followerId_followingId: {
+          followerId: currentUser,
+          followingId: user,
+        },
+      },
+    });
+
+    return !!result;
+  }
+
   async create(userId: string, currentUserId: string) {
     return await this.prismaService.userFollow.create({
       data: {

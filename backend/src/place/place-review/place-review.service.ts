@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { PlaceReviewDto } from './place-review.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class PlaceReviewService {
   constructor(private prismaService: PrismaService) {}
 
-  async create(payload: PlaceReviewDto, userId: string) {
+  async update(payload: PlaceReviewDto, userId: string) {
     const { placeId, ...rest } = payload;
     return await this.prismaService.placeReview.upsert({
       where: {
@@ -39,29 +40,47 @@ export class PlaceReviewService {
     page,
     placeId,
     userId,
+    currentUser,
   }: {
     perPage: number;
     page: number;
     placeId?: string;
     userId?: string;
+    currentUser?: string;
   }) {
     const skip = (page - 1) * perPage;
+    const whereClause: Prisma.PlaceReviewWhereInput = {
+      ...(placeId && {
+        placeId,
+      }),
+      ...(userId && {
+        //jika melihat profile user
+        userId,
+      }),
+    };
+    if (!!currentUser && !!placeId) {
+      whereClause.NOT = [{ userId: currentUser }];
+    }
+
     const result = await this.prismaService.placeReview.findMany({
-      where: {
-        ...(placeId && {
-          placeId,
-        }),
-        ...(userId && {
-          userId,
-        }),
-      },
+      where: whereClause,
       include: {
         user: {
           select: {
+            id: true,
             image: true,
             name: true,
           },
         },
+        place: {
+          select: {
+            name: true,
+            slug: true,
+          },
+        },
+      },
+      orderBy: {
+        updatedAt: 'desc',
       },
       skip,
       take: perPage,

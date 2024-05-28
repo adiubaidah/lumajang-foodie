@@ -19,7 +19,7 @@ import {
 } from "~/components/ui/table";
 import { Anchor } from "~/components/ui/anchor";
 import { Button } from "~/components/ui/button";
-import { useUser } from "~/hooks";
+import { useAuth } from "~/hooks";
 import { axiosInstance } from "~/lib/utils";
 import { Place, PlacePhoto } from "~/types";
 import SkeletonImage from "~/components/ready-use/skeleton-image";
@@ -31,7 +31,7 @@ import {
 } from "~/components/ui/dropdown-menu";
 
 function Client() {
-  const user = useUser();
+  const user = useAuth();
   const { data } = useQuery({
     queryKey: ["place"],
     queryFn: async () => {
@@ -90,7 +90,9 @@ function Client() {
                   <DropdownMenuContent>
                     <DropdownMenuItem className="space-x-3">
                       <ImageIcon size={16} color="blue" />
-                      <a href={`/manage/tempat-makan/${place.id}/photo`}>Foto</a>
+                      <a href={`/manage/tempat-makan/${place.id}/photo`}>
+                        Foto
+                      </a>
                     </DropdownMenuItem>
                     <DropdownMenuItem className="space-x-3">
                       <PencilIcon size={16} color="yellow" />
@@ -116,4 +118,3 @@ function Client() {
 }
 
 export default Client;
-

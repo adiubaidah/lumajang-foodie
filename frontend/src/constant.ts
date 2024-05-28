@@ -21,6 +21,4 @@ export const placeFeature = {
 };
 
 
-export const getColorRating = (rate: number)=> {
-  if(rate <= 1) return ''
-}
+export const rateColor = ['#FF9941', '#FF9133', '#FF7F12', '#F97300', '#E26700'];

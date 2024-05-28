@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { X } from "lucide-react";
-import PaginationComponent from "~/components/ready-use/pagination";
+import PaginationComponent from "~/components/ready-use/pagination-link";
 
 import { useUserLocation } from "~/hooks";
 import { Place, PlacePhoto } from "~/types";

@@ -23,6 +23,7 @@ const config = {
         helvetica: ["var(--font-helvetica)"],
       },
       colors: {
+        "soft-red": "#ED6368",
         poteh: "#F9F9F9",
         stroke: "#A4A4A4",
         orange: "#F97300",

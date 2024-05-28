@@ -28,6 +28,8 @@ model User {
   name      String
 
   gender          Gender?
+  subdistrictId   String?      @db.ObjectId
+  subdistrict     Subdistrict? @relation(fields: [subdistrictId], references: [id])
   description     String?
   image           String?
   backgroundImage String?
@@ -63,6 +65,7 @@ model Subdistrict {
   id    String  @id @default(auto()) @map("_id") @db.ObjectId
   name  String
   Place Place[]
+  User  User[]
 }
 
 model Place {
@@ -135,7 +138,6 @@ model Menu {
   slug    String    @unique
   name    String
   jenis   JenisMenu
-  keyword String[]
   price   Int
   place   Place     @relation(fields: [placeId], references: [id])
   placeId String    @db.ObjectId
