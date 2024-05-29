@@ -21,9 +21,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { data: user } = useQuery({
     queryKey: ["auth"],
     queryFn: async () => {
-      const user = await axiosInstance
-        .post("/auth/is-auth")
-        .then((data) => data.data);
+      const user = (await axiosInstance.post("/auth/is-auth")).data;
 
       user.image = imageFromBackend(
         user.image ?? "public/img/user/default.png"
@@ -31,7 +29,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return user;
     },
     staleTime: Infinity,
-    retry: false
+    retry: false,
   });
 
   return <AuthContext.Provider value={user}>{children}</AuthContext.Provider>;

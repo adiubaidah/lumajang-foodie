@@ -6,6 +6,7 @@ import {
   UseGuards,
   Get,
   Query,
+  Delete,
 } from '@nestjs/common';
 import { Request as RequestExpress } from 'express';
 import { Role as RoleEnum } from '@prisma/client';
@@ -18,14 +19,10 @@ import { Role } from 'src/role/role.decorator';
 export class UserFollowController {
   constructor(private userFollowService: UserFollowService) {}
 
-  @Role([RoleEnum.foodie, RoleEnum.owner])
-  @UseGuards(JwtGuard, RoleGuard)
   @Get('follower/:userId')
   async follower(@Param('userId') userId: string) {
     return this.userFollowService.follower(userId);
   }
-  @Role([RoleEnum.foodie, RoleEnum.owner])
-  @UseGuards(JwtGuard, RoleGuard)
   @Get('following/:userId')
   async following(@Param('userId') userId: string) {
     return this.userFollowService.following(userId);
@@ -35,7 +32,16 @@ export class UserFollowController {
   @UseGuards(JwtGuard, RoleGuard)
   @Post(':userId')
   async follow(@Param('userId') userId: string, @Req() req: RequestExpress) {
-    return await this.userFollowService.create(userId, req['user'].id);
+    const result = await this.userFollowService.create(userId, req['user'].id);
+    return { result, type: 'follow' };
+  }
+
+  @Role([RoleEnum.foodie, RoleEnum.owner])
+  @UseGuards(JwtGuard, RoleGuard)
+  @Delete(':userId')
+  async unFollow(@Param('userId') userId: string, @Req() req: RequestExpress) {
+    const result = await this.userFollowService.delete(userId, req['user'].id);
+    return { result, type: 'unfollow' };
   }
 
   @Role([RoleEnum.foodie, RoleEnum.owner])

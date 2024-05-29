@@ -75,4 +75,15 @@ export class UserFollowService {
       },
     });
   }
+
+  async delete(userId: string, currentUserId: string) {
+    return await this.prismaService.userFollow.delete({
+      where: {
+        followerId_followingId: {
+          followerId: currentUserId,
+          followingId: userId,
+        },
+      },
+    });
+  }
 }

@@ -103,6 +103,7 @@ export class UserService {
         _count: {
           select: {
             placeReviews: true,
+            menuReviews: true,
             ownerPlaces: true,
             followers: true,
             following: true,
@@ -110,7 +111,6 @@ export class UserService {
         },
       },
     });
-
     return result;
   }
 

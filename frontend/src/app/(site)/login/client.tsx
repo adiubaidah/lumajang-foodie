@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,8 +24,8 @@ import {
 import { Login } from "~/types";
 import { loginSchema } from "~/schema";
 import { Separator } from "~/components/ui/separator";
-import { Anchor } from "~/components/ui/anchor";
 function Client() {
+  const router = useRouter()
   const form = useForm<Login>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -39,6 +40,7 @@ function Client() {
     },
     onSuccess: ({ data }) => {
       toast.success("Login sukses");
+      router.replace('/my-profile')
     },
     onError: (data) => {
       toast.error("Login gagal");

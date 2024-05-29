@@ -53,14 +53,14 @@ type Review = PlaceReview & { user: User } & { updatedAt: string };
 function Review({ placeId, page, setPage }: ReviewProps) {
   const auth = useAuth();
   const { data, isLoading } = useQuery({
-    queryKey: ["place-review", { place: placeId, page }],
+    queryKey: ["place-review", { place: placeId, page, auth: "" }],
     queryFn: async () => {
       const query = createQueryString({
-        //menyebabkan tidak bisa
         place: placeId,
-        ...(!!auth.id && {
-          "current-user": auth.id,
-        }),
+        ...(!!auth &&
+          auth.id && {
+            "current-user": auth.id,
+          }),
       });
       return (await axiosInstance.get(`/place-review?${query}`)).data;
     },

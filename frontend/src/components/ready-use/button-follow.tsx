@@ -1,46 +1,60 @@
 import React from "react";
 import { Check, SquarePlus } from "lucide-react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { cn } from "~/lib/utils";
 import { axiosInstance } from "~/lib/utils";
 import toast from "react-hot-toast";
+import { useAuth } from "~/hooks";
 
 interface ButtonFollowProps {
   user: string;
 }
 
 export function ButtonFollow({ user }: ButtonFollowProps) {
+  const auth = useAuth();
+  const queryClient = useQueryClient();
   const { data, isLoading } = useQuery({
-    queryKey: ["check-follow", user],
+    queryKey: ["check-follow", { follow: user, auth: auth && auth.id }],
     queryFn: async () => {
       return (await axiosInstance.get(`/user-follow/check-follow?user=${user}`))
         .data;
     },
-    enabled: !!user,
+    enabled: !!user && !!auth && !!auth.id,
   });
 
   const followMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({ follow }: { follow: boolean }) => {
+      if(follow) {
+        return (await axiosInstance.delete(`/user-follow/${user}`)).data
+      }
       return (await axiosInstance.post(`/user-follow/${user}`)).data;
     },
-    onSuccess: () => {
-      toast.success("Berhasil memfollow");
+    onSuccess: (data) => {
+      if (data.type === "follow") {
+        toast.success("Berhasil follow");
+      } else {
+        toast.success("Berhasil unfollow");
+      }
+      queryClient.invalidateQueries({
+        queryKey: ["check-follow", { follow: user, auth: auth && auth.id }],
+      });
     },
     onError: () => {
       toast.error("Gagal memfollow");
     },
   });
 
-  const handleToggle = () => {};
+  const handleToggle = () => {
+    followMutation.mutate({ follow: data });
+  };
 
   return (
     <button
       className={cn(
         "font-bold mx-auto px-2 py-1 rounded-lg text-davy flex items-center gap-x-2 mt-2 group  transition",
-        data
-          ? "bg-puce hover:bg-white"
-          : "bg-white hover:bg-puce"
+        data ? "bg-puce hover:bg-white" : "bg-white hover:bg-puce"
       )}
+      onClick={handleToggle}
     >
       {data ? (
         <React.Fragment>

@@ -12,14 +12,23 @@ import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import Edit from "./components/edit";
 import { Review } from "./components";
-import Follower from "./components/follower";
+import Connection from "./components/connections/connection";
 
-type UserSubdistrict = User & { subdistrict: Subdistrict };
+type UserComplete = User & {
+  subdistrict: Subdistrict;
+  _count: {
+    menuReviews: number;
+    placeReviews: number;
+    ownerPlaces: number;
+    followers: number;
+    following: number;
+  };
+};
 
 function Client() {
   const [openEdit, setOpenEdit] = useState(false);
   const user = useAuth();
-  const { data: dataUser } = useQuery<UserSubdistrict>({
+  const { data: dataUser } = useQuery<UserComplete>({
     queryKey: ["user", user && user.id],
     queryFn: async () => {
       return axiosInstance.get(`/user/${user.id}`).then((data) => data.data);
@@ -70,12 +79,16 @@ function Client() {
               </Button>
               <div className="flex gap-x-3 mt-4">
                 <div className=" text-center">
-                  <span className="font-medium text-2xl">0</span>
+                  <span className="font-medium text-2xl">
+                    {dataUser._count.placeReviews + dataUser._count.menuReviews}
+                  </span>
                   <p className="text-[16px]">Ulasan</p>
                 </div>
                 <div className="border-r-2" />
                 <div className="text-center">
-                  <span className="font-medium text-2xl">0</span>
+                  <span className="font-medium text-2xl">
+                    {dataUser._count.followers}
+                  </span>
                   <p className="text-[16px]">Pengikut</p>
                 </div>
               </div>
@@ -108,17 +121,17 @@ function Client() {
                     "w-full text-start inline-block",
                     "data-[state=active]:text-puce data-[state=active]:border-l-4 data-[state=active]:border-puce"
                   )}
-                  value="follower"
+                  value="connection"
                 >
-                  Follower
+                  Koneksi
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="review" className="w-2/3">
                 <Review />
               </TabsContent>
               <TabsContent value="photo">Foto</TabsContent>
-              <TabsContent value="follower">
-                <Follower />
+              <TabsContent value="connection">
+                <Connection />
               </TabsContent>
             </Tabs>
           </div>
