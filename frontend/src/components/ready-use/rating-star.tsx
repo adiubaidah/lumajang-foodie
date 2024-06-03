@@ -18,7 +18,11 @@ export function RatingStar({ rating, setRating }: RatingStarProps) {
               setRating(star);
             }}
           >
-            <Star width={40} height={40} fill={rating >= star ? '#F97300' : 'black'} />
+            <Star
+              width={40}
+              height={40}
+              fill={rating >= star ? "#F97300" : "black"}
+            />
           </button>
         );
       })}

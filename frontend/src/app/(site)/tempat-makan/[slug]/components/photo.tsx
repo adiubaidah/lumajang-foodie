@@ -29,7 +29,7 @@ function Photo({ placeId, page, setPage }: PhotoProps) {
       {isLoading ? (
         "Loading"
       ) : data && data.result ? (
-        <Fancybox className="grid grid-cols-5 gap-3 grid-rows-2 h-[500px]">
+        <Fancybox className="grid h-[500px] grid-cols-5 grid-rows-2 gap-3">
           {data.result.map((photo: PlacePhoto) => (
             <a
               data-fancybox="gallery"
@@ -38,7 +38,7 @@ function Photo({ placeId, page, setPage }: PhotoProps) {
               key={photo.id}
             >
               <SkeletonImage
-                className="h-full object-cover rounded-lg"
+                className="h-full rounded-lg object-cover"
                 src={imageFromBackend(photo.url)}
                 width={300}
                 height={300}

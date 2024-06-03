@@ -47,8 +47,10 @@ model User {
 
   messages Message[]
 
-  following UserFollow[] @relation("UserFollowing")
-  followers UserFollow[] @relation("UserFollowers")
+  following    UserFollow[]   @relation("UserFollowing")
+  followers    UserFollow[]   @relation("UserFollowers")
+  placeArchive PlaceArchive[]
+  menuArchive  MenuArchive[]
 }
 
 model UserFollow {
@@ -89,9 +91,10 @@ model Place {
   owner         User?          @relation(fields: [ownerId], references: [id])
   ownerId       String?        @db.ObjectId
 
-  photos  PlacePhoto[]
-  menus   Menu[]
-  reviews PlaceReview[]
+  photos   PlacePhoto[]
+  menus    Menu[]
+  reviews  PlaceReview[]
+  archives PlaceArchive[]
 }
 
 type OpeningHours {
@@ -128,6 +131,16 @@ model PlacePhoto {
   placeId String         @db.ObjectId
 }
 
+model PlaceArchive {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  placeId String @db.ObjectId
+  place   Place  @relation(fields: [placeId], references: [id])
+  userId  String @db.ObjectId
+  user    User   @relation(fields: [userId], references: [id])
+
+  @@unique([placeId, userId])
+}
+
 enum JenisMenu {
   makanan
   minuman
@@ -137,21 +150,23 @@ model Menu {
   id      String    @id @default(auto()) @map("_id") @db.ObjectId
   slug    String    @unique
   name    String
+  photo   String
   jenis   JenisMenu
   price   Int
   place   Place     @relation(fields: [placeId], references: [id])
   placeId String    @db.ObjectId
 
-  reviews MenuReview[]
-  photos  MenuPhoto[]
+  reviews  MenuReview[]
+  // photos   MenuPhoto[]
+  archives MenuArchive[]
 }
 
-model MenuPhoto {
-  id     String @id @default(auto()) @map("_id") @db.ObjectId
-  url    String
-  menuId String @db.ObjectId
-  menu   Menu   @relation(fields: [menuId], references: [id])
-}
+// model MenuPhoto {
+//   id     String @id @default(auto()) @map("_id") @db.ObjectId
+//   url    String
+//   menuId String @db.ObjectId
+//   menu   Menu   @relation(fields: [menuId], references: [id])
+// }
 
 model MenuReview {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -167,12 +182,23 @@ model MenuReview {
   @@unique([menuId, userId])
 }
 
+model MenuArchive {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  menuId String @db.ObjectId
+  menu   Menu   @relation(fields: [menuId], references: [id])
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([menuId, userId])
+}
+
 model Conversation {
-  id       String    @id @default(auto()) @map("_id") @db.ObjectId
-  isGroup  Boolean   @default(false)
-  messages Message[]
-  userIds  String[]  @db.ObjectId
-  users    User[]    @relation(fields: [userIds], references: [id])
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  isGroup       Boolean   @default(false)
+  lastMessageAt DateTime  @default(now())
+  messages      Message[]
+  userIds       String[]  @db.ObjectId
+  users         User[]    @relation(fields: [userIds], references: [id])
 }
 
 model Message {

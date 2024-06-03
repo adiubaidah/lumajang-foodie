@@ -41,7 +41,7 @@ import toast from "react-hot-toast";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { User } from "~/types";
 
-const editSchema = userSchema.pick({
+export const editSchema = userSchema.pick({
   description: true,
   email: true,
   gender: true,
@@ -50,7 +50,7 @@ const editSchema = userSchema.pick({
   subdistrictId: true,
 });
 
-type Edit = z.infer<typeof editSchema>;
+export type EditType = z.infer<typeof editSchema>;
 interface EditProps {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -62,7 +62,7 @@ function Edit({ isOpen, setIsOpen, value }: EditProps) {
   const [backgroundImage, setBackgroundImage] = useState<
     File | string | null
   >();
-  const form = useForm<Edit>({
+  const form = useForm<EditType>({
     resolver: zodResolver(editSchema),
     defaultValues: {
       description: undefined,
@@ -103,7 +103,7 @@ function Edit({ isOpen, setIsOpen, value }: EditProps) {
   };
 
   const handleBackgroundImageChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const { files } = e.target;
     if (files) {
@@ -126,7 +126,7 @@ function Edit({ isOpen, setIsOpen, value }: EditProps) {
     },
   });
 
-  const onSubmit = (values: Edit) => {
+  const onSubmit = (values: EditType) => {
     const formData = new FormData();
     for (const [key, value] of Object.entries(values)) {
       formData.append(key, value.toString());
@@ -186,10 +186,7 @@ function Edit({ isOpen, setIsOpen, value }: EditProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Gender</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                    >
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Gender" />
@@ -260,8 +257,8 @@ function Edit({ isOpen, setIsOpen, value }: EditProps) {
                       image instanceof File
                         ? URL.createObjectURL(image)
                         : typeof image === "string"
-                        ? imageFromBackend(image)
-                        : ""
+                          ? imageFromBackend(image)
+                          : ""
                     }
                     width={180}
                     height={180}
@@ -269,7 +266,7 @@ function Edit({ isOpen, setIsOpen, value }: EditProps) {
                     alt="Image"
                   />
                 ) : (
-                  <div className="bg-gray-400 w-56 h-56"></div>
+                  <div className="h-56 w-56 bg-gray-400"></div>
                 )}
 
                 <Input
@@ -282,7 +279,7 @@ function Edit({ isOpen, setIsOpen, value }: EditProps) {
                 />
                 <label
                   htmlFor="image"
-                  className="absolute top-1/2 left-1/2 -translate-x-1/2"
+                  className="absolute left-1/2 top-1/2 -translate-x-1/2"
                 >
                   <Camera />
                 </label>
@@ -294,16 +291,16 @@ function Edit({ isOpen, setIsOpen, value }: EditProps) {
                       backgroundImage instanceof File
                         ? URL.createObjectURL(backgroundImage)
                         : typeof backgroundImage === "string"
-                        ? imageFromBackend(backgroundImage)
-                        : ""
+                          ? imageFromBackend(backgroundImage)
+                          : ""
                     }
                     width={400}
                     height={400}
-                    className="w-full h-56 object-cover"
+                    className="h-56 w-full object-cover"
                     alt="Image"
                   />
                 ) : (
-                  <div className="bg-gray-400 w-full h-56"></div>
+                  <div className="h-56 w-full bg-gray-400"></div>
                 )}
 
                 <Input
@@ -316,18 +313,18 @@ function Edit({ isOpen, setIsOpen, value }: EditProps) {
                 />
                 <label
                   htmlFor="backgroundImage"
-                  className="absolute top-1/2 left-1/2 -translate-x-1/2"
+                  className="absolute left-1/2 top-1/2 -translate-x-1/2"
                 >
                   <Camera />
                 </label>
               </div>
               <Button
                 type="submit"
-                className="font-bold rounded-md w-full px-[35px] h-[45.6px] shadow-[0_8px_12px_rgba(249,116,0,0.3)]"
+                className="h-[45.6px] w-full rounded-md px-[35px] font-bold shadow-[0_8px_12px_rgba(249,116,0,0.3)]"
                 disabled={userMutation.isPending}
               >
                 {userMutation.isPending ? (
-                  <Loader2 className="animate-spin mx-auto" />
+                  <Loader2 className="mx-auto animate-spin" />
                 ) : (
                   <span>Update</span>
                 )}

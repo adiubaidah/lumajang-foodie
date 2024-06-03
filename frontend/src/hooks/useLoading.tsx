@@ -8,6 +8,4 @@ import {
 
 const LoadingContext = createContext(false);
 
-export const LoadingProvider = ({children}: {children: ReactNode}) => {
-    
-}
+export const LoadingProvider = ({ children }: { children: ReactNode }) => {};

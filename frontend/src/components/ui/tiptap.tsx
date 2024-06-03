@@ -50,7 +50,6 @@ export default function Tiptap({
     },
   });
 
-
   useEffect(() => {
     if (defaultValue) {
       editor?.commands.insertContent(defaultValue);
@@ -58,7 +57,7 @@ export default function Tiptap({
   }, [defaultValue, editor]);
 
   return (
-    <div className="min-h-[250px] ">
+    <div className="min-h-[250px]">
       <Toolbar editor={editor} />
       <EditorContent editor={editor} />
     </div>

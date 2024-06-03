@@ -1,19 +1,19 @@
 "use client";
 import { useState } from "react";
-import { Sidebar as SidebarComponent, Menu, MenuItem } from "react-pro-sidebar";
+import Image from "next/image";
 import Link from "next/link";
+import { Sidebar as SidebarComponent, Menu, MenuItem } from "react-pro-sidebar";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  GripVertical,
-  Warehouse,
-  GanttChartSquare,
-  Power,
-  Milk,
-  List,
-  RefreshCcw,
-  User,
-} from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
+import {
+  Warehouse,
+  Power,
+  UtensilsCrossed,
+  UserRound,
+  Soup,
+  GlassWater,
+  Home,
+} from "lucide-react";
 
 import { axiosInstance, rgbToHex } from "~/lib/utils";
 
@@ -40,8 +40,8 @@ function Sidebar({ toggled, setToggled, setBroken }: SidebarProps) {
 
   return (
     <SidebarComponent
-      backgroundColor="#1f2937"
-      className="md:hidden"
+      backgroundColor="#FFFFFF"
+      className="text-black md:hidden"
       toggled={toggled}
       onBackdropClick={() => setToggled(false)}
       breakPoint="md"
@@ -51,46 +51,96 @@ function Sidebar({ toggled, setToggled, setBroken }: SidebarProps) {
         // height: '100%'
       }}
     >
-      <div className="p-6 bg-zinc-600 flex justify-between">
-        <h1
-          className={'font-bold text-xl text-nowrap text-stone-300'}
-        >
-          Sidebar
-        </h1>
+      <div className="flex justify-between bg-white p-6">
+        <Image
+          src="/assets/logo.png"
+          alt="Lumajang Foodie"
+          width={300}
+          height={300}
+          className="w-[156px]"
+        />
       </div>
+      <div className="mb-2 px-6 text-[10px] uppercase tracking-wide">Main</div>
       <Menu
         menuItemStyles={{
           button: {
             ":hover": {
-              backgroundColor: "#1f2937",
+              backgroundColor: "#F6F6F6",
               ["& > .ps-menu-icon, & > .ps-menu-label"]: {
-                color: rgbToHex("214,211,209"),
+                color: "#000000",
               },
             },
             ["&.ps-active"]: {
               ["& > .ps-menu-icon, & > .ps-menu-label"]: {
-                color: rgbToHex("214,211,209"),
+                color: "#000000",
               },
             },
           },
           label: {
             marginTop: "3px",
+            color: "#5A5A5A",
           },
         }}
       >
         <MenuItem
           component={<Link href="/" />}
-          icon={<Warehouse size={20} />}
+          icon={<Home size={20} />}
           active={pathname === "/"}
         >
-          Dashboard
+          Home
         </MenuItem>
         <MenuItem
-          component={<Link href="/transaksi" />}
-          icon={<GanttChartSquare size={20} />}
-          active={pathname === "/transaksi"}
+          component={<Link href="/tempat-makan" />}
+          icon={<UtensilsCrossed size={20} />}
+          active={pathname === "/tempat-makan"}
         >
-          Transaksi
+          Restoran
+        </MenuItem>
+        <MenuItem
+          component={<Link href="/makanan" />}
+          icon={<Soup size={20} />}
+          active={pathname === "/makanan"}
+        >
+          Makanan
+        </MenuItem>
+        <MenuItem
+          component={<Link href="/minuman" />}
+          icon={<GlassWater size={20} />}
+          active={pathname === "/minuman"}
+        >
+          Makanan
+        </MenuItem>
+      </Menu>
+      <div className="mt-6 px-6 text-[10px] uppercase tracking-wide">
+        Setting
+      </div>
+      <Menu
+        menuItemStyles={{
+          button: {
+            ":hover": {
+              backgroundColor: "#F6F6F6",
+              ["& > .ps-menu-icon, & > .ps-menu-label"]: {
+                color: "#000000",
+              },
+            },
+            ["&.ps-active"]: {
+              ["& > .ps-menu-icon, & > .ps-menu-label"]: {
+                color: "#000000",
+              },
+            },
+          },
+          label: {
+            marginTop: "3px",
+            color: "#5A5A5A",
+          },
+        }}
+      >
+        <MenuItem
+          component={<Link href="/my-profile" />}
+          icon={<UserRound size={20} />}
+          active={pathname === "/my-profile"}
+        >
+          Profile
         </MenuItem>
         <MenuItem icon={<Power />} onClick={() => logoutMutation.mutate()}>
           Logout

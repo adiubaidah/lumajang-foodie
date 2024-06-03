@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
+import { MessageEvent } from './message.event';
 import { MessageDto } from './message.dto';
 
 @Injectable()
 export class MessageService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private messageEvent: MessageEvent,
+  ) {}
 
-  async create(payload: MessageDto) {
-    return await this.prismaService.message.create({
+  async create(payload: MessageDto, senderId: string) {
+    const newMessage = await this.prismaService.message.create({
       data: {
         body: payload.body,
         conversation: {
@@ -17,11 +21,76 @@ export class MessageService {
         },
         sender: {
           connect: {
-            id: payload.senderId,
+            id: senderId,
+          },
+        },
+        seen: {
+          connect: {
+            id: senderId,
+          },
+        },
+      },
+      include: {
+        seen: true,
+        sender: true,
+      },
+    });
+
+    const updatedConversation = await this.prismaService.conversation.update({
+      where: {
+        id: payload.conversationId,
+      },
+      data: {
+        lastMessageAt: new Date(),
+        messages: {
+          connect: {
+            id: newMessage.id,
+          },
+        },
+      },
+
+      include: {
+        users: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
+        messages: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+          take: 1,
+          include: {
+            seen: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+              },
+            },
           },
         },
       },
     });
+
+    const lastMessage = updatedConversation.messages[0];
+
+    this.messageEvent.server
+      .to(payload.conversationId)
+      .emit('message:new', newMessage);
+
+    updatedConversation.users.forEach((user) => {
+      this.messageEvent.server
+        .to(this.messageEvent.users[user.id])
+        .emit('conversation:update', {
+          id: payload.conversationId,
+          messages: [lastMessage],
+        });
+    });
+
+    return updatedConversation;
   }
 
   async getByConversation(conversationId: string) {
@@ -36,6 +105,32 @@ export class MessageService {
             name: true,
             image: true,
           },
+        },
+      },
+    });
+  }
+
+  async getConversation({ currentUser }: { currentUser: string }) {
+    return await this.prismaService.conversation.findMany({
+      where: {
+        users: {
+          some: {
+            id: currentUser,
+          },
+        },
+      },
+      select: {
+        id: true,
+        messages: {
+          select: {
+            id: true,
+            body: true,
+            createdAt: true,
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+          take: 1,
         },
       },
     });

@@ -11,21 +11,21 @@ interface ButtonFollowProps {
 }
 
 export function ButtonFollow({ user }: ButtonFollowProps) {
-  const auth = useAuth();
+  const { user: userAuth } = useAuth();
   const queryClient = useQueryClient();
   const { data, isLoading } = useQuery({
-    queryKey: ["check-follow", { follow: user, auth: auth && auth.id }],
+    queryKey: ["check-follow", { follow: user, auth: userAuth && userAuth.id }],
     queryFn: async () => {
       return (await axiosInstance.get(`/user-follow/check-follow?user=${user}`))
         .data;
     },
-    enabled: !!user && !!auth && !!auth.id,
+    enabled: !!user && !!userAuth && !!userAuth.id,
   });
 
   const followMutation = useMutation({
     mutationFn: async ({ follow }: { follow: boolean }) => {
-      if(follow) {
-        return (await axiosInstance.delete(`/user-follow/${user}`)).data
+      if (follow) {
+        return (await axiosInstance.delete(`/user-follow/${user}`)).data;
       }
       return (await axiosInstance.post(`/user-follow/${user}`)).data;
     },
@@ -36,7 +36,10 @@ export function ButtonFollow({ user }: ButtonFollowProps) {
         toast.success("Berhasil unfollow");
       }
       queryClient.invalidateQueries({
-        queryKey: ["check-follow", { follow: user, auth: auth && auth.id }],
+        queryKey: [
+          "check-follow",
+          { follow: user, auth: userAuth && userAuth.id },
+        ],
       });
     },
     onError: () => {
@@ -51,8 +54,8 @@ export function ButtonFollow({ user }: ButtonFollowProps) {
   return (
     <button
       className={cn(
-        "font-bold mx-auto px-2 py-1 rounded-lg text-davy flex items-center gap-x-2 mt-2 group  transition",
-        data ? "bg-puce hover:bg-white" : "bg-white hover:bg-puce"
+        "group mx-auto mt-2 flex items-center gap-x-2 rounded-lg px-2 py-1 font-bold text-davy transition",
+        data ? "bg-puce hover:bg-white" : "bg-white hover:bg-puce",
       )}
       onClick={handleToggle}
     >

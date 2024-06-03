@@ -1,4 +1,4 @@
-import { OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -10,6 +10,7 @@ import { Server, Socket } from 'socket.io';
 import { ConversationService } from 'src/conversation/conversation.service';
 import { MessageService } from './message.service';
 
+@Injectable()
 @WebSocketGateway({
   namespace: 'message',
   cors: {
@@ -20,16 +21,11 @@ import { MessageService } from './message.service';
   },
 })
 export class MessageEvent implements OnModuleInit {
-  constructor(
-    private conversationService: ConversationService,
-    private messageService: MessageService,
-  ) {}
-
   @WebSocketServer()
   server: Server;
 
   users = {};
-  conversation = new Map<string, string[]>()
+  conversation = new Map<string, string[]>();
 
   onModuleInit() {
     this.server.on('connection', (socket) => {
@@ -45,59 +41,47 @@ export class MessageEvent implements OnModuleInit {
   ) {
     this.users[userId] = client.id;
   }
-@SubscribeMessage('joinConversation')
-  onJoinConversation(@MessageBody("userId") userId: string) {
-    // this.conversation.
-  }
-
-  @SubscribeMessage('sendMessage')
-  async onSendMessage(
-    @MessageBody()
-    {
-      senderId,
-      receiverId,
-      message,
-      conversationId,
-    }: {
-      senderId: string;
-      receiverId: string;
-      conversationId: string;
-      message: string;
-    },
+  @SubscribeMessage('conversation:join')
+  onJoinConversation(
+    @MessageBody('userId') userId: string,
+    @MessageBody('conversationId') conversationId: string,
   ) {
-    if (this.users[receiverId]) {
-      this.server.to(this.users[receiverId]).emit('newMessage', message);
-
-      // jika belum ad
-      if (conversationId) {
-        const newMessage = await this.messageService.create({
-          body: message,
-          conversationId,
-          senderId: senderId,
-        });
-        return newMessage;
-      } else {
-        const checkBySenderAndReceiver =
-          await this.conversationService.findByUser({ receiverId, senderId });
-        let conversationId: string;
-        if (!!checkBySenderAndReceiver) {
-          conversationId = checkBySenderAndReceiver.id;
-        } else {
-          const newConversation = await this.conversationService.create({
-            receiverId,
-            senderId,
-          });
-          conversationId = newConversation.id;
-        }
-        //jika belum ada conversation
-        //buat pesan
-        const newMessage = await this.messageService.create({
-          body: message,
-          conversationId,
-          senderId: senderId,
-        });
-        return { conversationId: conversationId, message: newMessage.body };
-      }
-    }
+    this.conversation.set(conversationId, [
+      ...(this.conversation.get(conversationId) || []),
+      userId,
+    ]);
+    this.server.socketsJoin(conversationId);
   }
+
+  // @SubscribeMessage('message:send')
+  // async onSendMessage(
+  //   @MessageBody()
+  //   {
+  //     senderId,
+  //     receiverId,
+  //     message,
+  //     conversationId,
+  //   }: {
+  //     senderId: string;
+  //     receiverId: string;
+  //     conversationId: string;
+  //     message: string;
+  //   },
+  // ) {
+  //   if (this.users[receiverId]) {
+  //     const { newMessage, lastMessage, users } =
+  //       await this.messageService.create(
+  //         { body: message, conversationId },
+  //         senderId,
+  //       );
+  //     this.server.to(this.users[receiverId]).emit('message:new', newMessage);
+
+  //     users.forEach((user) =>
+  //       this.server.to(this.users[user.id]).emit('conversation:update', {
+  //         conversationId,
+  //         lastMessage,
+  //       }),
+  //     );
+  //   }
+  // }
 }

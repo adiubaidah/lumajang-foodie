@@ -1,8 +1,6 @@
-import { Suspense } from "react"
+import { Suspense } from "react";
 function Makanan() {
-  return (
-    <div>Makanan</div>
-  )
+  return <div>Makanan</div>;
 }
 
-export default Makanan
+export default Makanan;

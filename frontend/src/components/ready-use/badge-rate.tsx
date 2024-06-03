@@ -12,9 +12,9 @@ export function BadgeRate({ rate }: BadgeRateProps) {
   return (
     <Badge
       className={cn(
-        "flex items-center text-white px-2 py-1 rounded-md",
+        "flex items-center rounded-md px-2 py-1 text-white",
         "hover",
-        !rate && "border-orange border-2 bg-orange/20"
+        !rate && "border-2 border-orange bg-orange/20",
       )}
       style={{
         backgroundColor: !!rate
@@ -25,14 +25,14 @@ export function BadgeRate({ rate }: BadgeRateProps) {
       {!!rate ? (
         <React.Fragment>
           <Star width={17} height={17} fill="white" />
-          <span className="text-[12px] font-semibold leading-4 font-helvetica">
+          <span className="font-helvetica text-[12px] font-semibold leading-4">
             4.0
           </span>
         </React.Fragment>
       ) : (
         <React.Fragment>
           <Star width={17} height={17} fill="#F97300" />
-          <span className="text-[12px] font-bold leading-4 font-helvetica text-orange">
+          <span className="font-helvetica text-[12px] font-bold leading-4 text-orange">
             New
           </span>
         </React.Fragment>

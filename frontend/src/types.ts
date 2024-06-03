@@ -9,13 +9,26 @@ import {
   placeSchema,
   registerSchema,
   userSchema,
+  editPasswordSchema,
 } from "./schema";
 
 export type Login = z.infer<typeof loginSchema>;
 export type Register = z.infer<typeof registerSchema>;
 export type NewUser = z.infer<typeof userSchema>;
 export type User = NewUser & { id: string };
-export type OpeningHours = z.infer<typeof openingHourSchema>
+export type UserComplete = User & {
+  subdistrict: Subdistrict;
+  _count: {
+    menuReviews: number;
+    placeReviews: number;
+    ownerPlaces: number;
+    followers: number;
+    following: number;
+  };
+};
+export type EditPassword = z.infer<typeof editPasswordSchema>;
+
+export type OpeningHours = z.infer<typeof openingHourSchema>;
 
 export type Location = { latitude: number; longitude: number };
 export type NewPlace = z.infer<typeof placeSchema>;

@@ -52,7 +52,7 @@ function Client() {
 
   // return JSON.stringify(detail);
   return (
-    <div className="container max-w-full py-3 h-[5000px]">
+    <div className="container h-[5000px] max-w-full py-3">
       {imagePreview && imagePreview.result && (
         <>
           {!isDesktop ? (
@@ -63,7 +63,7 @@ function Client() {
                     src={imageFromBackend(imagePreview.result[0].url)}
                     height={500}
                     width={500}
-                    className="w-full h-full object-cover"
+                    className="h-full w-full object-cover"
                     alt="preview-1"
                   />
                 </CarouselItem>
@@ -72,7 +72,7 @@ function Client() {
                     src={imageFromBackend(imagePreview.result[1].url)}
                     height={500}
                     width={500}
-                    className="w-full h-full object-cover"
+                    className="h-full w-full object-cover"
                     alt="preview-2"
                   />
                 </CarouselItem>
@@ -81,7 +81,7 @@ function Client() {
                     src={imageFromBackend(imagePreview.result[2].url)}
                     height={500}
                     width={500}
-                    className="w-full h-full object-cover"
+                    className="h-full w-full object-cover"
                     alt="preview-3"
                   />
                 </CarouselItem>
@@ -90,25 +90,25 @@ function Client() {
                     src={imageFromBackend(imagePreview.result[3].url)}
                     height={500}
                     width={500}
-                    className="w-full h-full object-cover"
+                    className="h-full w-full object-cover"
                     alt="preview-4"
                   />
                 </CarouselItem>
               </CarouselContent>
             </Carousel>
           ) : (
-            <div className="w-full h-[350px] flex items-center space-x-2">
+            <div className="flex h-[350px] w-full items-center space-x-2">
               <div className="h-full w-3/5">
                 <SkeletonImage
                   src={imageFromBackend(imagePreview.result[0].url)}
                   height={500}
                   width={500}
-                  className="w-full h-full object-cover"
+                  className="h-full w-full object-cover"
                   alt="preview-1"
                 />
               </div>
-              <div className="w-2/5 h-full items-center flex gap-x-2">
-                <div className="w-1/2 h-full flex flex-col gap-y-2">
+              <div className="flex h-full w-2/5 items-center gap-x-2">
+                <div className="flex h-full w-1/2 flex-col gap-y-2">
                   <SkeletonImage
                     src={imageFromBackend(imagePreview.result[1].url)}
                     height={500}
@@ -124,7 +124,7 @@ function Client() {
                     alt="preview-1"
                   />
                 </div>
-                <div className="w-1/2 h-full">
+                <div className="h-full w-1/2">
                   <SkeletonImage
                     src={imageFromBackend(imagePreview.result[3].url)}
                     height={500}
@@ -150,8 +150,8 @@ function Client() {
             </div>
           </div>
         </div>
-        <p className="font-light text-2xl text-davy">{detail.address}</p>
-        <div className="text-davy font-light flex gap-x-2">
+        <p className="text-2xl font-light text-davy">{detail.address}</p>
+        <div className="flex gap-x-2 font-light text-davy">
           {isOpen(detail.openingHours) ? (
             <>
               <span className="text-islamic">Buka</span>-
@@ -169,12 +169,12 @@ function Client() {
       </div>
       {/* Komponen */}
       <Tabs defaultValue="overview">
-        <TabsList className="bg-transparent after:w-full after:h-1 after:bg-stroke mb-3">
+        <TabsList className="mb-3 bg-transparent after:h-1 after:w-full after:bg-stroke">
           <TabsTrigger
             value="overview"
             className={cn(
-              "data-[state=active]:border-b-2 data-[state=active]:border-puce data-[state=active]:bg-transparent data-[state=active]:text-puce data-[state=active]:",
-              "font-light text-davy text-xl py-3 px-5"
+              "data-[state=active]: data-[state=active]:border-b-2 data-[state=active]:border-puce data-[state=active]:bg-transparent data-[state=active]:text-puce",
+              "px-5 py-3 text-xl font-light text-davy",
             )}
           >
             Sekilas
@@ -182,8 +182,8 @@ function Client() {
           <TabsTrigger
             value="review"
             className={cn(
-              "data-[state=active]:border-b-2 data-[state=active]:border-puce data-[state=active]:bg-transparent data-[state=active]:text-puce data-[state=active]:",
-              "font-light text-davy text-xl py-3 px-5"
+              "data-[state=active]: data-[state=active]:border-b-2 data-[state=active]:border-puce data-[state=active]:bg-transparent data-[state=active]:text-puce",
+              "px-5 py-3 text-xl font-light text-davy",
             )}
           >
             Ulasan
@@ -191,8 +191,8 @@ function Client() {
           <TabsTrigger
             value="photo"
             className={cn(
-              "data-[state=active]:border-b-2 data-[state=active]:border-puce data-[state=active]:bg-transparent data-[state=active]:text-puce data-[state=active]:",
-              "font-light text-davy text-xl py-3 px-5"
+              "data-[state=active]: data-[state=active]:border-b-2 data-[state=active]:border-puce data-[state=active]:bg-transparent data-[state=active]:text-puce",
+              "px-5 py-3 text-xl font-light text-davy",
             )}
           >
             Foto
@@ -200,8 +200,8 @@ function Client() {
           <TabsTrigger
             value="menu"
             className={cn(
-              "data-[state=active]:border-b-2 data-[state=active]:border-puce data-[state=active]:bg-transparent data-[state=active]:text-puce data-[state=active]:",
-              "font-light text-davy text-xl py-3 px-5"
+              "data-[state=active]: data-[state=active]:border-b-2 data-[state=active]:border-puce data-[state=active]:bg-transparent data-[state=active]:text-puce",
+              "px-5 py-3 text-xl font-light text-davy",
             )}
           >
             Menu
@@ -211,7 +211,7 @@ function Client() {
           <Overview detail={detail} />
         </TabsContent>
         <TabsContent value="review">
-          <h2 className="text-3xl font-normal mb-3">Review</h2>
+          <h2 className="mb-3 text-3xl font-normal">Review</h2>
           <Review
             page={reviewPage}
             setPage={setReviewPage}

@@ -115,7 +115,7 @@ function Add({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-8 mt-4"
+            className="mt-4 space-y-8"
           >
             <FormField
               control={form.control}
@@ -151,7 +151,7 @@ function Add({
                   alt="Image"
                 />
               ) : (
-                <div className="bg-gray-400 w-56 h-56"></div>
+                <div className="h-56 w-56 bg-gray-400"></div>
               )}
 
               <Input

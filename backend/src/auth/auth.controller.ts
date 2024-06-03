@@ -66,15 +66,14 @@ export class AuthController {
   ) {
     const token =
       req.cookies['access_token'] ?? (body.token ? body.token.value : null);
-    if (token) {
-      const access_token = token.split(' ')[1];
-      const user = await this.jwtService.verify(access_token, {
-        publicKey: process.env.JWT_SECRET_KEY,
-      });
-      // console.log(user);
-      return { isAuth: true, ...user };
+    if (!token) {
+      throw new UnauthorizedException('Belum login');
     }
-    throw new UnauthorizedException('Belum login');
+    const access_token = token.split(' ')[1];
+    const user = await this.jwtService.verify(access_token, {
+      publicKey: process.env.JWT_SECRET_KEY,
+    });
+    return { isAuth: true, ...user };
   }
   @Post('logout')
   async logout(@Res({ passthrough: true }) res: Response) {

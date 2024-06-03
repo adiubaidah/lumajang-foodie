@@ -114,25 +114,25 @@ function Filter({ filter, path, router, location }: FilterProps) {
       <DialogTrigger asChild>
         <Button variant={"outline"}>Filter</Button>
       </DialogTrigger>
-      <DialogContent className="px-0 max-w-[700px]">
+      <DialogContent className="max-w-[700px] px-0">
         <DialogHeader className="px-5">
           <DialogTitle>Filter</DialogTitle>
         </DialogHeader>
         <Separator />
 
-        <Tabs className="flex items-center -mt-4 -mb-4">
-          <TabsList className="flex flex-col bg-gray-200 h-fit items-start px-0 py-0 rounded-none">
-            <TabsTrigger className="pl-5 w-full py-7" value="sort">
+        <Tabs className="-mb-4 -mt-4 flex items-center">
+          <TabsList className="flex h-fit flex-col items-start rounded-none bg-gray-200 px-0 py-0">
+            <TabsTrigger className="w-full py-7 pl-5" value="sort">
               Urutkan
             </TabsTrigger>
-            <TabsTrigger className="pl-5 w-full py-7" value="rate">
+            <TabsTrigger className="w-full py-7 pl-5" value="rate">
               Rating
             </TabsTrigger>
-            <TabsTrigger className="pl-5 w-full py-7" value="other">
+            <TabsTrigger className="w-full py-7 pl-5" value="other">
               Filter Lainnya
             </TabsTrigger>
           </TabsList>
-          <div className="px-5 py-6 w-full">
+          <div className="w-full px-5 py-6">
             <TabsContent value="sort">
               <RadioGroup
                 className="space-y-4"
@@ -158,9 +158,9 @@ function Filter({ filter, path, router, location }: FilterProps) {
               </RadioGroup>
             </TabsContent>
             <TabsContent value="rate">
-              <div className="flex items-center flex-col justify-center">
+              <div className="flex flex-col items-center justify-center">
                 <Slider defaultValue={[1]} step={0.5} max={5} min={0} />
-                <div className="mt-1.5 flex flex-row justify-between w-full px-1">
+                <div className="mt-1.5 flex w-full flex-row justify-between px-1">
                   {Array.from({ length: 11 }).map((_, i) => {
                     // Calculate the value at each step, including half steps.
                     const value = (i * 0.5).toFixed(1);
@@ -174,8 +174,8 @@ function Filter({ filter, path, router, location }: FilterProps) {
                         {i === 0 || i === 10
                           ? parseInt(value, 10)
                           : i === 5
-                          ? 2.5
-                          : "|"}
+                            ? 2.5
+                            : "|"}
                       </span>
                     );
                   })}

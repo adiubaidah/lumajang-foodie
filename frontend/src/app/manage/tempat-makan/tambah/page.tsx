@@ -218,13 +218,13 @@ function Tambah() {
           </div>
           <div>
             {fields.map((field, index) => (
-              <div key={field.id} className="flex mt-4">
+              <div key={field.id} className="mt-4 flex">
                 <input
                   {...form.register(`openingHours.${index}.day`)}
                   className="focus:outline-none"
                   readOnly
                 />
-                <div className="flex w-1/3 md:2/3 space-x-3">
+                <div className="md:2/3 flex w-1/3 space-x-3">
                   <Input
                     {...form.register(`openingHours.${index}.openHours`)}
                     placeholder="Open Hours"

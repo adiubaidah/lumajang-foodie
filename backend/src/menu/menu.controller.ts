@@ -8,6 +8,8 @@ import {
   UseGuards,
   Query,
   Param,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { Role as RoleEnum } from '@prisma/client';
 import { Role } from 'src/role/role.decorator';
@@ -15,6 +17,8 @@ import { JwtGuard } from 'src/auth/jwt.guard';
 import { RoleGuard } from 'src/role/role.guard';
 import { MenuService } from './menu.service';
 import { MenuDto } from './menu.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
 @Controller('menu')
 export class MenuController {
@@ -22,9 +26,22 @@ export class MenuController {
 
   @Role([RoleEnum.owner])
   @UseGuards(JwtGuard, RoleGuard)
+  @UseInterceptors(
+    FileInterceptor('photo', {
+      storage: diskStorage({
+        destination: 'public/img/menu',
+        filename: (req, file, cb) => {
+          cb(null, Date.now() + '-' + file.originalname.replace(/\//g, '/'));
+        },
+      }),
+    }),
+  )
   @Post()
-  async create(@Body() payload: MenuDto) {
-    return await this.menuService.create(payload);
+  async create(
+    @Body() payload: MenuDto,
+    @UploadedFile() photo: Express.Multer.File,
+  ) {
+    return await this.menuService.create(payload, photo.path);
   }
 
   @Get()

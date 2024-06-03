@@ -32,7 +32,7 @@ const anchorVariants = cva(
       variant: "default",
       size: "default",
     },
-  }
+  },
 );
 
 export interface AnchorProps
@@ -51,7 +51,7 @@ const Anchor = React.forwardRef<HTMLAnchorElement, AnchorProps>(
         {...props}
       />
     );
-  }
+  },
 );
 Anchor.displayName = "Anchor";
 

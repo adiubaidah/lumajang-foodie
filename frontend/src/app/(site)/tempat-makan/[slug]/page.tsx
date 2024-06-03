@@ -25,7 +25,7 @@ export default async function DetailTempatMakan({
         {
           method: "GET",
           cache: "no-store",
-        }
+        },
       );
       const result = await response.json();
       return result;
@@ -36,7 +36,7 @@ export default async function DetailTempatMakan({
     queryKey: ["place-photo", { place: data.id }, "preview"],
     queryFn: async () => {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/place-photo?place=${data.result.id}&perPage=4`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/place-photo?place=${data.result.id}&perPage=4`,
       );
       const result = await response.json();
       return result;

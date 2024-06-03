@@ -116,26 +116,26 @@ function Client() {
           ))}
       </div>
 
-      <div className="grid md:grid-cols-3 gap-x-10 gap-y-11 py-3">
+      <div className="grid gap-x-10 gap-y-11 py-3 md:grid-cols-3">
         {isLoading
           ? "Loading"
           : data.result.length > 0
-          ? data.result.map((place: PlaceComplete) => (
-              <CardPlace
-                key={place.id}
-                slug={place.slug}
-                srcImage={
-                  place.photoForThumbnail
-                    ? place.photoForThumbnail.url
-                    : "public/img/place/default.PNG"
-                }
-                title={place.name}
-                rate={place.averageStar}
-                subdistrict={place.subdistrict}
-                distance={place.distance}
-              />
-            ))
-          : "Data tidak ditemukan"}
+            ? data.result.map((place: PlaceComplete) => (
+                <CardPlace
+                  key={place.id}
+                  slug={place.slug}
+                  srcImage={
+                    place.photoForThumbnail
+                      ? place.photoForThumbnail.url
+                      : "public/img/place/default.PNG"
+                  }
+                  title={place.name}
+                  rate={place.averageStar}
+                  subdistrict={place.subdistrict}
+                  distance={place.distance}
+                />
+              ))
+            : "Data tidak ditemukan"}
       </div>
 
       <div className="mt-4">

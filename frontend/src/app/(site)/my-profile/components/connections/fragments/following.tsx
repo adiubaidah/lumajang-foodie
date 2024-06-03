@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "~/lib/utils";
 
 function Following() {
-  const user = useAuth();
+  const { user } = useAuth();
   const { data } = useQuery({
     queryKey: ["following", { user: user && user.id }],
     queryFn: async () => {

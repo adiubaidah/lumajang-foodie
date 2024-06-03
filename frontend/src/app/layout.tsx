@@ -96,7 +96,7 @@ export default function RootLayout({
         className={cn(
           productSans.variable,
           helvetica.variable,
-          "bg-poteh font-product-sans"
+          "bg-poteh font-product-sans",
         )}
       >
         <Provider>{children}</Provider>

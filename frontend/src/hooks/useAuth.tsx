@@ -10,29 +10,34 @@ import { Role } from "~/constant";
 import { useQuery } from "@tanstack/react-query";
 
 const AuthContext = createContext({
-  id: "",
-  email: "",
-  role: Role[1],
-  name: "",
-  image: "",
+  user: {
+    id: "",
+    email: "",
+    role: Role[1],
+    name: "",
+    image: "",
+  },
+  isLoading: false,
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const { data: user } = useQuery({
+  const { data: user, isLoading } = useQuery({
     queryKey: ["auth"],
     queryFn: async () => {
       const user = (await axiosInstance.post("/auth/is-auth")).data;
-
       user.image = imageFromBackend(
-        user.image ?? "public/img/user/default.png"
+        user.image ?? "public/img/user/default.png",
       );
       return user;
     },
-    staleTime: Infinity,
     retry: false,
   });
 
-  return <AuthContext.Provider value={user}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, isLoading }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 const useAuth = () => {
   return useContext(AuthContext);

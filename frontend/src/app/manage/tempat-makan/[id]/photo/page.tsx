@@ -72,40 +72,40 @@ function Image() {
             {isLoading
               ? "Loading"
               : data.result.length > 0
-              ? data.result.map((photo: PlacePhoto) => (
-                  <TableRow key={photo.id}>
-                    <TableCell>
-                      <SkeletonImage
-                        src={photo.url}
-                        alt="photo"
-                        height={400}
-                        className="w-64 aspect-video"
-                        skeletonStyle={{ width: 256, aspectRatio: 16 / 9 }}
-                        width={400}
-                      />
-                    </TableCell>
-                    <TableCell>{photo.type}</TableCell>
-                    <TableCell className="space-x-3">
-                      <Button size={"icon"}>
-                        <Pencil />
-                      </Button>
-                      <Button
-                        variant={"destructive"}
-                        type="button"
-                        onClick={() => {
-                          setDataModal({
-                            operation: "delete",
-                          });
-                          setOpenModal(true);
-                        }}
-                        size={"icon"}
-                      >
-                        <Trash2 />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
-              : "Data tidak ditemukan"}
+                ? data.result.map((photo: PlacePhoto) => (
+                    <TableRow key={photo.id}>
+                      <TableCell>
+                        <SkeletonImage
+                          src={photo.url}
+                          alt="photo"
+                          height={400}
+                          className="aspect-video w-64"
+                          skeletonStyle={{ width: 256, aspectRatio: 16 / 9 }}
+                          width={400}
+                        />
+                      </TableCell>
+                      <TableCell>{photo.type}</TableCell>
+                      <TableCell className="space-x-3">
+                        <Button size={"icon"}>
+                          <Pencil />
+                        </Button>
+                        <Button
+                          variant={"destructive"}
+                          type="button"
+                          onClick={() => {
+                            setDataModal({
+                              operation: "delete",
+                            });
+                            setOpenModal(true);
+                          }}
+                          size={"icon"}
+                        >
+                          <Trash2 />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                : "Data tidak ditemukan"}
           </TableBody>
         </Table>
       </div>

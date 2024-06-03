@@ -1,4 +1,3 @@
-
 function TempatAndMakanan() {
   return <div>TempatAndMakanan</div>;
 }

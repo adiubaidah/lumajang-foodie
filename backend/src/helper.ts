@@ -34,3 +34,6 @@ export function makeid(length: number) {
   }
   return result;
 }
+export function sumArray(arr: number[]) {
+  return arr.reduce((a, b) => a + b, 0);
+}

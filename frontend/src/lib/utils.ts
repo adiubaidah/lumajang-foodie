@@ -44,7 +44,7 @@ export const createQueryString = (params: Object) => {
   return Object.entries(params)
     .map(
       ([key, value]) =>
-        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
     )
     .join("&");
 };
@@ -53,7 +53,7 @@ export function isOpen(openingHours: OpeningHours[]) {
   const now = moment();
   const dayIndex = now.day(); // 0 (Minggu) - 6 (Sabtu)
   const todayOpeningHours = openingHours.find(
-    (day) => day.day === days[dayIndex]
+    (day) => day.day === days[dayIndex],
   );
 
   if (!todayOpeningHours) return false;
@@ -68,7 +68,7 @@ export function getOpeningTime(openingHours: OpeningHours[]) {
   const now = moment();
   const dayIndex = now.day(); // 0 (Minggu) - 6 (Sabtu)
   const todayOpeningHours = openingHours.find(
-    (day) => day.day === days[dayIndex]
+    (day) => day.day === days[dayIndex],
   );
 
   if (!todayOpeningHours) return null;
@@ -80,7 +80,7 @@ export function getClosingTime(openingHours: OpeningHours[]) {
   const now = moment();
   const dayIndex = now.day(); // 0 (Minggu) - 6 (Sabtu)
   const todayOpeningHours = openingHours.find(
-    (day) => day.day === days[dayIndex]
+    (day) => day.day === days[dayIndex],
   );
 
   if (!todayOpeningHours) return null;

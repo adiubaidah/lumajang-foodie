@@ -69,12 +69,12 @@ function Delete({
           </Button>
           <Button
             variant="destructive"
-            className="rounded-xl flex items-center"
+            className="flex items-center rounded-xl"
             disabled={deleteMutation.isPending}
             onClick={handleDelete}
           >
             {deleteMutation.isPending && (
-              <Loader2 className="animate-spin mr-2" />
+              <Loader2 className="mr-2 animate-spin" />
             )}
             <span>Hapus</span>
           </Button>

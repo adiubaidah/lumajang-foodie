@@ -15,7 +15,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         id="hamburger"
         name="hamburger"
         type="button"
-        className={`block fixed right-4 top-1 md:hidden ${
+        className={`fixed right-4 top-1 block md:hidden ${
           isToggled ? "hamburger-active" : ""
         }`}
         onClick={() => {
@@ -26,9 +26,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <span className="hamburger-line"></span>
         <span className="hamburger-line origin-bottom-left"></span>
       </button>
-      <section className="w-full mt-4 container overflow-y-scroll py-6">
-        {children}
-      </section>
+      <section className="w-full overflow-y-scroll no-scrollbar">{children}</section>
     </main>
   );
 }

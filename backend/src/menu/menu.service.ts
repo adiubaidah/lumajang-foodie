@@ -7,13 +7,14 @@ import { Prisma } from '@prisma/client';
 export class MenuService {
   constructor(private prismaService: PrismaService) {}
 
-  async create(payload: MenuDto) {
+  async create(payload: MenuDto, photo: string) {
     const { placeId, name, jenis, price } = payload;
     return await this.prismaService.menu.create({
       data: {
         name,
         jenis,
         price,
+        photo,
         slug: slugify(name),
         place: {
           connect: {

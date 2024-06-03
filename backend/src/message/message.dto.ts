@@ -7,7 +7,4 @@ export class MessageDto {
 
   @IsString({ message: 'Konversasi harus ada' })
   conversationId: string;
-
-  @IsString({ message: 'Pengirim harus ada' })
-  senderId: string;
 }

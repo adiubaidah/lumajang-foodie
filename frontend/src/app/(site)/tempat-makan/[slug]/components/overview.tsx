@@ -24,7 +24,7 @@ function Overview({ detail }: { detail: any }) {
       <h2 className="text-3xl font-normal">Tentang tempat makan ini</h2>
       <div
         dangerouslySetInnerHTML={{ __html: detail.description }}
-        className="font-normal text-davy text-lg"
+        className="text-lg font-normal text-davy"
       />
 
       {detail.owner && (
@@ -37,19 +37,22 @@ function Overview({ detail }: { detail: any }) {
                 width={100}
                 height={100}
                 alt={detail.owner.name}
-                className="rounded-full w-[120px] h-[120px] border-soft-red border-2 outline-soft-red outline-2"
+                className="h-[120px] w-[120px] rounded-full border-2 border-soft-red outline-2 outline-soft-red"
               />
               <span>
-                <p className="font-bold text-davy text-lg">
+                <p className="text-lg font-bold text-davy">
                   {detail.owner.name}
                 </p>
-                <p className="font-normal text-davy space-x-2">
+                <p className="space-x-2 font-normal text-davy">
                   <span>{detail.owner._count.followers}</span>
                   <span>Follower</span>
                 </p>
               </span>
             </div>
-            <Button variant={"ghost"} className="border-2 border-stroke group text-stroke gap-x-3 hover:bg-puce">
+            <Button
+              variant={"ghost"}
+              className="group gap-x-3 border-2 border-stroke text-stroke hover:bg-puce"
+            >
               <PlusSquareIcon className="text-puce group-hover:text-white" />
               <span className="group-hover:text-white">Ikuti</span>
             </Button>
@@ -57,44 +60,44 @@ function Overview({ detail }: { detail: any }) {
         </div>
       )}
 
-      <div className="flex flex-col md:items-center md:flex-row">
+      <div className="flex flex-col md:flex-row md:items-center">
         <div className="w-1/2">
           <ul>
             <h5 className="text-2xl">Layanan</h5>
             {detail.servesCoffee && (
-              <li className="flex items-center font-light text-davy text-lg">
+              <li className="flex items-center text-lg font-light text-davy">
                 <EiCheck width={30} fill="#31af62" />
                 <span>Kopi</span>
               </li>
             )}
             {detail.takeout && (
-              <li className="flex items-center font-light text-davy text-lg">
+              <li className="flex items-center text-lg font-light text-davy">
                 <EiCheck width={30} fill="#31af62" />
                 <span>Takeout</span>
               </li>
             )}
             {detail.liveMusic && (
-              <li className="flex items-center font-light text-davy text-lg">
+              <li className="flex items-center text-lg font-light text-davy">
                 <EiCheck width={30} fill="#31af62" />
                 <span>Live Musik</span>
               </li>
             )}
             {detail.restRoom && (
-              <li className="flex items-center font-light text-davy text-lg">
+              <li className="flex items-center text-lg font-light text-davy">
                 <EiCheck width={30} fill="#31af62" />
                 <span>Ruang Istirahat</span>
               </li>
             )}
             {detail.cashOnly && (
-              <li className="flex items-center font-light text-davy text-lg">
+              <li className="flex items-center text-lg font-light text-davy">
                 <EiCheck width={30} fill="#31af62" />
                 <span>Hanya menerima Cash</span>
               </li>
             )}
           </ul>
         </div>
-        <div className="w-full md:w-1/2 rounded-3xl shadow-[0px_4px_7.3px_0px_rgba(0,0,0,0.2)] p-7">
-          <h5 className="text-davy font-black text-xl">Petunjuk</h5>
+        <div className="w-full rounded-3xl p-7 shadow-[0px_4px_7.3px_0px_rgba(0,0,0,0.2)] md:w-1/2">
+          <h5 className="text-xl font-black text-davy">Petunjuk</h5>
           <MapGL
             {...viewport}
             onMove={(evt) => setViewport(evt.viewState)}

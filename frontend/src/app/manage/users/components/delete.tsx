@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import { Loader2 } from "lucide-react";
 
 import {
@@ -11,9 +11,7 @@ import {
 } from "~/components/ui/alert-dialog";
 
 function Delete() {
-  return (
-    <div>Delete</div>
-  )
+  return <div>Delete</div>;
 }
 
-export default Delete
+export default Delete;

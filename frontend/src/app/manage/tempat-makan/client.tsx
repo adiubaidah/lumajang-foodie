@@ -20,7 +20,7 @@ import {
 import { Anchor } from "~/components/ui/anchor";
 import { Button } from "~/components/ui/button";
 import { useAuth } from "~/hooks";
-import { axiosInstance } from "~/lib/utils";
+import { axiosInstance, imageFromBackend } from "~/lib/utils";
 import { Place, PlacePhoto } from "~/types";
 import SkeletonImage from "~/components/ready-use/skeleton-image";
 import {
@@ -31,16 +31,16 @@ import {
 } from "~/components/ui/dropdown-menu";
 
 function Client() {
-  const user = useAuth();
+  const { user } = useAuth();
   const { data } = useQuery({
-    queryKey: ["place"],
+    queryKey: ["place", { user: user && user.id }],
     queryFn: async () => {
       return axiosInstance
         .get("/place/by-owner/" + user.id)
         .then((data) => data.data);
     },
     staleTime: 5 * 1000 * 60,
-    enabled: !!user.id,
+    enabled: user && !!user.id,
   });
   return (
     <div>
@@ -66,7 +66,7 @@ function Client() {
               <TableCell>
                 {place.photos.length > 0 ? (
                   <SkeletonImage
-                    src={place.photos[0].url}
+                    src={imageFromBackend(place.photos[0].url)}
                     alt="Foto"
                     skeletonStyle={{ width: 96, height: 40 }}
                     className="w-24"

@@ -4,7 +4,7 @@ export async function middleware(request: NextRequest) {
   const access_token = request.cookies.get("access_token");
   if (!access_token) {
     return NextResponse.redirect(
-      new URL("/login", process.env.NEXT_PUBLIC_DOMAIN_URL)
+      new URL("/login", process.env.NEXT_PUBLIC_DOMAIN_URL),
     );
   } else {
     try {
@@ -16,11 +16,11 @@ export async function middleware(request: NextRequest) {
           body: JSON.stringify({
             access_token,
           }),
-        }
+        },
       );
     } catch (err) {
       return NextResponse.redirect(
-        new URL("/", process.env.NEXT_PUBLIC_DOMAIN_URL)
+        new URL("/", process.env.NEXT_PUBLIC_DOMAIN_URL),
       );
     }
     return NextResponse.next();

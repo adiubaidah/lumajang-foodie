@@ -20,5 +20,10 @@ export const placeFeature = {
   servesCoffee: "Kopi",
 };
 
-
-export const rateColor = ['#FF9941', '#FF9133', '#FF7F12', '#F97300', '#E26700'];
+export const rateColor = [
+  "#FF9941",
+  "#FF9133",
+  "#FF7F12",
+  "#F97300",
+  "#E26700",
+];

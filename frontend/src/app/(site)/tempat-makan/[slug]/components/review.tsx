@@ -68,45 +68,45 @@ function Review({ placeId, page, setPage }: ReviewProps) {
     enabled: !!placeId,
   });
   return (
-    <div className="bg-white shadow-lg p-7">
+    <div className="bg-white p-7 shadow-lg">
       <ReviewModal place={placeId} />
       <div className="flex flex-col gap-y-7">
         {isLoading
           ? "Loading"
           : data && data.result
-          ? data.result.map((review: Review) => (
-              <div
-                key={review.id}
-                className="border-orange border-[1px] p-4 rounded-md shadow-[0px_4px_8px_0px_rgba(10,58,100,0.15)]"
-              >
-                <div className="flex items-center gap-x-3">
-                  <SkeletonImage
-                    src={imageFromBackend(
-                      review.user.image ?? "public/img/user/default.png"
-                    )}
-                    height={40}
-                    width={40}
-                    className="rounded-full"
-                    alt={review.user.id}
-                  />
-                  <span className="font-medium text-lg">
-                    {review.user.name}
-                  </span>
+            ? data.result.map((review: Review) => (
+                <div
+                  key={review.id}
+                  className="rounded-md border-[1px] border-orange p-4 shadow-[0px_4px_8px_0px_rgba(10,58,100,0.15)]"
+                >
+                  <div className="flex items-center gap-x-3">
+                    <SkeletonImage
+                      src={imageFromBackend(
+                        review.user.image ?? "public/img/user/default.png",
+                      )}
+                      height={40}
+                      width={40}
+                      className="rounded-full"
+                      alt={review.user.id}
+                    />
+                    <span className="text-lg font-medium">
+                      {review.user.name}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[14px] font-thin">
+                      {humanizeIdTime(review.updatedAt)}
+                    </span>
+                    <BadgeRate rate={review.star} />
+                  </div>
+                  <p className="mt-3 font-light text-black">{review.review}</p>
+                  <Separator className="mt-3" />
+                  <div className="flex">
+                    <ButtonFollow user={review.user.id} />
+                  </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="font-thin text-[14px]">
-                    {humanizeIdTime(review.updatedAt)}
-                  </span>
-                  <BadgeRate rate={review.star} />
-                </div>
-                <p className="mt-3 font-light text-black">{review.review}</p>
-                <Separator className="mt-3" />
-                <div className="flex">
-                  <ButtonFollow user={review.user.id} />
-                </div>
-              </div>
-            ))
-          : "Data tidak ditemukan"}
+              ))
+            : "Data tidak ditemukan"}
       </div>
       <div className="mt-4">
         {data && data.pagination.pageCount > 1 && (
@@ -164,7 +164,7 @@ export const ReviewModal = ({ place }: { place: string }) => {
       <DialogTrigger asChild>
         <Button
           variant={"ghost"}
-          className="flex items-center text-davy space-x-2"
+          className="flex items-center space-x-2 text-davy"
           type="button"
         >
           <SquarePen color="#F97300" />
@@ -211,11 +211,11 @@ export const ReviewModal = ({ place }: { place: string }) => {
               />
               <Button
                 type="submit"
-                className="bg-soft-red float-right hover:bg-soft-red/90 w-28"
+                className="float-right w-28 bg-soft-red hover:bg-soft-red/90"
                 disabled={reviewMutation.isPending}
               >
                 {reviewMutation.isPending ? (
-                  <Loader2 className="animate-spin mx-auto" />
+                  <Loader2 className="mx-auto animate-spin" />
                 ) : (
                   <span>Kirim</span>
                 )}

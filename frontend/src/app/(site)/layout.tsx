@@ -3,8 +3,9 @@ import { Navbar } from "./components";
 import { useState } from "react";
 import Sidebar from "~/components/ready-use/sidebar-1";
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const [isToggled, setIsToggled] = useState(false);
+  const [isToggled, setIsToggled] = useState(true);
   const [broken, setBroken] = useState(false);
+  // const isDesktop = false
   return (
     <>
       <Navbar />
@@ -13,11 +14,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         setToggled={setIsToggled}
         toggled={isToggled}
       />
+
       <button
         id="hamburger"
         name="hamburger"
         type="button"
-        className={`block fixed right-4 top-1 md:hidden ${
+        className={`fixed right-4 top-1 block md:hidden ${
           isToggled ? "hamburger-active" : ""
         }`}
         onClick={() => {

@@ -5,10 +5,11 @@ import { PrismaService } from 'src/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { PlaceReviewModule } from './place-review/place-review.module';
 import { PlacePhotoModule } from './place-photo/place-photo.module';
+import { PlaceArchviveModule } from './place-archvive/place-archvive.module';
 
 @Module({
   providers: [PlaceService, PrismaService, JwtService],
   controllers: [PlaceController],
-  imports: [PlaceReviewModule, PlacePhotoModule],
+  imports: [PlaceReviewModule, PlacePhotoModule, PlaceArchviveModule],
 })
 export class PlaceModule {}

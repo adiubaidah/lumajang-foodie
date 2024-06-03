@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
 function ReviewMenu() {
-  return (
-    <div>ReviewMenu</div>
-  )
+  return <div>ReviewMenu</div>;
 }
 
-export default ReviewMenu
+export default ReviewMenu;

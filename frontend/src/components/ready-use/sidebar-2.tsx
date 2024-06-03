@@ -2,12 +2,13 @@
 import { Sidebar as SidebarComponent, Menu, MenuItem } from "react-pro-sidebar";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Home, MapPin, Power, UsersRound } from "lucide-react";
+import { Home, MapPin, Power, UsersRound, Settings } from "lucide-react";
 import { Role } from "~/constant";
 import { useMutation } from "@tanstack/react-query";
 
 import { axiosInstance, rgbToHex } from "~/lib/utils";
 import { useAuth } from "~/hooks";
+import SkeletonImage from "./skeleton-image";
 
 interface SidebarProps {
   toggled: boolean;
@@ -45,7 +46,7 @@ export const links: Links[] = [
 function Sidebar({ toggled, setToggled, setBroken }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const user = useAuth();
+  const { user } = useAuth();
 
   const logoutMutation = useMutation({
     mutationKey: ["logout"],
@@ -59,7 +60,7 @@ function Sidebar({ toggled, setToggled, setBroken }: SidebarProps) {
 
   return (
     <SidebarComponent
-      backgroundColor="#1f2937"
+      backgroundColor="#A65F5F"
       toggled={toggled}
       onBackdropClick={() => setToggled(false)}
       breakPoint="md"
@@ -69,12 +70,15 @@ function Sidebar({ toggled, setToggled, setBroken }: SidebarProps) {
         // height: '100%'
       }}
     >
-      <div className="p-6 bg-zinc-600 flex justify-between">
-        <h1
-          className={"font-bold text-xl text-nowrap text-stone-300 uppercase"}
-        >
-          {user && user.role} page
-        </h1>
+      <div className="flex justify-center p-6">
+        <SkeletonImage
+          src={user && user.image}
+          alt="Foto"
+          className="w-20 rounded-full"
+          width={400}
+          height={400}
+          skeletonStyle={{ width: 80, height: 80 }}
+        />
       </div>
       <Menu
         menuItemStyles={{
@@ -91,28 +95,37 @@ function Sidebar({ toggled, setToggled, setBroken }: SidebarProps) {
               },
             },
           },
+          icon: {
+            color: "white",
+          },
           label: {
             marginTop: "3px",
+            color: "white",
           },
         }}
       >
-        {links.map(
-          (link) =>
-            link.roles.includes(user.role) && (
-              <MenuItem
-                key={link.link}
-                component={<Link href={"/manage" + link.link} />}
-                icon={link.icon}
-                active={pathname === "/manage" + link.link}
-              >
-                {link.label}
-              </MenuItem>
-            )
-        )}
+        {user &&
+          links.map(
+            (link) =>
+              link.roles.includes(user.role) && (
+                <MenuItem
+                  key={link.link}
+                  component={<Link href={"/manage" + link.link} />}
+                  icon={link.icon}
+                  active={pathname === "/manage" + link.link}
+                >
+                  {link.label}
+                </MenuItem>
+              ),
+          )}
         <MenuItem icon={<Power />} onClick={() => logoutMutation.mutate()}>
           Logout
         </MenuItem>
       </Menu>
+
+      <div>
+        <h1></h1>
+      </div>
     </SidebarComponent>
   );
 }

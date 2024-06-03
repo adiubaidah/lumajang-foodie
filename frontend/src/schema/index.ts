@@ -26,6 +26,23 @@ export const loginSchema = z.object({
   password: z.string().min(6, { message: "Password minimal 6 karakter" }),
 });
 
+export const editPasswordSchema = z
+  .object({
+    old_password: z
+      .string()
+      .min(6, { message: "Password lama minimal 6 karakter" }),
+    new_password: z
+      .string()
+      .min(6, { message: "Password baru minimal 6 karakter" }),
+    confirm_new_password: z
+      .string()
+      .min(6, { message: "Konfirmasi password diperlukan" }),
+  })
+  .refine((data) => data.new_password === data.confirm_new_password, {
+    message: "Konfirmasi password tidak sesuai",
+    path: ["confirm_password"],
+  });
+
 export const gender = z.enum(["L", "P"]);
 
 export const userSchema = z.object({

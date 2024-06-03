@@ -1,4 +1,12 @@
-import { Controller, UseGuards, Get, Req } from '@nestjs/common';
+import {
+  Controller,
+  UseGuards,
+  Get,
+  Post,
+  Req,
+  Body,
+  Param,
+} from '@nestjs/common';
 import { Request as RequestExpress } from 'express';
 import { Role as RoleEnum } from '@prisma/client';
 import { JwtGuard } from 'src/auth/jwt.guard';
@@ -6,6 +14,7 @@ import { RoleGuard } from 'src/role/role.guard';
 import { Role } from 'src/role/role.decorator';
 
 import { ConversationService } from './conversation.service';
+import { ConversationDto } from './conversation.dto';
 
 @Controller('conversation')
 export class ConversationController {
@@ -16,5 +25,28 @@ export class ConversationController {
   @Get()
   async allByUser(@Req() req: RequestExpress) {
     return await this.conversationService.allByUser(req['user'].id);
+  }
+
+  @Role([RoleEnum.foodie, RoleEnum.owner])
+  @UseGuards(JwtGuard, RoleGuard)
+  @Post()
+  async create(@Body() body: ConversationDto, @Req() req: RequestExpress) {
+    return await this.conversationService.create({
+      receiverId: body.receiverId,
+      senderId: req['user'].id,
+    });
+  }
+  @Role([RoleEnum.foodie, RoleEnum.owner])
+  @UseGuards(JwtGuard, RoleGuard)
+  @Post('seen/:conversation')
+  async seen(
+    @Param('conversation') conversationId: string,
+    @Req() req: RequestExpress,
+  ) {
+    const user = req['user'];
+    return await this.conversationService.seen({
+      conversation: conversationId,
+      currentUser: user.id,
+    });
   }
 }
