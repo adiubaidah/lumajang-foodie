@@ -1,12 +1,22 @@
-import { Suspense } from "react";
-import Client from "./client";
-
-function UserDetail() {
+"use client"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import ReviewMenu from "./ulasan/components/review-menu";
+import ReviewPlace from "./ulasan/components/review-place";
+function Review() {
   return (
-    <Suspense>
-      <Client />
-    </Suspense>
+    <Tabs className="px-2" defaultValue="place">
+      <TabsList>
+        <TabsTrigger value="place">Tempat Makan</TabsTrigger>
+        <TabsTrigger value="menu">Makanan</TabsTrigger>
+      </TabsList>
+      <TabsContent value="place">
+        <ReviewPlace />
+      </TabsContent>
+      <TabsContent value="menu">
+        <ReviewMenu />
+      </TabsContent>
+    </Tabs>
   );
 }
 
-export default UserDetail;
+export default Review;

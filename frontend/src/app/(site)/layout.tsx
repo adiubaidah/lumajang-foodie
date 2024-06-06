@@ -30,7 +30,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <span className="hamburger-line"></span>
         <span className="hamburger-line origin-bottom-left"></span>
       </button>
-      <>{children}</>
+      <main className="container max-w-full">{children}</main>
     </>
   );
 }

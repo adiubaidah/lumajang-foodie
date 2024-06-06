@@ -124,7 +124,7 @@ function Edit() {
   };
 
   return (
-    <div>
+    <div className="h-full overflow-y-auto">
       <h1>Edit Tempat Makan</h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="mt-4 space-y-5">

@@ -1,4 +1,6 @@
+"use client";
 import { SetStateAction, useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Loader2, SquarePen, SquarePlus } from "lucide-react";
 
@@ -42,34 +44,40 @@ import useAuth from "~/hooks/useAuth";
 import { BadgeRate } from "~/components/ready-use/badge-rate";
 import { ButtonFollow } from "~/components/ready-use/button-follow";
 
-export type ReviewProps = {
-  placeId: string;
-  page: number;
-  setPage: React.Dispatch<SetStateAction<number>>;
-};
-
 type Review = PlaceReview & { user: User } & { updatedAt: string };
 
-function Review({ placeId, page, setPage }: ReviewProps) {
-  const auth = useAuth();
+function Ulasan() {
+  const [page, setPage] = useState(1);
+  const params = useParams<{ slug: string }>();
+  const { user } = useAuth();
+  const { data: detail } = useQuery({
+    queryKey: ["place", params.slug],
+    queryFn: async () => {
+      return (await axiosInstance.get(`/place/find?slug=${params.slug}`)).data;
+    },
+    enabled: !!params.slug,
+  });
   const { data, isLoading } = useQuery({
-    queryKey: ["place-review", { place: placeId, page, auth: "" }],
+    queryKey: [
+      "place-review",
+      { place: detail.id, page, auth: user && user.id },
+    ],
     queryFn: async () => {
       const query = createQueryString({
-        place: placeId,
-        ...(!!auth &&
-          auth.id && {
-            "current-user": auth.id,
+        place: detail.id,
+        ...(!!user &&
+          !!user.id && {
+            "current-user": user.id,
           }),
       });
       return (await axiosInstance.get(`/place-review?${query}`)).data;
     },
     staleTime: 1000 * 5 * 60,
-    enabled: !!placeId,
+    enabled: !!detail.id,
   });
   return (
     <div className="bg-white p-7 shadow-lg">
-      <ReviewModal place={placeId} />
+      <ReviewModal place={detail.id} />
       <div className="flex flex-col gap-y-7">
         {isLoading
           ? "Loading"
@@ -121,7 +129,7 @@ function Review({ placeId, page, setPage }: ReviewProps) {
   );
 }
 
-export default Review;
+export default Ulasan;
 
 export const ReviewModal = ({ place }: { place: string }) => {
   const [isOpen, setIsOpen] = useState(false);

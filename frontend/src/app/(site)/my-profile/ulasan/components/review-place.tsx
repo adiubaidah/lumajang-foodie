@@ -11,14 +11,14 @@ function ReviewPlace() {
   const { user } = useAuth();
 
   const { data, isLoading } = useQuery({
-    queryKey: ["place-review", { user: user.id }],
+    queryKey: ["place-review", { user: user && user.id }],
     queryFn: async () => {
       return axiosInstance
         .get(`/place-review?user=${user.id}`)
         .then((data) => data.data);
     },
     staleTime: 1000 * 5 * 60,
-    enabled: !!user.id,
+    enabled: !!user && !!user.id,
   });
   return (
     <>

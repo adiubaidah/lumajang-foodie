@@ -14,7 +14,8 @@ const config = {
       center: true,
       padding: {
         DEFAULT: "1rem",
-        md: "10rem",
+        sm: "5rem",
+        md: "13rem",
       },
     },
     extend: {

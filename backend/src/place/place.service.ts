@@ -246,6 +246,8 @@ export class PlaceService {
             image: true,
             _count: {
               select: {
+                placeReviews: true,
+                menuReviews: true,
                 followers: true,
               },
             },

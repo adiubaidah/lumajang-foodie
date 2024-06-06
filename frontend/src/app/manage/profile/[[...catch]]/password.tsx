@@ -19,29 +19,43 @@ import { Button } from "~/components/ui/button";
 import PasswordInput from "~/components/ready-use/password-input";
 import { editPasswordSchema } from "~/schema";
 import { EditPassword } from "~/types";
+import { AxiosError, AxiosResponse } from "axios";
 function Password() {
   const form = useForm<EditPassword>({
     resolver: zodResolver(editPasswordSchema),
     defaultValues: {
-      confirm_new_password: "",
-      new_password: "",
-      old_password: "",
+      newPassword: "",
+      oldPassword: "",
+      confirmNewPassword: "",
     },
   });
 
   const editPasswordMutation = useMutation({
     mutationFn: async (payload: EditPassword) => {
-      // return axiosInstance.put()
+      return (await axiosInstance.put("/user/update-password", payload)).data;
+    },
+    onSuccess: () => {
+      toast.success("Password berhasil diubah");
+      form.reset({
+        newPassword: "",
+        oldPassword: "",
+        confirmNewPassword: "",
+      });
+    },
+    onError: (err: AxiosError) => {
+      toast.error((err.response?.data as any)?.message || "Terjadi kesalahan");
     },
   });
 
-  const onSubmit = (values: EditPassword) => {};
+  const onSubmit = (values: EditPassword) => {
+    editPasswordMutation.mutate(values);
+  };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
         <FormField
-          name="old_password"
+          name="oldPassword"
           control={form.control}
           render={({ field }) => (
             <FormItem>
@@ -57,7 +71,7 @@ function Password() {
           )}
         />
         <FormField
-          name="new_password"
+          name="newPassword"
           control={form.control}
           render={({ field }) => (
             <FormItem>
@@ -73,7 +87,7 @@ function Password() {
           )}
         />
         <FormField
-          name="confirm_new_password"
+          name="confirmNewPassword"
           control={form.control}
           render={({ field }) => (
             <FormItem>

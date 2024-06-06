@@ -5,6 +5,8 @@ import { cn } from "~/lib/utils";
 import { axiosInstance } from "~/lib/utils";
 import toast from "react-hot-toast";
 import { useAuth } from "~/hooks";
+import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
 interface ButtonFollowProps {
   user: string;
@@ -12,6 +14,7 @@ interface ButtonFollowProps {
 
 export function ButtonFollow({ user }: ButtonFollowProps) {
   const { user: userAuth } = useAuth();
+  const router = useRouter();
   const queryClient = useQueryClient();
   const { data, isLoading } = useQuery({
     queryKey: ["check-follow", { follow: user, auth: userAuth && userAuth.id }],
@@ -48,16 +51,17 @@ export function ButtonFollow({ user }: ButtonFollowProps) {
   });
 
   const handleToggle = () => {
+    if (!Boolean(userAuth)) {
+      return router.push("/login");
+    }
     followMutation.mutate({ follow: data });
   };
 
   return (
-    <button
-      className={cn(
-        "group mx-auto mt-2 flex items-center gap-x-2 rounded-lg px-2 py-1 font-bold text-davy transition",
-        data ? "bg-puce hover:bg-white" : "bg-white hover:bg-puce",
-      )}
+    <Button
+      variant={!!data ? "puce" : "outline"}
       onClick={handleToggle}
+      className="flex items-center gap-x-2"
     >
       {data ? (
         <React.Fragment>
@@ -70,6 +74,6 @@ export function ButtonFollow({ user }: ButtonFollowProps) {
           <span className="text-davy group-hover:text-white">Ikuti</span>
         </React.Fragment>
       )}
-    </button>
+    </Button>
   );
 }

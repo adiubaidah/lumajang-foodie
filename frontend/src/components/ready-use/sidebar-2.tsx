@@ -71,14 +71,16 @@ function Sidebar({ toggled, setToggled, setBroken }: SidebarProps) {
       }}
     >
       <div className="flex justify-center p-6">
-        <SkeletonImage
-          src={user && user.image}
-          alt="Foto"
-          className="w-20 rounded-full"
-          width={400}
-          height={400}
-          skeletonStyle={{ width: 80, height: 80 }}
-        />
+        <Link href="/manage/profile">
+          <SkeletonImage
+            src={user && user.image}
+            alt="Foto"
+            className="w-20 rounded-full outline outline-2 outline-stroke hover:outline-offset-1"
+            width={400}
+            height={400}
+            skeletonStyle={{ width: 80, height: 80 }}
+          />
+        </Link>
       </div>
       <Menu
         menuItemStyles={{

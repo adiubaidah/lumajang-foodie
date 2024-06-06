@@ -1,14 +1,11 @@
 "use client";
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "next/navigation";
+import Link from "next/link";
+import { useParams, usePathname } from "next/navigation";
 
+import { IconsDistance } from "~/icons";
 import { BadgeRate } from "~/components/ready-use/badge-rate";
-import { Review, Photo, Overview } from "./components";
 import SkeletonImage from "~/components/ready-use/skeleton-image";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import {
-  axiosInstance,
   getClosingTime,
   getOpeningTime,
   isOpen,
@@ -21,38 +18,17 @@ import {
   CarouselContent,
   CarouselItem,
 } from "~/components/ui/carousel";
-import { Badge } from "~/components/ui/badge";
+import ArchiveButton from "../components/archive-button";
+import { buttonVariants } from "~/components/ui/button";
 
-function Client() {
-  const { slug } = useParams();
+function Header({ imagePreview, detail }: { imagePreview: any; detail: any }) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  const [photoPage, setPhotoPage] = useState(1);
-  const [reviewPage, setReviewPage] = useState(1);
-  const { data: detail } = useQuery({
-    queryKey: ["place", slug],
-    queryFn: async () => {
-      return axiosInstance
-        .get(`/place/find?slug=${slug}`)
-        .then((data) => data.data);
-    },
-    enabled: !!slug,
-    staleTime: 1000 * 60 * 5,
-  });
-
-  const { data: imagePreview } = useQuery({
-    queryKey: ["place-photo", { place: detail && detail.id }, "preview"],
-    queryFn: async () => {
-      return axiosInstance
-        .get(`/place-photo?place=${detail.id}&perPage=4`)
-        .then((data) => data.data);
-    },
-    enabled: !!detail && !!detail.id,
-    staleTime: 1000 * 60 * 5,
-  });
+  const params = useParams<{ slug: string }>();
+  const path = usePathname();
 
   // return JSON.stringify(detail);
   return (
-    <div className="container h-[5000px] max-w-full py-3">
+    <div className="py-3">
       {imagePreview && imagePreview.result && (
         <>
           {!isDesktop ? (
@@ -108,19 +84,21 @@ function Client() {
                 />
               </div>
               <div className="flex h-full w-2/5 items-center gap-x-2">
-                <div className="flex h-full w-1/2 flex-col gap-y-2">
+                <div className="flex h-full w-1/2 flex-col gap-y-2 overflow-y-hidden">
                   <SkeletonImage
                     src={imageFromBackend(imagePreview.result[1].url)}
                     height={500}
                     width={500}
-                    className="h-1/2"
+                    className="h-1/2 object-cover"
+                    skeletonStyle={{ height: "50%", width: "100%" }}
                     alt="preview-1"
                   />
                   <SkeletonImage
                     src={imageFromBackend(imagePreview.result[2].url)}
                     height={500}
                     width={500}
-                    className="h-1/2"
+                    className="h-1/2 object-cover"
+                    skeletonStyle={{ height: "50%", width: "100%" }}
                     alt="preview-1"
                   />
                 </div>
@@ -144,10 +122,12 @@ function Client() {
           <h1 className="text-4xl font-normal">{detail.name}</h1>
           <div className="flex items-center gap-x-2">
             <BadgeRate rate={detail.rate._avg.star} />
-            <div className="flex flex-col">
-              <span className="text-davy">{detail.rate._count.id}</span>
-              <span className="font-light text-davy">Ulasan</span>
-            </div>
+            {detail.rate._count.id > 0 && (
+              <div className="flex flex-col">
+                <span className="text-davy">{detail.rate._count.id}</span>
+                <span className="font-light text-davy">Ulasan</span>
+              </div>
+            )}
           </div>
         </div>
         <p className="text-2xl font-light text-davy">{detail.address}</p>
@@ -165,65 +145,55 @@ function Client() {
           )}
         </div>
 
-        <div className="flex"></div>
+        <div className="flex items-center gap-x-2">
+          <Link className={cn(buttonVariants({variant: "outline"}), 'flex items-center gap-x-2')} href={"#"}>
+            <IconsDistance width={27} fill="#A65F5F" height={27} />
+            <span>Petunjuk</span>
+          </Link>
+          <ArchiveButton place={detail.id} />
+        </div>
       </div>
-      {/* Komponen */}
-      <Tabs defaultValue="overview">
-        <TabsList className="mb-3 bg-transparent after:h-1 after:w-full after:bg-stroke">
-          <TabsTrigger
-            value="overview"
+
+      <ul className="my-3 flex items-center bg-transparent">
+        <li>
+          <Link
+            href={`/tempat-makan/${params.slug}`}
             className={cn(
-              "data-[state=active]: data-[state=active]:border-b-2 data-[state=active]:border-puce data-[state=active]:bg-transparent data-[state=active]:text-puce",
               "px-5 py-3 text-xl font-light text-davy",
+              path === `/tempat-makan/${params.slug}` &&
+                "border-b-2 border-puce bg-transparent text-puce",
             )}
           >
             Sekilas
-          </TabsTrigger>
-          <TabsTrigger
-            value="review"
+          </Link>
+        </li>
+        <li>
+          <Link
+            href={`/tempat-makan/${params.slug}/ulasan`}
             className={cn(
-              "data-[state=active]: data-[state=active]:border-b-2 data-[state=active]:border-puce data-[state=active]:bg-transparent data-[state=active]:text-puce",
               "px-5 py-3 text-xl font-light text-davy",
+              path === `/tempat-makan/${params.slug}/ulasan` &&
+                "border-b-2 border-puce bg-transparent text-puce",
             )}
           >
             Ulasan
-          </TabsTrigger>
-          <TabsTrigger
-            value="photo"
+          </Link>
+        </li>
+        <li>
+          <Link
+            href={`/tempat-makan/${params.slug}/foto`}
             className={cn(
-              "data-[state=active]: data-[state=active]:border-b-2 data-[state=active]:border-puce data-[state=active]:bg-transparent data-[state=active]:text-puce",
               "px-5 py-3 text-xl font-light text-davy",
+              path === `/tempat-makan/${params.slug}/foto` &&
+                "border-b-2 border-puce bg-transparent text-puce",
             )}
           >
             Foto
-          </TabsTrigger>
-          <TabsTrigger
-            value="menu"
-            className={cn(
-              "data-[state=active]: data-[state=active]:border-b-2 data-[state=active]:border-puce data-[state=active]:bg-transparent data-[state=active]:text-puce",
-              "px-5 py-3 text-xl font-light text-davy",
-            )}
-          >
-            Menu
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="overview">
-          <Overview detail={detail} />
-        </TabsContent>
-        <TabsContent value="review">
-          <h2 className="mb-3 text-3xl font-normal">Review</h2>
-          <Review
-            page={reviewPage}
-            setPage={setReviewPage}
-            placeId={detail.id}
-          />
-        </TabsContent>
-        <TabsContent value="photo">
-          <Photo page={photoPage} setPage={setPhotoPage} placeId={detail.id} />
-        </TabsContent>
-      </Tabs>
+          </Link>
+        </li>
+      </ul>
     </div>
   );
 }
 
-export default Client;
+export default Header;

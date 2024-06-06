@@ -13,8 +13,11 @@ export async function middleware(request: NextRequest) {
         {
           method: "POST",
           cache: "no-store",
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({
-            access_token,
+            token: access_token,
           }),
         },
       );
@@ -29,5 +32,5 @@ export async function middleware(request: NextRequest) {
 
 //explain this code
 export const config = {
-  matcher: ["/manage/:path*"],
+  matcher: ["/manage/:path*", '/my-profile/:path*'],
 };

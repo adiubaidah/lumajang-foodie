@@ -26,7 +26,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <span className="hamburger-line"></span>
         <span className="hamburger-line origin-bottom-left"></span>
       </button>
-      <section className="w-full overflow-y-scroll no-scrollbar">{children}</section>
+      <section className="w-full px-5 mt-3 overflow-y-scroll no-scrollbar">{children}</section>
     </main>
   );
 }

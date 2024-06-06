@@ -5,6 +5,9 @@ import { cn } from "~/lib/utils";
 import { axiosInstance } from "~/lib/utils";
 import toast from "react-hot-toast";
 import { useAuth } from "~/hooks";
+import { Button } from "~/components/ui/button";
+import { FluentSave } from "~/icons";
+import { useRouter } from "next/navigation";
 
 interface ArchiveButtonProps {
   place: string;
@@ -12,14 +15,17 @@ interface ArchiveButtonProps {
 
 function ArchiveButton({ place }: ArchiveButtonProps) {
   const { user: userAuth } = useAuth();
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
     queryKey: ["check-archive", { auth: userAuth && userAuth.id, place }],
     queryFn: async () => {
-      return (await axiosInstance.get(`/place-archive?place=${place}`)).data;
+      return (await axiosInstance.get(`/place-archive/find?place=${place}`))
+        .data;
     },
     enabled: !!userAuth && !!userAuth.id && !!place,
+    retry: 2,
   });
 
   const archiveMutation = useMutation({
@@ -28,7 +34,7 @@ function ArchiveButton({ place }: ArchiveButtonProps) {
         return (await axiosInstance.delete(`/place-archive?place=${place}`))
           .data;
       }
-      return (await axiosInstance.post(`/place-archive/place=${place}`)).data;
+      return (await axiosInstance.post(`/place-archive?place=${place}`)).data;
     },
     onSuccess: (data) => {
       if (data.type === "archive") {
@@ -41,34 +47,35 @@ function ArchiveButton({ place }: ArchiveButtonProps) {
       });
     },
     onError: () => {
-      toast.error("Gagal memfollow");
+      toast.error("Gagal mengarsipkan");
     },
   });
 
   const handleArchiveToggle = () => {
-    archiveMutation.mutate({ archive: data });
+    if (!Boolean(userAuth)) {
+      return router.push("/login");
+    }
+    archiveMutation.mutate({ archive: Boolean(data) });
   };
 
   return (
-    <button
-      className={cn(
-        "group mx-auto mt-2 flex items-center gap-x-2 rounded-lg px-2 py-1 font-bold text-davy transition",
-        data ? "bg-puce hover:bg-white" : "bg-white hover:bg-puce",
-      )}
+    <Button
+      variant={!!data ? "puce" : "outline"}
       onClick={handleArchiveToggle}
+      className="flex items-center gap-x-2"
     >
-      {data ? (
+      {!!data ? (
         <React.Fragment>
           <Check className="text-white group-hover:text-puce" />
-          <span className="text-white group-hover:text-davy">Mengikuti</span>
+          <span className="text-white group-hover:text-davy">Diarsipkan</span>
         </React.Fragment>
       ) : (
         <React.Fragment>
-          <SquarePlus className="text-puce group-hover:text-white" />
-          <span className="text-davy group-hover:text-white">Ikuti</span>
+          <FluentSave width={27} height={27} fill="#A65F5F" />
+          <span className="text-davy group-hover:text-white">Arsip</span>
         </React.Fragment>
       )}
-    </button>
+    </Button>
   );
 }
 

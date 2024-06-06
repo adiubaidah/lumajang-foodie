@@ -1,7 +1,6 @@
 import { Gender } from '@prisma/client';
 import { Transform, Type } from 'class-transformer';
 import {
-  IsBooleanString,
   IsBoolean,
   IsEmail,
   IsEnum,
@@ -45,4 +44,15 @@ export class UserDto {
   @IsOptional()
   @IsString({ message: 'Deskripsi tidak valid' })
   description: string;
+}
+
+export class UpdatePasswordDto {
+  @IsString({ message: 'Password lama diperlukan' })
+  oldPassword: string;
+
+  @IsString({ message: 'Password baru diperlukan' })
+  newPassword: string;
+
+  @IsString({ message: 'Konfirmasi password baru diperlukan' })
+  confirmNewPassword: string;
 }

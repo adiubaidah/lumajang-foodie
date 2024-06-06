@@ -22,7 +22,7 @@ import { Role } from 'src/role/role.decorator';
 import { JwtGuard } from 'src/auth/jwt.guard';
 import { UserService } from './user.service';
 import { RoleGuard } from 'src/role/role.guard';
-import { UserDto } from './user.dto';
+import { UpdatePasswordDto, UserDto } from './user.dto';
 
 @Controller('user')
 export class UserController {
@@ -47,14 +47,8 @@ export class UserController {
     });
   }
 
-  @Role([RoleEnum.admin, RoleEnum.foodie, RoleEnum.owner])
-  @UseGuards(JwtGuard, RoleGuard)
   @Get(':id')
-  async find(@Param('id') id: string, @Req() req: RequestExpress) {
-    const user = req['user'];
-    if (user.id !== id && user.role !== RoleEnum.admin) {
-      throw new ForbiddenException();
-    }
+  async find(@Param('id') id: string) {
     return await this.userService.find(id);
   }
 
@@ -100,6 +94,24 @@ export class UserController {
     return await this.userService.update(req['user'].id, body, {
       image: imageFile && imageFile.path,
       backgroundImage: backgroundImageFile && backgroundImageFile.path,
+    });
+  }
+  @Role([RoleEnum.foodie, RoleEnum.admin, RoleEnum.owner])
+  @UseGuards(JwtGuard, RoleGuard)
+  @Put('update-password')
+  async updatePassword(
+    @Body() body: UpdatePasswordDto,
+    @Req() req: RequestExpress,
+  ) {
+    if (body.confirmNewPassword !== body.newPassword) {
+      throw new ForbiddenException(
+        'Password baru dan konfirmasi password baru tidak sama',
+      );
+    }
+    return await this.userService.changePassword({
+      newPassword: body.newPassword,
+      oldPassword: body.oldPassword,
+      userId: req['user'].id,
     });
   }
 }

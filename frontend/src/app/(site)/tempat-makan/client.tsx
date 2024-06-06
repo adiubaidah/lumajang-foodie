@@ -90,7 +90,7 @@ function Client() {
   };
 
   return (
-    <main className="container max-w-full">
+    <>
       <h1>Daftar Tempat Makan</h1>
       <div className="flex items-center gap-x-3">
         <Filter
@@ -147,7 +147,7 @@ function Client() {
           />
         )}
       </div>
-    </main>
+    </>
   );
 }
 

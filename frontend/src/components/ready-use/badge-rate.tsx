@@ -12,8 +12,7 @@ export function BadgeRate({ rate }: BadgeRateProps) {
   return (
     <Badge
       className={cn(
-        "flex items-center rounded-md px-2 py-1 text-white",
-        "hover",
+        "flex items-center gap-x-1 rounded-md px-2 py-1 text-white",
         !rate && "border-2 border-orange bg-orange/20",
       )}
       style={{
@@ -26,7 +25,7 @@ export function BadgeRate({ rate }: BadgeRateProps) {
         <React.Fragment>
           <Star width={17} height={17} fill="white" />
           <span className="font-helvetica text-[12px] font-semibold leading-4">
-            4.0
+            {Math.ceil(rate).toFixed(1)}
           </span>
         </React.Fragment>
       ) : (

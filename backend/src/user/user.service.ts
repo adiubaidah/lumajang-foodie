@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { RegisterDto } from 'src/auth/auth.dto';
 import { PrismaService } from 'src/prisma.service';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import { UserDto } from './user.dto';
 import { Prisma, Role } from '@prisma/client';
 @Injectable()
@@ -99,6 +99,7 @@ export class UserService {
         image: true,
         role: true,
         isPrivate: true,
+        subdistrictId: true,
         subdistrict: true,
         _count: {
           select: {
@@ -118,6 +119,41 @@ export class UserService {
     return await this.prismaService.user.findUnique({
       where: {
         email,
+      },
+    });
+  }
+  //create service to change password
+  async changePassword({
+    oldPassword,
+    newPassword,
+    userId,
+  }: {
+    oldPassword: string;
+    newPassword: string;
+    userId: string;
+  }) {
+    //user must provide old password newPassword change password
+    const checkOldPassword = await this.prismaService.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+    const check = await bcrypt.compare(oldPassword, checkOldPassword.password);
+    if (!check) {
+      throw new ForbiddenException('Password lama salah');
+    }
+    return await this.prismaService.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        password: await bcrypt.hash(newPassword, 10),
+      },
+      select: {
+        id: true,
+        image: true,
+        name: true,
+        email: true,
       },
     });
   }

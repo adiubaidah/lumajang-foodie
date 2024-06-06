@@ -17,8 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { Anchor } from "~/components/ui/anchor";
-import { Button } from "~/components/ui/button";
+import { Button, buttonVariants } from "~/components/ui/button";
 import { useAuth } from "~/hooks";
 import { axiosInstance, imageFromBackend } from "~/lib/utils";
 import { Place, PlacePhoto } from "~/types";
@@ -29,6 +28,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
 } from "~/components/ui/dropdown-menu";
+import Link from "next/link";
 
 function Client() {
   const { user } = useAuth();
@@ -43,12 +43,12 @@ function Client() {
     enabled: user && !!user.id,
   });
   return (
-    <div>
+    <div className="h-full overflow-y-auto">
       <div className="flex justify-between">
         <h1>Daftar Tempat makan</h1>
-        <Anchor href="/manage/tempat-makan/tambah" variant={"outline"}>
+        <Link href="/manage/tempat-makan/tambah" className={buttonVariants({variant: 'outline'})}>
           Tambah Tempat Makan
-        </Anchor>
+        </Link>
       </div>
       <Table>
         <TableHeader>

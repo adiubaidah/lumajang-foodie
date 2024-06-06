@@ -1,3 +1,4 @@
+"use client"
 import { CSSProperties, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import { type ClassValue } from "clsx";

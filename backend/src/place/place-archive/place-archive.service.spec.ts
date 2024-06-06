@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PlaceArchviveService } from './place-archvive.service';
+import { PlaceArchviveService } from './place-archive.service';
 
 describe('PlaceArchviveService', () => {
   let service: PlaceArchviveService;

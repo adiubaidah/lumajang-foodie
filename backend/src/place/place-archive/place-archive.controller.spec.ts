@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PlaceArchviveController } from './place-archvive.controller';
+import { PlaceArchiveController } from './place-archive.controller';
 
 describe('PlaceArchviveController', () => {
-  let controller: PlaceArchviveController;
+  let controller: PlaceArchiveController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [PlaceArchviveController],
+      controllers: [PlaceArchiveController],
     }).compile();
 
-    controller = module.get<PlaceArchviveController>(PlaceArchviveController);
+    controller = module.get<PlaceArchiveController>(PlaceArchiveController);
   });
 
   it('should be defined', () => {

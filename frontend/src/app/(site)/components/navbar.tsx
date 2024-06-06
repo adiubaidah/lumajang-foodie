@@ -25,7 +25,6 @@ function Navbar() {
   const { user } = useAuth();
   const path = usePathname();
   const yAxis = useScrollPosition();
-  console.log(path);
   const logoutMutation = useMutation({
     mutationFn: async () => {
       return (await axiosInstance.post("/auth/logout")).data;
@@ -50,9 +49,9 @@ function Navbar() {
       <Image
         src="/assets/logo.png"
         alt="Lumajang Foodie"
-        width={300}
-        height={300}
-        className="w-[176px]"
+        width={200}
+        height={200}
+        className="h-[44px] lg:h-14 w-auto"
       />
       <div className="mt-3 flex w-full max-w-lg items-center space-x-3 rounded-lg bg-white px-2 py-3 shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
         <Search />
@@ -88,9 +87,13 @@ function Navbar() {
                 <DropdownMenuItem asChild>
                   <Link href={"/my-profile"}>Profil</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>Ulasan</DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href={"/my-profile/ulasan"}>Ulasan</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href={"/my-profile/koneksi"}>Koneksi Saya</Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem>Pesan</DropdownMenuItem>
-                <DropdownMenuItem>Koneksi Saya</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => logoutMutation.mutate()}>
                   Logout
                 </DropdownMenuItem>

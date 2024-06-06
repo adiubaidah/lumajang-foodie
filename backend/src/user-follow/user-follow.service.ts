@@ -17,6 +17,13 @@ export class UserFollowService {
             name: true,
             email: true,
             image: true,
+            _count: {
+              select: {
+                followers: true,
+                placeReviews: true,
+                menuReviews: true,
+              },
+            },
           },
         },
       },
@@ -34,6 +41,13 @@ export class UserFollowService {
             name: true,
             email: true,
             image: true,
+            _count: {
+              select: {
+                followers: true,
+                placeReviews: true,
+                menuReviews: true,
+              },
+            },
           },
         },
       },

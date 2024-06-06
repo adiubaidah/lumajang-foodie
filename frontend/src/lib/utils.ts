@@ -101,3 +101,4 @@ export const humanizeIdTime = (date: string) => {
   localId.locale("id");
   return localId.fromNow();
 };
+
