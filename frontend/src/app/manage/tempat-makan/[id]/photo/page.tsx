@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 
+import { Loader2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -10,7 +11,6 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { usePlacePhoto } from "~/hooks";
 import SkeletonImage from "~/components/ready-use/skeleton-image";
 import { ModalCrud, PlacePhoto } from "~/types";
 import { Button } from "~/components/ui/button";
@@ -69,43 +69,58 @@ function Image() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading
-              ? "Loading"
-              : data.result.length > 0
-                ? data.result.map((photo: PlacePhoto) => (
-                    <TableRow key={photo.id}>
-                      <TableCell>
-                        <SkeletonImage
-                          src={photo.url}
-                          alt="photo"
-                          height={400}
-                          className="aspect-video w-64"
-                          skeletonStyle={{ width: 256, aspectRatio: 16 / 9 }}
-                          width={400}
-                        />
-                      </TableCell>
-                      <TableCell>{photo.type}</TableCell>
-                      <TableCell className="space-x-3">
-                        <Button size={"icon"}>
-                          <Pencil />
-                        </Button>
-                        <Button
-                          variant={"destructive"}
-                          type="button"
-                          onClick={() => {
-                            setDataModal({
-                              operation: "delete",
-                            });
-                            setOpenModal(true);
-                          }}
-                          size={"icon"}
-                        >
-                          <Trash2 />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                : "Data tidak ditemukan"}
+            {isLoading || !data ? (
+              <TableRow>
+                <TableCell colSpan={6}>
+                  <div className="flex items-center justify-center gap-x-3">
+                    <Loader2 className="animate-spin" />
+                    <span>Mengambil data...</span>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : data.result && data.result.length > 0 ? (
+              data.result.map((photo: PlacePhoto) => (
+                <TableRow key={photo.id}>
+                  <TableCell>
+                    <SkeletonImage
+                      src={imageFromBackend(photo.url)}
+                      alt="photo"
+                      height={400}
+                      className="aspect-video w-64"
+                      skeletonStyle={{ width: 256, aspectRatio: 16 / 9 }}
+                      width={400}
+                    />
+                  </TableCell>
+                  <TableCell>{photo.type}</TableCell>
+                  <TableCell className="space-x-3">
+                    <Button size={"icon"}>
+                      <Pencil />
+                    </Button>
+                    <Button
+                      variant={"destructive"}
+                      type="button"
+                      onClick={() => {
+                        setDataModal({
+                          operation: "delete",
+                        });
+                        setOpenModal(true);
+                      }}
+                      size={"icon"}
+                    >
+                      <Trash2 />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={6}>
+                  <div className="flex items-center justify-center">
+                    <span>Data tidak ditemukan</span>
+                  </div>
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>

@@ -58,10 +58,6 @@ export class MessageService {
           },
         },
         messages: {
-          orderBy: {
-            createdAt: 'desc',
-          },
-          take: 1,
           include: {
             seen: {
               select: {
@@ -75,7 +71,8 @@ export class MessageService {
       },
     });
 
-    const lastMessage = updatedConversation.messages[0];
+    const lastMessage =
+      updatedConversation.messages[updatedConversation.messages.length - 1];
 
     this.messageEvent.server
       .to(payload.conversationId)

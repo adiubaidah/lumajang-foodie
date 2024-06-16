@@ -47,16 +47,14 @@ export class PlaceReviewController {
     });
   }
 
-  @Role([RoleEnum.foodie, RoleEnum.owner])
-  @UseGuards(JwtGuard, RoleGuard)
-  @Get()
-  async currentUser(
+  @Get('find')
+  async findByPlace(
     @Query('place') placeId: string,
-    @Req() req: RequestExpress,
+    @Query('current-user') currentUser: string,
   ) {
-    const user = req['user'];
-    if (placeId && user.id) {
-      return await this.placeReviewService.findByPlaceAndUser(placeId, user.id);
-    }
+    return await this.placeReviewService.findByPlaceAndUser(
+      placeId,
+      currentUser,
+    );
   }
 }

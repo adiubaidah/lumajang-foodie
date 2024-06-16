@@ -25,6 +25,7 @@ const config = {
       },
       colors: {
         "soft-red": "#ED6368",
+        gray: "#EEEEEE",
         poteh: "#F9F9F9",
         stroke: "#A4A4A4",
         orange: "#F97300",

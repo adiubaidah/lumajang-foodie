@@ -141,9 +141,9 @@ model PlaceArchive {
   @@unique([placeId, userId])
 }
 
-enum JenisMenu {
-  makanan
-  minuman
+enum MenuType {
+  food
+  drink
 }
 
 model Menu {
@@ -151,7 +151,7 @@ model Menu {
   slug    String    @unique
   name    String
   photo   String
-  jenis   JenisMenu
+  type   MenuType
   price   Int
   place   Place     @relation(fields: [placeId], references: [id])
   placeId String    @db.ObjectId

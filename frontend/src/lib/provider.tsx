@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
 
 import { AuthProvider } from "~/hooks/useAuth";
+import { SocketProvider } from "~/hooks/useSocket";
 
 export default function Provider({ children }: { children: ReactNode }) {
   const [queryClient] = useState(
@@ -20,9 +21,11 @@ export default function Provider({ children }: { children: ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools initialIsOpen={false} />
+      <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-left" />
       <Toaster />
-      <AuthProvider>{children}</AuthProvider>
+      <AuthProvider>
+        <SocketProvider>{children}</SocketProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

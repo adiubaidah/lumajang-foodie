@@ -108,6 +108,24 @@ export class ConversationService {
     });
   }
 
+  async find(conversationId: string) {
+    return await this.prismaService.conversation.findUnique({
+      where: {
+        id: conversationId,
+      },
+      include: {
+        users: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            image: true,
+          },
+        },
+      },
+    });
+  }
+
   //seen only last message
   async seen({
     currentUser,

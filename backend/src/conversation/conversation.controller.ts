@@ -27,6 +27,13 @@ export class ConversationController {
     return await this.conversationService.allByUser(req['user'].id);
   }
 
+  @Role([RoleEnum.foodie, RoleEnum.owner, RoleEnum.admin])
+  @UseGuards(JwtGuard, RoleGuard)
+  @Get(':id')
+  async find(@Param('id') id: string) {
+    return await this.conversationService.find(id);
+  }
+
   @Role([RoleEnum.foodie, RoleEnum.owner])
   @UseGuards(JwtGuard, RoleGuard)
   @Post()
@@ -38,7 +45,7 @@ export class ConversationController {
   }
   @Role([RoleEnum.foodie, RoleEnum.owner])
   @UseGuards(JwtGuard, RoleGuard)
-  @Post('seen/:conversation')
+  @Post(':conversation/seen')
   async seen(
     @Param('conversation') conversationId: string,
     @Req() req: RequestExpress,

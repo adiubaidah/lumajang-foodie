@@ -33,6 +33,7 @@ export class MessageController {
   @Post()
   async create(@Body() payload: MessageDto, @Req() req: RequestExpress) {
     const user = req['user'];
+    // console.log(payload)
     return await this.messageService.create(
       {
         body: payload.body,

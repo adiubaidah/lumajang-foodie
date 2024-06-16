@@ -8,6 +8,7 @@ import SkeletonImage from "~/components/ready-use/skeleton-image";
 import { betterToKm, cn, imageFromBackend } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
 import { rateColor } from "~/constant";
+import { BadgeRate } from "~/components/ready-use/badge-rate";
 
 interface CardPlaceProps {
   srcImage: string;
@@ -41,43 +42,23 @@ function CardPlace({
       className="block rounded-2xl p-2.5 shadow-[0px_4px_7.3px_0px_rgba(0,0,0,0.2)] transition duration-200"
     >
       <div>
-        <SkeletonImage
-          src={imageFromBackend(srcImage)}
-          alt={title}
-          height={200}
-          width={200}
-          className="h-[248px] w-full rounded-2xl object-cover"
-          skeletonStyle={{ borderRadius: 12, width: "100%", height: 248 }}
-        />
-        <div className="mt-1 flex items-center justify-between">
-          <h4 className="font-helvetica text-2xl text-davy">{title}</h4>
-          <Badge
-            className={cn(
-              "flex items-center rounded-md px-2 py-1 text-white",
-              "hover:bg-",
-              !!rate
-                ? `bg-[${rateColor[Math.ceil(rate)]}]`
-                : "border-2 border-orange bg-orange/20",
-            )}
-          >
-            {!!rate ? (
-              <React.Fragment>
-                <Star width={17} height={17} fill="white" />
-                <span className="font-helvetica text-[12px] font-semibold leading-4">
-                  4.0
-                </span>
-              </React.Fragment>
-            ) : (
-              <React.Fragment>
-                <Star width={17} height={17} fill="#F97300" />
-                <span className="font-helvetica text-[12px] font-bold leading-4 text-orange">
-                  New
-                </span>
-              </React.Fragment>
-            )}
-          </Badge>
+        <div className="h-[248px]">
+          <SkeletonImage
+            src={imageFromBackend(srcImage)}
+            alt={title}
+            height={200}
+            width={200}
+            className="w-full h-full rounded-2xl object-cover"
+            skeletonStyle={{ borderRadius: 12}}
+          />
         </div>
-        <p className="font-helvetica text-[16px] font-thin text-davy">
+        <div className="mt-1.5 flex items-center justify-between">
+          <h4 className="font-helvetica text-[17px] tracking-wider text-black">
+            {title}
+          </h4>
+          <BadgeRate rate={rate} />
+        </div>
+        <p className="font-helvetica text-[14px] font-thin tracking-wide text-davy">
           {subdistrict}
         </p>
       </div>

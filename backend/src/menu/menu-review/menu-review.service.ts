@@ -34,6 +34,18 @@ export class MenuReviewService {
       where: {
         menuId,
       },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
+      },
       skip,
       take: perPage,
     });

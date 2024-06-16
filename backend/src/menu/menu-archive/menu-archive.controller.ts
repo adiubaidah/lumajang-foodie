@@ -28,13 +28,17 @@ export class MenuArchiveController {
     @Req() req: RequestExpress,
   ) {
     const user = req['user'].id;
-    return await this.menuService.all({ perPage, page, user });
+    return await this.menuService.all({
+      perPage: perPage || 6,
+      page: page || 1,
+      user,
+    });
   }
 
   @Role([RoleEnum.foodie, RoleEnum.owner])
   @UseGuards(JwtGuard, RoleGuard)
-  @Get(':menu')
-  async find(@Param('menu') menu: string, @Req() req: RequestExpress) {
+  @Get('find')
+  async find(@Query('menu') menu: string, @Req() req: RequestExpress) {
     const user = req['user'].id;
     return await this.menuService.find({ user, menu });
   }

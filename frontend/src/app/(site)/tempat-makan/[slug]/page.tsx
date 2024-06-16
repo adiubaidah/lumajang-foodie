@@ -52,7 +52,7 @@ export default function Overview() {
           </React.Fragment>
         )}
 
-        <div className="mt-7 flex flex-col h-[5000px] md:flex-row relative">
+        <div className="mt-7 flex flex-col md:flex-row">
           <div className="w-full md:w-3/5 space-y-3">
             {detail.owner && (
               <div className="mt-3">
@@ -114,7 +114,7 @@ export default function Overview() {
               )}
             </ul>
           </div>
-          <div className="w-full h-fit md:sticky md:top-32 rounded-3xl p-7 shadow-[0px_4px_7.3px_0px_rgba(0,0,0,0.2)] md:w-2/5 ">
+          <div className="w-full h-fit rounded-3xl p-7 shadow-[0px_4px_7.3px_0px_rgba(0,0,0,0.2)] md:w-2/5 ">
             <div>
               <h5 className="mb-2 text-xl font-black text-davy">Telepon</h5>
               <p>{detail.phoneNumber}</p>

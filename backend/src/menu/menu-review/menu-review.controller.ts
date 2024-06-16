@@ -24,11 +24,10 @@ export class MenuReviewController {
     @Query('menu') menuId: string,
     @Query('perPage') perPage: number,
     @Query('page') page: number,
-    @Query('sortBy') sortBy: string,
   ) {
     return await this.menuReview.all(menuId, {
-      page: page ?? 1,
-      perPage: perPage ?? 4,
+      page: page || 1,
+      perPage: perPage || 4,
     });
   }
 

@@ -6,21 +6,13 @@ import { X } from "lucide-react";
 import PaginationComponent from "~/components/ready-use/pagination-link";
 
 import { useUserLocation } from "~/hooks";
-import { Place, PlacePhoto } from "~/types";
+import { PlaceComplete } from "~/types";
 import { CardPlace } from "./components";
 import { axiosInstance, createQueryString } from "~/lib/utils";
 import { Filter } from "./components";
 
 import { FilterData, filterOther } from "./components/filter";
 import { Button } from "~/components/ui/button";
-// import { Slider } from "~/components/ui/slider";
-
-type PlaceComplete = Place & {
-  photoForThumbnail?: PlacePhoto;
-  averageStar: number;
-  subdistrict: string;
-  distance?: number;
-};
 
 function Client() {
   const { location } = useUserLocation();
@@ -76,11 +68,8 @@ function Client() {
         ...filter.other,
         page,
       });
-      return axiosInstance
-        .get(`/place?${queryString}`)
-        .then((data) => data.data);
+      return (await axiosInstance.get(`/place?${queryString}`)).data;
     },
-    staleTime: 1000 * 5 * 60,
   });
 
   const handleRemoveFilter = (id: string) => {
@@ -117,9 +106,9 @@ function Client() {
       </div>
 
       <div className="grid gap-x-10 gap-y-11 py-3 md:grid-cols-3">
-        {isLoading
+        {isLoading || !data
           ? "Loading"
-          : data.result.length > 0
+          : data.result && data.result.length > 0
             ? data.result.map((place: PlaceComplete) => (
                 <CardPlace
                   key={place.id}

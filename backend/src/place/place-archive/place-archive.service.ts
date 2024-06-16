@@ -20,7 +20,20 @@ export class PlaceArchiveService {
         userId: user,
       },
       include: {
-        place: true,
+        place: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            subdistrict: true,
+            photos: {
+              take: 1,
+              where: {
+                type: 'thumbnail',
+              },
+            },
+          },
+        },
       },
       skip,
       take: perPage,

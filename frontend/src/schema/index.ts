@@ -114,10 +114,7 @@ export const placeReviewSchema = z.object({
 
 export const menuSchema = z.object({
   name: z.string().min(3, { message: "Nama menu diperlukan" }),
-  description: z
-    .string()
-    .min(3, { message: "Deskripsi tidak valid" })
-    .optional(),
+  type: z.enum(['food', 'drink']),
   price: z.number().min(100, { message: "Harga diperlukan" }),
   placeId: z.string().min(4, { message: "Tempat makan diperlukan" }),
 });

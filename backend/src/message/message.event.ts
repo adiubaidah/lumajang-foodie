@@ -20,19 +20,18 @@ import { MessageService } from './message.service';
     transports: ['websocket', 'polling'],
   },
 })
-export class MessageEvent implements OnModuleInit {
+export class MessageEvent {
   @WebSocketServer()
   server: Server;
 
   users = {};
   conversation = new Map<string, string[]>();
 
-  onModuleInit() {
-    this.server.on('connection', (socket) => {
-      console.log(socket.id);
-      // console.log('Connected');
-    });
-  }
+  // onModuleInit() {
+  //   this.server.on('connection', (socket) => {
+  //     // console.log('Connected');
+  //   });
+  // }
 
   @SubscribeMessage('register')
   onRegister(
@@ -40,7 +39,19 @@ export class MessageEvent implements OnModuleInit {
     @ConnectedSocket() client: Socket,
   ) {
     this.users[userId] = client.id;
+    this.server.to(this.users[userId]).emit('registered');
+    console.log(this.users[userId]);
   }
+
+  @SubscribeMessage('unregister')
+  onUnregister(
+    @MessageBody('userId') userId: string,
+    @ConnectedSocket() client: Socket,
+  ) {
+    delete this.users[userId];
+    this.server.to(client.id).disconnectSockets();
+  }
+
   @SubscribeMessage('conversation:join')
   onJoinConversation(
     @MessageBody('userId') userId: string,
@@ -51,6 +62,20 @@ export class MessageEvent implements OnModuleInit {
       userId,
     ]);
     this.server.socketsJoin(conversationId);
+  }
+
+  @SubscribeMessage('conversation:leave')
+  onLeaveConversation(
+    @MessageBody('userId') userId: string,
+    @MessageBody('conversationId') conversationId: string,
+  ) {
+    this.conversation.set(
+      conversationId,
+      (this.conversation.get(conversationId) || []).filter(
+        (id) => id !== userId,
+      ),
+    );
+    this.server.socketsLeave(conversationId);
   }
 
   // @SubscribeMessage('message:send')

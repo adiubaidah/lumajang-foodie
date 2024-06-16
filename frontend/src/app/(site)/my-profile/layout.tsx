@@ -62,7 +62,11 @@ async function Layout({ children }: { children: React.ReactNode }) {
       <Header dataUser={dataUser} />
       <div className="mt-10 flex flex-col md:flex-row">
         <NavLinks />
-        <div>{children}</div>
+        <div className="w-full px-2 md:px-8">
+          <HydrationBoundary state={dehydrate(queryClient)}>
+            {children}
+          </HydrationBoundary>
+        </div>
       </div>
     </div>
   );

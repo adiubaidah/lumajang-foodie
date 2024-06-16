@@ -6,6 +6,7 @@ import { cn } from "~/lib/utils";
 const links = [
   { link: ["/my-profile/ulasan", "/my-profile"], label: "Ulasan" },
   { link: ["/my-profile/koneksi"], label: "Koneksi" },
+  { link: ["/my-profile/arsip"], label: "Arsip" },
 ];
 
 function NavLinks() {
@@ -22,7 +23,7 @@ function NavLinks() {
             className={cn(
               "inline-block text-start text-lg md:w-full md:pl-3",
               link.includes(path) &&
-                "border-b-2 border-puce bg-transparent text-puce md:border-l-4 md:bg-gradient-to-r md:from-white md:to-[#c9a5a5]",
+                "border-b-2 border-puce md:border-b-0 bg-transparent text-puce md:border-l-4 md:bg-gradient-to-r md:from-white md:to-[#c9a5a5]",
             )}
           >
             {label}

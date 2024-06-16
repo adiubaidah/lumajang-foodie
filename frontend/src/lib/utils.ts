@@ -102,3 +102,21 @@ export const humanizeIdTime = (date: string) => {
   return localId.fromNow();
 };
 
+export const rupiah = (num: number) => {
+  return new Intl.NumberFormat("id", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(num);
+};
+
+export function cutString(str: string, len: number) {
+  if (str.length > len) {
+    return str.substring(0, len) + "...";
+  }
+  return str;
+}
+
+export function formatTime(time: Date) {
+  return moment(time).format("HH:mm");
+}

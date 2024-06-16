@@ -10,6 +10,7 @@ import {
   registerSchema,
   userSchema,
   editPasswordSchema,
+  menuReviewSchema
 } from "./schema";
 
 export type Login = z.infer<typeof loginSchema>;
@@ -33,6 +34,12 @@ export type OpeningHours = z.infer<typeof openingHourSchema>;
 export type Location = { latitude: number; longitude: number };
 export type NewPlace = z.infer<typeof placeSchema>;
 export type Place = NewPlace & { id: string; slug: string };
+export type PlaceComplete = Place & {
+  photoForThumbnail?: PlacePhoto;
+  averageStar: number;
+  subdistrict: string;
+  distance?: number;
+};
 
 export type NewPlacePhoto = z.infer<typeof placePhotoSchema> & {
   placeId: string;
@@ -45,10 +52,33 @@ export type PlacePhoto = NewPlacePhoto & {
 export type NewPlaceReview = z.infer<typeof placeReviewSchema>;
 export type PlaceReview = NewPlaceReview & { id: string };
 export type NewMenu = z.infer<typeof menuSchema>;
-export type Menu = NewMenu & { id: string };
+export type Menu = NewMenu & { id: string; slug: string; averageStar: number };
+export type MenuWithPhoto = Menu & { photo: string };
+export type NewMenuReview = z.infer<typeof menuReviewSchema>;
+export type MenuReview = NewMenuReview & { id: string };
 export type NewMessage = z.infer<typeof messageSchema>;
-export type Message = NewMessage & { id: string };
+export type Message = NewMessage & { id: string, createdAt: Date};
 export type Subdistrict = { id: string; name: string };
+
+
+export type Conversation = {
+  id: string;
+  isGroup: boolean;
+  userIds: string[];
+  users: string[];
+  messages: Message[];
+  lastMessageAt: Date;
+}
+
+export type FullMessageType = Message & {
+  sender: User;
+  seen: User[];
+};
+
+export type FullConversationType = Conversation & {
+  users: User[];
+  messages: FullMessageType[];
+};
 
 export type ModalCrud = "add" | "edit" | "delete";
 
