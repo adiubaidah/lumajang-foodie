@@ -13,7 +13,7 @@ import {
   Param,
 } from '@nestjs/common';
 import { diskStorage } from 'multer';
-import { Role as RoleEnum } from '@prisma/client';
+import { PlacePhotoType, Role as RoleEnum } from '@prisma/client';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PlacePhotoService } from './place-photo.service';
 import { Role } from 'src/role/role.decorator';
@@ -50,10 +50,12 @@ export class PlacePhotoController {
     @Query('place') placeId: string,
     @Query('perPage') perPage: number,
     @Query('page') page: number,
+    @Query('type') type: PlacePhotoType,
   ) {
     return await this.placePhotoService.all({
       perPage: perPage || 5,
       page: page || 1,
+      type,
       placeId,
     });
   }

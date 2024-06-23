@@ -8,11 +8,12 @@ import PaginationComponent from "~/components/ready-use/pagination-link";
 import { useUserLocation } from "~/hooks";
 import { PlaceComplete } from "~/types";
 import { CardPlace } from "./components";
-import { axiosInstance, createQueryString } from "~/lib/utils";
+import { axiosInstance, cn, createQueryString, isOpen } from "~/lib/utils";
 import { Filter } from "./components";
 
 import { FilterData, filterOther } from "./components/filter";
 import { Button } from "~/components/ui/button";
+import Loader from "~/components/ready-use/loader";
 
 function Client() {
   const { location } = useUserLocation();
@@ -21,7 +22,10 @@ function Client() {
   const router = useRouter();
   const page = searchParams.get("page") || "1";
   const query = searchParams.get("q") || "";
+  const sort = searchParams.get("sort") || "name:asc";
+
   const [filter, setFilter] = useState<FilterData>({
+    q: "",
     sort: "name:asc",
     other: {
       cashOnly: 0,
@@ -35,7 +39,6 @@ function Client() {
   });
 
   useEffect(() => {
-    const sort = searchParams.get("sort") || "name:asc";
     const cashOnly = parseInt(searchParams.get("cashOnly") || "0", 10);
     const delivery = parseInt(searchParams.get("delivery") || "0", 10);
     const liveMusic = parseInt(searchParams.get("liveMusic") || "0", 10);
@@ -46,6 +49,7 @@ function Client() {
 
     setFilter({
       sort,
+      q: query,
       other: {
         cashOnly,
         delivery,
@@ -56,7 +60,7 @@ function Client() {
         takeout,
       },
     });
-  }, [searchParams]);
+  }, [searchParams, sort, query]);
 
   const { data, isLoading } = useQuery({
     queryKey: ["places", filter, page, location],
@@ -65,6 +69,7 @@ function Client() {
         longitude: location.longitude,
         latitude: location.latitude,
         sort: filter.sort,
+        q: filter.q,
         ...filter.other,
         page,
       });
@@ -80,7 +85,6 @@ function Client() {
 
   return (
     <>
-      <h1>Daftar Tempat Makan</h1>
       <div className="flex items-center gap-x-3">
         <Filter
           filter={filter}
@@ -105,26 +109,36 @@ function Client() {
           ))}
       </div>
 
-      <div className="grid gap-x-10 gap-y-11 py-3 md:grid-cols-3">
-        {isLoading || !data
-          ? "Loading"
-          : data.result && data.result.length > 0
-            ? data.result.map((place: PlaceComplete) => (
-                <CardPlace
-                  key={place.id}
-                  slug={place.slug}
-                  srcImage={
-                    place.photoForThumbnail
-                      ? place.photoForThumbnail.url
-                      : "public/img/place/default.PNG"
-                  }
-                  title={place.name}
-                  rate={place.averageStar}
-                  subdistrict={place.subdistrict}
-                  distance={place.distance}
-                />
-              ))
-            : "Data tidak ditemukan"}
+      <div
+        className={cn(
+          "grid gap-x-10 gap-y-11 py-3",
+          !isLoading && "md:grid-cols-3",
+        )}
+      >
+        {isLoading || !data ? (
+          <div className="grid h-60 place-content-center">
+            <Loader />
+          </div>
+        ) : data.result && data.result.length > 0 ? (
+          data.result.map((place: PlaceComplete) => (
+            <CardPlace
+              key={place.id}
+              slug={place.slug}
+              srcImage={
+                place.photoForThumbnail
+                  ? place.photoForThumbnail.url
+                  : "public/img/place/default.PNG"
+              }
+              title={place.name}
+              rate={place.averageStar}
+              subdistrict={place.subdistrict}
+              isOpen={isOpen(place.openingHours)}
+              distance={place.distance}
+            />
+          ))
+        ) : (
+          "Data tidak ditemukan"
+        )}
       </div>
 
       <div className="mt-4">

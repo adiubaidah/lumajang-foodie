@@ -9,6 +9,7 @@ import { Conversation, User } from "~/types";
 
 import Avatar from "../../components/avatar";
 import useActiveList from "~/hooks/useActiveList";
+import ChatDrawer from "./chat-drawer";
 
 interface HeaderProps {
   conversation: Conversation & {
@@ -32,6 +33,11 @@ const Header: React.FC<HeaderProps> = ({ conversation }) => {
 
   return (
     <>
+      <ChatDrawer
+        data={conversation}
+        isOpen={drawerOpen}
+        setIsOpen={setDrawerOpen}
+      />
       <div className="flex w-full items-center justify-between border-b-[1px] bg-white px-4 py-3 shadow-sm sm:px-4 lg:px-6">
         <div className="flex items-center gap-3">
           <Link

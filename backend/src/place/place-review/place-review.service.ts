@@ -75,6 +75,12 @@ export class PlaceReviewService {
         place: {
           select: {
             name: true,
+            address: true,
+            photos: {
+              where: {
+                type: 'thumbnail',
+              },
+            },
             slug: true,
           },
         },

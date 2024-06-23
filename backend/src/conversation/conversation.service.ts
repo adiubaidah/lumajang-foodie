@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { MessageEvent } from 'src/message/message.event';
 
@@ -59,6 +59,14 @@ export class ConversationService {
           },
         },
       },
+    });
+
+    newConversation.users.forEach((user) => {
+      if (user.id) {
+        this.messageEvent.server
+          .to(this.messageEvent.users[user.id])
+          .emit('conversation:new', newConversation);
+      }
     });
 
     return newConversation;
@@ -210,5 +218,46 @@ export class ConversationService {
       .to(conversation)
       .emit('message:update', updatedMessage);
     return 'Success';
+  }
+
+  async delete({
+    conversationId,
+    userId,
+  }: {
+    conversationId: string;
+    userId: string;
+  }) {
+    const existingConversation =
+      await this.prismaService.conversation.findUnique({
+        where: {
+          id: conversationId,
+        },
+        include: {
+          users: true,
+        },
+      });
+
+    if (!existingConversation) {
+      throw new BadRequestException('Conversation not found');
+    }
+
+    const deletedConversation = await this.prismaService.conversation.delete({
+      where: {
+        id: conversationId,
+        userIds: {
+          hasSome: [userId],
+        },
+      },
+    });
+
+    existingConversation.users.forEach((user) => {
+      if (user.id) {
+        this.messageEvent.server
+          .to(this.messageEvent.users[user.id])
+          .emit('conversation:delete', deletedConversation);
+      }
+    });
+
+    return deletedConversation;
   }
 }

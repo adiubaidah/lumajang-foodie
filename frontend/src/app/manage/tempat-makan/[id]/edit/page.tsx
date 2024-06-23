@@ -124,7 +124,7 @@ function Edit() {
   };
 
   return (
-    <div className="h-full overflow-y-auto">
+    <div>
       <h1>Edit Tempat Makan</h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="mt-4 space-y-5">
@@ -262,7 +262,7 @@ function Edit() {
                   className="focus:outline-none"
                   readOnly
                 />
-                <div className="md:2/3 flex w-1/3 space-x-3">
+                <div className="md:w-1/3 flex space-x-3">
                   <Input
                     {...form.register(`openingHours.${index}.openHours`)}
                     placeholder="Open Hours"

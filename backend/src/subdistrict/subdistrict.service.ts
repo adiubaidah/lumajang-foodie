@@ -5,8 +5,18 @@ import { PrismaService } from 'src/prisma.service';
 export class SubdistrictService {
   constructor(private prismaService: PrismaService) {}
 
-  async get() {
-    return await this.prismaService.subdistrict.findMany();
+  async all(place: number) {
+    return await this.prismaService.subdistrict.findMany({
+      ...(place && {
+        include: {
+          _count: {
+            select: {
+              Place: true,
+            },
+          },
+        },
+      }),
+    });
   }
 
   async findByName(subdistrictName: string) {

@@ -191,6 +191,18 @@ function Header({ imagePreview, detail }: { imagePreview: any; detail: any }) {
             Foto
           </Link>
         </li>
+        <li>
+          <Link
+            href={`/tempat-makan/${params.slug}/menu`}
+            className={cn(
+              "px-5 py-3 text-xl font-light text-davy",
+              path === `/tempat-makan/${params.slug}/menu` &&
+                "border-b-2 border-puce bg-transparent text-puce",
+            )}
+          >
+            Menu
+          </Link>
+        </li>
       </ul>
     </div>
   );

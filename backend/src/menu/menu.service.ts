@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+// import ObjectId
 import { PrismaService } from 'src/prisma.service';
 import { MenuDto } from './menu.dto';
 import { slugify } from 'src/helper';
@@ -54,7 +55,9 @@ export class MenuService {
             },
           }),
           ...(placeId && {
-            placeId,
+            placeId: {
+              $eq: { $oid: placeId },
+            },
           }),
           ...(minPrice && {
             price: {
@@ -108,7 +111,6 @@ export class MenuService {
     pipeline.push(
       ...[{ $sort: { ...sortBy } }, { $skip: skip }, { $limit: perPage }],
     );
-
     const result = await this.prismaService.menu.aggregateRaw({
       pipeline,
     });

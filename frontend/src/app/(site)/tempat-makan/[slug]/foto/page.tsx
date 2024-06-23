@@ -1,19 +1,23 @@
 "use client";
 
-import React, { SetStateAction , useState} from "react";
+import React, { SetStateAction, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import PaginationComponent from "~/components/ready-use/pagination-button";
 
 import Fancybox from "~/components/ready-use/fancybox";
 import SkeletonImage from "~/components/ready-use/skeleton-image";
-import { axiosInstance, imageFromBackend } from "~/lib/utils";
+import {
+  axiosInstance,
+  createQueryString,
+  imageFromBackend,
+  cn,
+} from "~/lib/utils";
 import { PlacePhoto } from "~/types";
 import { useParams } from "next/navigation";
-
-
+import Loader from "~/components/ready-use/loader";
 
 function Photo() {
-  const params = useParams<{slug: string}>()
+  const params = useParams<{ slug: string }>();
   const { data: detail } = useQuery({
     queryKey: ["place", params.slug],
     queryFn: async () => {
@@ -23,19 +27,18 @@ function Photo() {
   });
   const [page, setPage] = useState(1);
   const { data, isLoading } = useQuery({
-    queryKey: ["place-photo", { place: detail.id, page }],
+    queryKey: ["place-photo", { place: detail.id, page, perPage: 10 }],
     queryFn: async () => {
-      return axiosInstance
-        .get(`/place-photo?place=${detail.id}&page=${page}`)
-        .then((data) => data.data);
+      const query = createQueryString({ place: detail.id, page, perPage: 10 });
+      return (await axiosInstance.get(`/place-photo?${query}`)).data;
     },
     enabled: !!detail.id,
   });
   return (
     <>
-      <Fancybox className="grid grid-cols-5 grid-rows-2 gap-3">
+      <Fancybox className={cn("grid grid-cols-5 h-[500px] grid-rows-2 gap-3", isLoading && 'place-items-center grid-cols-1 grid-rows-1')}>
         {isLoading
-          ? "Loading"
+          ? <Loader />
           : data && data.result
             ? data.result.map((photo: PlacePhoto) => (
                 <a

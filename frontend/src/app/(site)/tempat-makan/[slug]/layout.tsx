@@ -4,9 +4,30 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
-import { cn } from "~/lib/utils";
 import Header from "./header";
-import Link from "next/link";
+import { Metadata } from "next";
+import { imageFromBackend } from "~/lib/utils";
+
+type Props = {
+  params: { slug: string }
+  searchParams: { [key: string]: string | string[] | undefined }
+}
+
+export async function generateMetadata({params}: Props): Promise<Metadata> {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/place/find/?slug=${params.slug}`,
+    {
+      method: "GET",
+      cache: "no-store",
+    },
+  );
+  const result = await response.json();
+
+  return {
+    title: result.name,
+    description: result.description,
+  };
+}
 
 async function Layout({
   children,
@@ -50,9 +71,7 @@ async function Layout({
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <Header detail={data} imagePreview={previewPhoto} />
-      <main className="mt-4 py-3">
-        {children}
-      </main>
+      <main className="mt-4 py-3">{children}</main>
     </HydrationBoundary>
   );
 }

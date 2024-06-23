@@ -20,6 +20,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import SearchInput from "~/components/ready-use/search-input";
 
 function Navbar() {
   const { user } = useAuth();
@@ -51,16 +52,9 @@ function Navbar() {
         alt="Lumajang Foodie"
         width={200}
         height={200}
-        className="h-[44px] lg:h-14 w-auto"
+        className="h-[44px] w-auto lg:h-14"
       />
-      <div className="mt-3 flex w-full max-w-lg items-center space-x-3 rounded-lg bg-white px-2 py-3 shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-        <Search />
-        <input
-          type="text"
-          placeholder="Cari makanan atau tempat makan"
-          className="w-full outline-none placeholder:font-thin placeholder:text-stroke"
-        />
-      </div>
+      <SearchInput />
 
       <ul className="hidden gap-x-5 md:flex">
         {user ? (
@@ -93,7 +87,9 @@ function Navbar() {
                 <DropdownMenuItem asChild>
                   <Link href={"/my-profile/koneksi"}>Koneksi Saya</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>Pesan</DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href={"/chat"}>Chat</Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => logoutMutation.mutate()}>
                   Logout
                 </DropdownMenuItem>

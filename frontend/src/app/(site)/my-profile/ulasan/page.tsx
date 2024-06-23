@@ -16,7 +16,7 @@ function Review() {
               "rounded-md font-light tracking-wider text-puce",
             )}
           >
-            Pengikut
+            Tempat Makan
           </TabsTrigger>
           <TabsTrigger
             value="menu"
@@ -25,7 +25,7 @@ function Review() {
               "rounded-md font-light tracking-wider text-puce",
             )}
           >
-            Mengikuti
+            Menu
           </TabsTrigger>
         </TabsList>
         <TabsContent value="place">

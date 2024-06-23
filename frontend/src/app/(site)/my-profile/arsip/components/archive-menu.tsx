@@ -1,10 +1,12 @@
 import React from 'react'
 import Link from "next/link";
-import { Subdistrict } from '~/types';
+import { useQuery } from "@tanstack/react-query";
+
+import { Subdistrict, Place, PlacePhoto } from '~/types';
 import SkeletonImage from '~/components/ready-use/skeleton-image';
 import { useAuth } from "~/hooks";
-import { axiosInstance } from "~/lib/utils";
-import { useQuery } from "@tanstack/react-query";
+
+import { axiosInstance, imageFromBackend } from "~/lib/utils";
 
 type ArchivePlaceType = {
   id: string;

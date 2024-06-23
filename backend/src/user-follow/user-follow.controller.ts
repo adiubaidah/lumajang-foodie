@@ -7,6 +7,7 @@ import {
   Get,
   Query,
   Delete,
+  BadRequestException,
 } from '@nestjs/common';
 import { Request as RequestExpress } from 'express';
 import { Role as RoleEnum } from '@prisma/client';
@@ -32,6 +33,8 @@ export class UserFollowController {
   @UseGuards(JwtGuard, RoleGuard)
   @Post(':userId')
   async follow(@Param('userId') userId: string, @Req() req: RequestExpress) {
+    if (userId === req['user'].id)
+      throw new BadRequestException('You cannot follow yourself');
     const result = await this.userFollowService.create(userId, req['user'].id);
     return { result, type: 'follow' };
   }

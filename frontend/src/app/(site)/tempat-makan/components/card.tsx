@@ -5,7 +5,7 @@ import { useInView } from "framer-motion";
 
 import { Star } from "~/icons";
 import SkeletonImage from "~/components/ready-use/skeleton-image";
-import { betterToKm, cn, imageFromBackend } from "~/lib/utils";
+import { betterToKm, cn, imageFromBackend, isOpen } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
 import { rateColor } from "~/constant";
 import { BadgeRate } from "~/components/ready-use/badge-rate";
@@ -16,6 +16,7 @@ interface CardPlaceProps {
   slug: string;
   rate: number;
   subdistrict: string;
+  isOpen: boolean;
   distance?: number;
 }
 
@@ -25,6 +26,7 @@ function CardPlace({
   rate,
   subdistrict,
   slug,
+  isOpen,
   distance,
 }: CardPlaceProps) {
   // const ref = useRef(null);
@@ -37,7 +39,7 @@ function CardPlace({
     //   animate={{ scale: isInView ? 1 : 0 }}
     //   transition={{ duration: 0.5 }}
     // >
-    <Link
+    <a
       href={`/tempat-makan/${slug}`}
       className="block rounded-2xl p-2.5 shadow-[0px_4px_7.3px_0px_rgba(0,0,0,0.2)] transition duration-200"
     >
@@ -62,12 +64,21 @@ function CardPlace({
           {subdistrict}
         </p>
       </div>
+      <div className="flex items-center justify-between">
+      {isOpen ? (
+              <span className="text-islamic">Buka</span>
+          ) : (
+              <span className="text-puce">Tutup</span>
+             
+          )}
+
       {!!distance && (
-        <span className="inline-block w-full text-right font-thin text-davy">
+        <span className="inline-block text-right font-thin text-davy">
           {betterToKm(distance)}
         </span>
       )}
-    </Link>
+      </div>
+    </a>
     // </motion.div>
   );
 }

@@ -67,7 +67,7 @@ export class AuthController {
     const token =
       req.cookies['access_token'] ?? (body.token ? body.token.value : null);
     if (!token) {
-      throw new UnauthorizedException('Belum login');
+      return { isAuth: false };
     }
     const access_token = token.split(' ')[1];
     const user = await this.jwtService.verify(access_token, {

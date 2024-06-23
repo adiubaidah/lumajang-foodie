@@ -79,7 +79,7 @@ const helvetica = localFont({
 
 export const metadata: Metadata = {
   title: {
-    template: "Lumajang Foodie | %s",
+    template: "%s | Lumajang Foodie",
     default: "Lumajang Foodie",
   },
   description: "Foodie nya orang Lumajang",

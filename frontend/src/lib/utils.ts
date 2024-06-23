@@ -35,9 +35,10 @@ export const axiosInstance = axios.create({
 
 export const imageFromBackend = (url: string) => {
   const check = url.startsWith("public");
+  const backSlashtoSlash = url.replace(/\\/g, "/");
   return check
-    ? (process.env.NEXT_PUBLIC_SERVER_URL as string) + "/" + url
-    : url;
+    ? (process.env.NEXT_PUBLIC_SERVER_URL as string) + "/" + backSlashtoSlash
+    : backSlashtoSlash;
 };
 
 export const createQueryString = (params: Object) => {

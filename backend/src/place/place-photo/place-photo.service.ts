@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { PlacePhotoDto } from './place-photo.dto';
+import { PlacePhotoType } from '@prisma/client';
 
 @Injectable()
 export class PlacePhotoService {
@@ -24,15 +25,20 @@ export class PlacePhotoService {
     placeId,
     perPage,
     page,
+    type,
   }: {
     placeId: string;
     perPage: number;
     page: number;
+    type?: PlacePhotoType;
   }) {
     const skip = (page - 1) * perPage;
     const result = await this.prismaService.placePhoto.findMany({
       where: {
         placeId,
+        ...(type && {
+          type,
+        }),
       },
       skip,
       take: perPage,

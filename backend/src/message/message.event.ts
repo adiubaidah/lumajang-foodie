@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -7,8 +7,6 @@ import {
   SubscribeMessage,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { ConversationService } from 'src/conversation/conversation.service';
-import { MessageService } from './message.service';
 
 @Injectable()
 @WebSocketGateway({
@@ -27,20 +25,16 @@ export class MessageEvent {
   users = {};
   conversation = new Map<string, string[]>();
 
-  // onModuleInit() {
-  //   this.server.on('connection', (socket) => {
-  //     // console.log('Connected');
-  //   });
-  // }
-
   @SubscribeMessage('register')
   onRegister(
     @MessageBody('userId') userId: string,
     @ConnectedSocket() client: Socket,
   ) {
     this.users[userId] = client.id;
+    // Mark the user as online
     this.server.to(this.users[userId]).emit('registered');
-    console.log(this.users[userId]);
+    // Optionally, notify others that this user is now online
+    this.server.emit(`user-${userId}:status`, { userId, online: true });
   }
 
   @SubscribeMessage('unregister')
@@ -49,7 +43,15 @@ export class MessageEvent {
     @ConnectedSocket() client: Socket,
   ) {
     delete this.users[userId];
+    // Mark the user as offline
     this.server.to(client.id).disconnectSockets();
+    // Optionally, notify others that this user is now offline
+    this.server.emit(`user-${userId}:status`, { userId, online: false });
+  }
+
+  @SubscribeMessage('check:online')
+  onCheckOnline(@MessageBody('userId') userId: string) {
+    return { online: !!this.users[userId] };
   }
 
   @SubscribeMessage('conversation:join')

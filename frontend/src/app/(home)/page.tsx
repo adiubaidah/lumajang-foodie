@@ -1,48 +1,36 @@
-"use client";
-import { useState } from "react";
 import Image from "next/image";
-import { YoutubeCircle, InstagramCircle } from "~/icons";
-import Logo from "~/../public/assets/logo.png";
-import { BottomNavbar, Navbar } from "./components";
-import Breadcrumb from "~/components/ready-use/breadcrumb";
-import Sidebar from "~/components/ready-use/sidebar-1";
 import Link from "next/link";
+import { Search } from "lucide-react";
 import { ChevronRight } from "lucide-react";
+import Logo from "~/../public/assets/logo.png";
+import Subdistricts from "./subdistricts";
+import { InstagramCircle, YoutubeCircle } from "~/icons";
+import SearchInput from "~/components/ready-use/search-input";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
-  const [isToggled, setIsToggled] = useState(true);
-  const [broken, setBroken] = useState(false);
-  // const isDesktop = false
+function Home() {
   return (
     <>
-      <Navbar />
-      <Sidebar
-        setBroken={setBroken}
-        setToggled={setIsToggled}
-        toggled={isToggled}
-      />
+      <main>
+        <section className="flex h-[420px] flex-col items-center justify-center bg-gray-800">
+          <Image
+            src="/assets/logo.png"
+            alt="Lumajang Foodie"
+            width={800}
+            height={400}
+            priority
+            className="h-[80px] w-auto"
+          />
+          <p className="mt-4 text-4xl text-white">
+            Temukan makanan & minuman terbaik di <span>Kabupaten Lumajang</span>
+          </p>
 
-      <button
-        id="hamburger"
-        name="hamburger"
-        type="button"
-        className={`fixed right-4 top-1 block md:hidden ${
-          isToggled ? "hamburger-active" : ""
-        }`}
-        onClick={() => {
-          setIsToggled(!isToggled);
-        }}
-      >
-        <span className="hamburger-line origin-top-left"></span>
-        <span className="hamburger-line"></span>
-        <span className="hamburger-line origin-bottom-left"></span>
-      </button>
-      <main className="container max-w-full py-5">
-        <Breadcrumb />
-        <BottomNavbar />
-        {children}
+          <SearchInput />
+        </section>
+
+        <section className="container max-w-full py-5 font-helvetica">
+          <Subdistricts />
+        </section>
       </main>
-
       <footer className="container flex max-w-full justify-between bg-[#EEEEEE] py-16">
         <div className="w-full md:max-w-lg">
           <Image
@@ -96,3 +84,5 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     </>
   );
 }
+
+export default Home;

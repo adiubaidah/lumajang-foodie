@@ -6,6 +6,7 @@ import {
   Req,
   Body,
   Param,
+  Delete,
 } from '@nestjs/common';
 import { Request as RequestExpress } from 'express';
 import { Role as RoleEnum } from '@prisma/client';
@@ -54,6 +55,19 @@ export class ConversationController {
     return await this.conversationService.seen({
       conversation: conversationId,
       currentUser: user.id,
+    });
+  }
+
+  @Role([RoleEnum.foodie, RoleEnum.owner])
+  @UseGuards(JwtGuard, RoleGuard)
+  @Delete(':conversation')
+  async delete(
+    @Param('conversation') conversationId: string,
+    @Req() req: RequestExpress,
+  ) {
+    return await this.conversationService.delete({
+      conversationId,
+      userId: req['user'].id,
     });
   }
 }

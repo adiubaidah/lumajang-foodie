@@ -42,6 +42,7 @@ export const filterOther: { id: keyof OtherFilter; label: string }[] = [
 
 export type FilterData = {
   sort: string;
+  q: string;
   other: OtherFilter;
 };
 
