@@ -25,7 +25,6 @@ function Client() {
   const sort = searchParams.get("sort") || "name:asc";
 
   const [filter, setFilter] = useState<FilterData>({
-    q: "",
     sort: "name:asc",
     other: {
       cashOnly: 0,
@@ -49,7 +48,6 @@ function Client() {
 
     setFilter({
       sort,
-      q: query,
       other: {
         cashOnly,
         delivery,
@@ -69,7 +67,7 @@ function Client() {
         longitude: location.longitude,
         latitude: location.latitude,
         sort: filter.sort,
-        q: filter.q,
+        q: query,
         ...filter.other,
         page,
       });
