@@ -113,9 +113,13 @@ function Edit({ isOpen, setIsOpen, value }: EditProps) {
 
   const userMutation = useMutation({
     mutationFn: async (payload: FormData) => {
-      return axiosInstance
-        .put("/user/update-profile", payload)
-        .then((data) => data.data);
+      return (
+        await axiosInstance.put("/user/update-profile", payload, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+      ).data;
     },
     onSuccess: () => {
       toast.success("Profile berhasil diupdate");
@@ -258,7 +262,7 @@ function Edit({ isOpen, setIsOpen, value }: EditProps) {
                         ? URL.createObjectURL(image)
                         : typeof image === "string"
                           ? imageFromBackend(image)
-                          : ""
+                          : "/assets/avatar.png"
                     }
                     width={180}
                     height={180}
@@ -292,7 +296,7 @@ function Edit({ isOpen, setIsOpen, value }: EditProps) {
                         ? URL.createObjectURL(backgroundImage)
                         : typeof backgroundImage === "string"
                           ? imageFromBackend(backgroundImage)
-                          : ""
+                          : "/assets/default-bg1.jpg"
                     }
                     width={400}
                     height={400}

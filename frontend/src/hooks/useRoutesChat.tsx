@@ -1,3 +1,4 @@
+"use client"
 import { useMemo } from "react";
 import { MessageCircleMore, UsersRound } from "lucide-react";
 
@@ -13,7 +14,7 @@ const useRoutes = () => {
     () => [
       {
         label: "Chat",
-        href: "/conversations",
+        href: "/chat",
         icon: MessageCircleMore,
         active: pathname === "/chat" || !!conversationId,
       },

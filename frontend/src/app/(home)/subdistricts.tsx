@@ -13,9 +13,6 @@ function Subdistricts() {
   });
   return (
     <React.Fragment>
-      <h2 className="font-product-sans text-4xl font-light text-[#363636]">
-        Tersebar ke berbagai Kecamatan
-      </h2>
       <div className="mt-7 grid gap-4 md:grid-cols-3">
         {subdistricts &&
           subdistricts.length > 0 &&

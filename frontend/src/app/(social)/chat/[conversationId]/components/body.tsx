@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import find from "lodash/find";
 
 import { useSocket, useConversation, useAuth } from "~/hooks";
@@ -13,13 +14,26 @@ interface BodyProps {
   initialMessages: FullMessageType[];
 }
 
-const Body: React.FC<BodyProps> = ({ initialMessages = [] }) => {
+const Body = () => {
   const { user: currentUser } = useAuth();
   const bottomRef = useRef<HTMLDivElement>(null);
   const { socket } = useSocket();
-  const [messages, setMessages] = useState(initialMessages);
+  const [messages, setMessages] = useState<FullMessageType[]>([]);
 
   const { conversationId } = useConversation();
+
+  const { isLoading } = useQuery({
+    queryKey: ["messages", conversationId],
+    queryFn: async () => {
+      const response = (
+        await axiosInstance.get(`/message?conversation=${conversationId}`)
+      ).data;
+      setMessages(response);
+      return response;
+    },
+    enabled: !!conversationId,
+    refetchOnMount: "always",
+  });
 
   useEffect(() => {
     axiosInstance.post(`/conversation/${conversationId}/seen`);

@@ -18,17 +18,22 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
+import { ClassValue } from "clsx";
 
 interface SubdistrictComboBoxProps {
   value: string;
-  setValue: React.Dispatch<React.SetStateAction<string>>;
+  setValue: (value: string) => void;
   onChange: (value: string) => void;
+  buttonClassName?: ClassValue;
+  contentClassName?: ClassValue;
 }
 
 export function SubdistrictComboBox({
   value,
   setValue,
   onChange,
+  buttonClassName,
+  contentClassName,
 }: SubdistrictComboBoxProps) {
   const [open, setOpen] = React.useState(false);
   const { data = [] } = useQuery<Subdistrict[]>({
@@ -47,7 +52,7 @@ export function SubdistrictComboBox({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-[200px] justify-between"
+            className={cn("w-[200px] justify-between", buttonClassName)}
           >
             {value
               ? data.find((subdistrict) => subdistrict.id === value)?.name
@@ -57,16 +62,18 @@ export function SubdistrictComboBox({
         </PopoverTrigger>
         <PopoverContent className="w-[300px] p-0">
           <Command>
-            <CommandInput placeholder="Search subdistrict..." />
+            <CommandInput placeholder="Cari Kecamatan" />
             <CommandEmpty>Kecamatan tidak ditemukan.</CommandEmpty>
             <CommandList>
               {data.map((subdistrict) => (
                 <CommandItem
                   key={subdistrict.id}
-                  onSelect={() => {
-                    setValue(subdistrict.id);
+                  value={subdistrict.id}
+                  onSelect={(currentValue) => {
+                      setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
                     onChange(subdistrict.id);
+                    // console.log(currentValue);
                   }}
                 >
                   <Check

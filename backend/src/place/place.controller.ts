@@ -39,6 +39,7 @@ export class PlaceController {
     @Query('sort') sort: string,
     @Query('longitude') longitude: number,
     @Query('latitude') latitude: number,
+    @Query('subdistrict') subdistrict: string,
   ) {
     return await this.placeService.all({
       page: page || 1,
@@ -54,6 +55,7 @@ export class PlaceController {
       query: q,
       sort,
       servesCoffe,
+      subdistrict,
     });
   }
 

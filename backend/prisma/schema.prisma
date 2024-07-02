@@ -73,6 +73,7 @@ model Subdistrict {
 model Place {
   id            String         @id @default(auto()) @map("_id") @db.ObjectId
   slug          String         @unique
+  placeGoogleId String         @unique
   name          String
   description   String?
   address       String
@@ -104,17 +105,25 @@ type OpeningHours {
 }
 
 model PlaceReview {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String             @id @default(auto()) @map("_id") @db.ObjectId
   star      Int
   review    String
-  userId    String   @db.ObjectId
-  user      User     @relation(fields: [userId], references: [id])
-  placeId   String   @db.ObjectId
-  place     Place    @relation(fields: [placeId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  userId    String             @db.ObjectId
+  user      User               @relation(fields: [userId], references: [id])
+  placeId   String             @db.ObjectId
+  place     Place              @relation(fields: [placeId], references: [id])
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+  photos    PlaceReviewPhoto[]
 
   @@unique([userId, placeId])
+}
+
+model PlaceReviewPhoto {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  url           String
+  placeReview   PlaceReview @relation(fields: [placeReviewId], references: [id])
+  placeReviewId String      @db.ObjectId
 }
 
 enum PlacePhotoType {
@@ -124,11 +133,12 @@ enum PlacePhotoType {
 }
 
 model PlacePhoto {
-  id      String         @id @default(auto()) @map("_id") @db.ObjectId
-  url     String
-  type    PlacePhotoType
-  place   Place          @relation(fields: [placeId], references: [id])
-  placeId String         @db.ObjectId
+  id                String         @id @default(auto()) @map("_id") @db.ObjectId
+  url               String
+  type              PlacePhotoType
+  // thumbnailPosition Int?
+  place             Place          @relation(fields: [placeId], references: [id])
+  placeId           String         @db.ObjectId
 }
 
 model PlaceArchive {
@@ -147,14 +157,14 @@ enum MenuType {
 }
 
 model Menu {
-  id      String    @id @default(auto()) @map("_id") @db.ObjectId
-  slug    String    @unique
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  slug    String   @unique
   name    String
   photo   String
-  type   MenuType
+  type    MenuType
   price   Int
-  place   Place     @relation(fields: [placeId], references: [id])
-  placeId String    @db.ObjectId
+  place   Place    @relation(fields: [placeId], references: [id])
+  placeId String   @db.ObjectId
 
   reviews  MenuReview[]
   // photos   MenuPhoto[]

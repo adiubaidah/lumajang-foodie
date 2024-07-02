@@ -12,12 +12,19 @@ import { UserFollowModule } from './user-follow/user-follow.module';
 import { MenuModule } from './menu/menu.module';
 import { MessageModule } from './message/message.module';
 import { ConversationModule } from './conversation/conversation.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..'),
     }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 10,
+      },
+    ]),
     AuthModule,
     UserModule,
     ScrappingModule,
@@ -27,7 +34,6 @@ import { ConversationModule } from './conversation/conversation.module';
     MenuModule,
     MessageModule,
     ConversationModule,
-    // MessageEventModule,
   ],
   controllers: [AppController],
   providers: [AppService],

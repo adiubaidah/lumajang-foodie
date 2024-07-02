@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
+import FoodMedia from "~/../public/assets/food-media.svg";
 import { axiosInstance } from "~/lib/utils";
 import { Separator } from "~/components/ui/separator";
 import PasswordInput from "~/components/ready-use/password-input";
@@ -52,14 +53,14 @@ function Client() {
     registerMutation.mutate(values);
   }
   return (
-    <div className="flex min-h-screen w-full items-center">
+    <div className="flex h-screen w-full items-center">
       <div className="flex h-full w-full flex-col items-center justify-center bg-white px-5 shadow-xl md:max-w-md">
         <Image
           src="/assets/logo.png"
           alt="lumajang foodie"
           height={400}
           width={400}
-          className="h-[109px] w-[297px]"
+          className="h-[87px] w-auto"
         />
         <h3 className="my-3 text-xl font-bold">Login ke Akun Anda</h3>
         <Form {...form}>
@@ -174,15 +175,8 @@ function Client() {
           </form>
         </Form>
       </div>
-      <div className="hidden w-full items-center justify-center md:flex">
-        {/* <LoginIlustrator /> */}
-        <Image
-          src="/assets/login-illustrator.jpg"
-          width={500}
-          height={500}
-          className="h-auto w-[400px] object-cover mix-blend-multiply"
-          alt="login"
-        />
+      <div className="hidden h-full w-full items-center justify-center md:flex">
+        <FoodMedia height={"100%"} width={800} />
       </div>
     </div>
   );

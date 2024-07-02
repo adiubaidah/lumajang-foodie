@@ -42,16 +42,12 @@ export class MessageEvent {
     @MessageBody('userId') userId: string,
     @ConnectedSocket() client: Socket,
   ) {
+    console.log(this.users[userId]);
     delete this.users[userId];
     // Mark the user as offline
     this.server.to(client.id).disconnectSockets();
     // Optionally, notify others that this user is now offline
     this.server.emit(`user-${userId}:status`, { userId, online: false });
-  }
-
-  @SubscribeMessage('check:online')
-  onCheckOnline(@MessageBody('userId') userId: string) {
-    return { online: !!this.users[userId] };
   }
 
   @SubscribeMessage('conversation:join')

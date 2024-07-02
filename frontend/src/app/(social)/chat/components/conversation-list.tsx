@@ -13,23 +13,23 @@ import { FullConversationType, User } from "~/types";
 import React from "react";
 import { axiosInstance, cn } from "~/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import { set } from "lodash";
 
 function ConversationList() {
   const router = useRouter();
-  const { socket } = useSocket();
-  const { user } = useAuth();
   const [items, setItems] = useState<FullConversationType[]>([]);
+  const { socket } = useSocket();
 
   const { conversationId, isOpen } = useConversation();
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["conversation", { auth: user && user.id }],
+  const { isLoading } = useQuery({
+    queryKey: ["conversations"],
     queryFn: async () => {
       const response = (await axiosInstance.get("/conversation")).data;
       setItems(response);
       return response;
     },
-    enabled: !!user && !!user.id,
+    refetchOnMount: "always",
   });
 
   useEffect(() => {
@@ -90,21 +90,15 @@ function ConversationList() {
     >
       <div className="px-5">
         <div className="mb-4 flex justify-between pt-4">
-          <div className="text-2xl font-bold text-neutral-800">
-            Pesan
-          </div>
+          <div className="text-2xl font-bold text-neutral-800">Pesan</div>
         </div>
-        {isLoading
-          ? "Loading"
-          : items.length > 0
-            ? items.map((item) => (
-                <ConversationBox
-                  key={item.id}
-                  data={item}
-                  selected={conversationId === item.id}
-                />
-              ))
-            : "Mulai chat"}
+        {items.map((item) => (
+          <ConversationBox
+            key={item.id}
+            data={item}
+            selected={conversationId === item.id}
+          />
+        ))}
       </div>
     </aside>
   );

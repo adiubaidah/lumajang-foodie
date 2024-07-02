@@ -1,18 +1,9 @@
 "use client";
-import React, { SetStateAction, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useParams } from "next/navigation";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { Loader2, SquarePen, SquarePlus } from "lucide-react";
-
-import { rateColor } from "~/constant";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-} from "~/components/ui/dialog";
+import { useQuery } from "@tanstack/react-query";
+import Review from "~/../public/assets/review.svg";
+import { cn } from "~/lib/utils";
 import {
   axiosInstance,
   createQueryString,
@@ -57,8 +48,7 @@ function Ulasan() {
         { place: detail.id, auth: user && user.id },
       ],
       queryFn: async () => {
-
-        if(!user) return null;
+        if (!user) return null;
 
         const query = createQueryString({
           place: detail.id,
@@ -100,7 +90,7 @@ function Ulasan() {
           <div>
             <Loader />
           </div>
-        ) : data && data.result ? (
+        ) : data && data.result.length > 0 ? (
           data.result.map((review: Review) => (
             <div
               key={review.id}
@@ -132,7 +122,10 @@ function Ulasan() {
             </div>
           ))
         ) : (
-          "Data tidak ditemukan"
+          <div className="flex flex-col items-center mt-6">
+            <Review height={100} width={100} />
+            <p className="text-center text-gray-500 font-helvetica text-xl">Belum ada review</p>
+          </div>
         )}
       </div>
       <div className="mt-4">

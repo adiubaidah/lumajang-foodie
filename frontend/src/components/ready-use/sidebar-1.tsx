@@ -97,18 +97,11 @@ function Sidebar({ toggled, setToggled, setBroken }: SidebarProps) {
           Restoran
         </MenuItem>
         <MenuItem
-          component={<Link href="/makanan" />}
+          component={<Link href="/menu" />}
           icon={<Soup size={20} />}
-          active={pathname === "/makanan"}
+          active={pathname === "/menu"}
         >
-          Makanan
-        </MenuItem>
-        <MenuItem
-          component={<Link href="/minuman" />}
-          icon={<GlassWater size={20} />}
-          active={pathname === "/minuman"}
-        >
-          Makanan
+          Menu
         </MenuItem>
       </Menu>
       <div className="mt-6 px-6 text-[10px] uppercase tracking-wide">

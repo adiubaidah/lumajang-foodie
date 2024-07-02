@@ -10,6 +10,7 @@ import Link from "next/link";
 import { Loader2 } from "lucide-react";
 
 import { axiosInstance } from "~/lib/utils";
+import FoodMedia from "~/../public/assets/food-media.svg";
 import PasswordInput from "~/components/ready-use/password-input";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
@@ -134,15 +135,9 @@ function Client() {
           </form>
         </Form>
       </div>
-      <div className="hidden w-full items-center justify-center md:flex">
+      <div className="hidden h-full w-full items-center justify-center md:flex">
         {/* <LoginIlustrator /> */}
-        <Image
-          src="/assets/login-illustrator.jpg"
-          width={500}
-          height={500}
-          className="h-auto w-[400px] object-cover mix-blend-multiply"
-          alt="login"
-        />
+        <FoodMedia height={"100%"} width={800} />
       </div>
     </div>
   );

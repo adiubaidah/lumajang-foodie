@@ -7,6 +7,7 @@ import {
   Body,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { Request as RequestExpress } from 'express';
 import { Role as RoleEnum } from '@prisma/client';
@@ -27,6 +28,8 @@ export class ConversationController {
   async allByUser(@Req() req: RequestExpress) {
     return await this.conversationService.allByUser(req['user'].id);
   }
+
+ 
 
   @Role([RoleEnum.foodie, RoleEnum.owner, RoleEnum.admin])
   @UseGuards(JwtGuard, RoleGuard)

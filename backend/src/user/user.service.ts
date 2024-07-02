@@ -3,10 +3,29 @@ import { RegisterDto } from 'src/auth/auth.dto';
 import { PrismaService } from 'src/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { UserDto } from './user.dto';
-import { Prisma, Role } from '@prisma/client';
+import { Prisma, Role, User } from '@prisma/client';
+import { MessageEvent } from 'src/message/message.event';
 @Injectable()
 export class UserService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private messageEvent: MessageEvent,
+  ) {}
+
+  async checkOnline(id: string) {
+    return { userId: id, online: !!this.messageEvent.users[id] };
+  }
+
+  async unregister(id: string) {
+    const clientId = this.messageEvent.users[id];
+    this.messageEvent.server.to(clientId).disconnectSockets();
+    delete this.messageEvent.users[id];
+    this.messageEvent.server.emit(`user-${id}:status`, {
+      userId: id,
+      online: false,
+    });
+    return { userId: id, online: false };
+  }
 
   async create(payload: RegisterDto) {
     const { email, name, password } = payload;
@@ -40,16 +59,13 @@ export class UserService {
     q,
     isActive,
     role,
-    page,
-    perPage,
+    currentUser,
   }: {
     q: string;
     isActive: number;
     role?: Role;
-    page: number;
-    perPage: number;
+    currentUser: User;
   }) {
-    const skip = (page - 1) * perPage;
     const filterOptions = {};
     if (isActive) {
       filterOptions['isActive'] = isActive === 1;
@@ -62,23 +78,41 @@ export class UserService {
     if (!!q) {
       whereClause.OR = [
         {
-          email: {
-            startsWith: q,
-          },
-        },
-        {
           name: {
             contains: q,
             mode: 'insensitive',
           },
         },
       ];
+      if (currentUser.role === 'admin') {
+        whereClause.OR.push({
+          email: {
+            startsWith: q,
+          },
+        });
+      }
+    }
+
+    if (currentUser.role !== 'admin') {
+      // if it user is foodie or owner
+      whereClause.id = {
+        not: currentUser.id,
+      };
+      whereClause.role = {
+        not: 'admin',
+      };
     }
 
     return await this.prismaService.user.findMany({
       where: whereClause,
-      take: perPage,
-      skip,
+      select: {
+        id: true,
+        email: true,
+        isActive: true,
+        role: true,
+        name: true,
+        image: true,
+      },
     });
   }
   async find(userId: string) {

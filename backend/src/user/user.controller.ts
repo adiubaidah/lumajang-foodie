@@ -9,7 +9,11 @@ import {
   Body,
   Query,
   Param,
+  Delete,
   ForbiddenException,
+  UsePipes,
+  ValidationPipe,
+  Post,
 } from '@nestjs/common';
 import { Role as RoleEnum } from '@prisma/client';
 import { Request as RequestExpress } from 'express';
@@ -23,12 +27,13 @@ import { JwtGuard } from 'src/auth/jwt.guard';
 import { UserService } from './user.service';
 import { RoleGuard } from 'src/role/role.guard';
 import { UpdatePasswordDto, UserDto } from './user.dto';
+import { makeid } from 'src/helper';
 
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Role([RoleEnum.admin])
+  @Role([RoleEnum.owner, RoleEnum.foodie, RoleEnum.admin])
   @UseGuards(JwtGuard, RoleGuard)
   @Get()
   async all(
@@ -37,14 +42,26 @@ export class UserController {
     @Query('q') query: string,
     @Query('isActive') isActive: number,
     @Query('role') role: RoleEnum,
+    @Req() req: RequestExpress,
   ) {
     return await this.userService.all({
-      perPage: perPage || 10,
-      page: page || 1,
       q: query,
       isActive,
       role,
+      currentUser: req['user'],
     });
+  }
+
+  @Get('online')
+  async checkOnline(@Query('id') id: string) {
+    return await this.userService.checkOnline(id);
+  }
+
+  @Role([RoleEnum.foodie, RoleEnum.admin, RoleEnum.owner])
+  @UseGuards(JwtGuard, RoleGuard)
+  @Delete('online')
+  async unregister(@Req() req: RequestExpress) {
+    return await this.userService.unregister(req['user'].id);
   }
 
   @Get(':id')
@@ -54,6 +71,7 @@ export class UserController {
 
   @Role([RoleEnum.foodie, RoleEnum.admin, RoleEnum.owner])
   @UseGuards(JwtGuard, RoleGuard)
+  // @UsePipes(new ValidationPipe({ forbidNonWhitelisted: false }))
   @UseInterceptors(
     FileFieldsInterceptor(
       [
@@ -63,9 +81,17 @@ export class UserController {
       {
         fileFilter: fileFilter,
         storage: diskStorage({
-          destination: 'public/img/user',
+          destination: (req, file, cb) => {
+            // Determine the destination based on the file field name
+            const destinationPath =
+              file.fieldname === 'image'
+                ? 'public/img/user/profile'
+                : 'public/img/user/background';
+            cb(null, destinationPath);
+          },
           filename: (req, file, cb) => {
-            cb(null, Date.now() + '-' + file.originalname);
+            const fileExtension = file.originalname.split('.').pop();
+            cb(null, `${Date.now()}-${makeid(6)}.${fileExtension}`);
           },
         }),
       },

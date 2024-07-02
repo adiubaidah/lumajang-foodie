@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { X } from "lucide-react";
+
+import SearchNotFound from "~/../public/assets/search-not-found.svg";
 import PaginationComponent from "~/components/ready-use/pagination-link";
 
 import { useUserLocation } from "~/hooks";
@@ -22,6 +24,7 @@ function Client() {
   const router = useRouter();
   const page = searchParams.get("page") || "1";
   const query = searchParams.get("q") || "";
+  const subdistrict = searchParams.get("subdistrict") || "";
   const sort = searchParams.get("sort") || "name:asc";
 
   const [filter, setFilter] = useState<FilterData>({
@@ -61,13 +64,14 @@ function Client() {
   }, [searchParams, sort, query]);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["places", filter, page, location],
+    queryKey: ["places", subdistrict, query, filter, page, location],
     queryFn: async () => {
       const queryString = createQueryString({
         longitude: location.longitude,
         latitude: location.latitude,
         sort: filter.sort,
         q: query,
+        subdistrict,
         ...filter.other,
         page,
       });
@@ -109,8 +113,10 @@ function Client() {
 
       <div
         className={cn(
-          "grid gap-x-10 gap-y-11 py-3",
-          !isLoading && "md:grid-cols-3",
+          "grid w-full gap-x-10 gap-y-11 py-3",
+          !isLoading && data.result.length > 0
+            ? "md:grid-cols-3"
+            : "place-items-center",
         )}
       >
         {isLoading || !data ? (
@@ -135,7 +141,10 @@ function Client() {
             />
           ))
         ) : (
-          "Data tidak ditemukan"
+          <div className="flex flex-col items-center">
+            <SearchNotFound height={100} width={100} />
+            <p>Hasil tidak ditemukan</p>
+          </div>
         )}
       </div>
 

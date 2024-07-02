@@ -36,7 +36,7 @@ function Photo() {
   });
   return (
     <>
-      <Fancybox className={cn("grid grid-cols-5 h-[500px] grid-rows-2 gap-3", isLoading && 'place-items-center grid-cols-1 grid-rows-1')}>
+      <Fancybox className={cn("grid grid-cols-2 md:grid-cols-5 h-[500px] grid-rows-2 gap-3", isLoading && 'place-items-center grid-cols-1 grid-rows-1')}>
         {isLoading
           ? <Loader />
           : data && data.result

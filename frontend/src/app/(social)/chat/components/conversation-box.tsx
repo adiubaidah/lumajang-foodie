@@ -50,40 +50,40 @@ function ConversationBox({ data, selected }: Props) {
 
   return (
     <div
-    onClick={handleClick}
-    className={cn(
-      `w-full relative flex items-center space-x-3 p-3 hover:bg-neutral-100 dark:bg-black dark:hover:bg-neutral-900 rounded-lg transition cursor-pointer`,
-      selected
-        ? "bg-neutral-100 dark:bg-neutral-900"
-        : "bg-white dark:bg-black"
-    )}
-  >
-    <Avatar user={otherUser} />
-    <div className="min-w-0 flex-0">
-      <div className="focus:outline-none">
-        <div className="flex justify-between items-center mb-1">
-          <p className="text-md text-gray-900 dark:text-gray-100 font-medium truncate">
-            {otherUser.name}
-          </p>
-          {lastMessage?.createdAt && (
-            <p className="text-xs text-gray-400 font-light dark:text-gray-300 pl-2">
-              {formatTime(new Date(lastMessage.createdAt))}
+      onClick={handleClick}
+      className={cn(
+        `relative flex w-full cursor-pointer items-center space-x-3 rounded-lg p-3 transition hover:bg-neutral-100 dark:bg-black dark:hover:bg-neutral-900`,
+        selected
+          ? "bg-neutral-100 dark:bg-neutral-900"
+          : "bg-white dark:bg-black",
+      )}
+    >
+      <Avatar user={otherUser} />
+      <div className="flex-0 min-w-0">
+        <div className="focus:outline-none">
+          <div className="mb-1 flex items-center justify-between">
+            <p className="text-md truncate font-medium text-gray-900 dark:text-gray-100">
+              {otherUser.name}
             </p>
-          )}
+            {lastMessage?.createdAt && (
+              <p className="pl-2 text-xs font-light text-gray-400 dark:text-gray-300">
+                {formatTime(new Date(lastMessage.createdAt))}
+              </p>
+            )}
+          </div>
+          <p
+            className={cn(
+              `truncate text-sm`,
+              hasSeen
+                ? "text-gray-500 dark:text-gray-400"
+                : "font-medium text-black dark:text-white",
+            )}
+          >
+            {lastMessageText}
+          </p>
         </div>
-        <p
-          className={cn(
-            `truncate text-sm`,
-            hasSeen
-              ? "text-gray-500 dark:text-gray-400"
-              : "text-black dark:text-white font-medium"
-          )}
-        >
-          {lastMessageText}
-        </p>
       </div>
     </div>
-  </div>
   );
 }
 

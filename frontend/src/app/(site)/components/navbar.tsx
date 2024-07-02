@@ -41,9 +41,7 @@ function Navbar() {
   return (
     <header
       className={cn(
-        "container z-20 max-w-full flex-col items-center justify-between bg-poteh pb-3 pt-5 font-semibold uppercase md:flex-row",
-        yAxis > 10 &&
-          "fixed -top-12 max-w-full translate-y-[48px] shadow-md transition duration-500",
+        "container z-20 max-w-full flex-col items-center justify-between bg-poteh pb-3 pt-5 font-semibold uppercase md:flex-row gap-x-3",
         path === "/register" || path === "/login" ? "hidden" : "md:flex",
       )}
     >
@@ -54,7 +52,9 @@ function Navbar() {
         height={200}
         className="h-[44px] w-auto lg:h-14"
       />
-      <SearchInput />
+      <div className="hidden md:block w-full">
+        <SearchInput />
+      </div>
 
       <ul className="hidden gap-x-5 md:flex">
         {user ? (
@@ -63,7 +63,7 @@ function Navbar() {
               <DropdownMenuTrigger className="flex items-center gap-x-3">
                 <SkeletonImage
                   src={imageFromBackend(
-                    user.image ?? "public/img/user/default.png",
+                    user.image ?? "/assets/avatar.png",
                   )}
                   alt={user.name}
                   height={100}

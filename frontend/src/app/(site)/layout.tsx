@@ -10,7 +10,7 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const [isToggled, setIsToggled] = useState(true);
+  const [isToggled, setIsToggled] = useState(false);
   const [broken, setBroken] = useState(false);
   // const isDesktop = false
   return (
@@ -45,14 +45,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {children}
       </main>
 
-      <footer className="container flex max-w-full justify-between bg-[#EEEEEE] py-16">
+      <footer className="container flex flex-col md:flex-row gap-y-5 max-w-full justify-between bg-[#EEEEEE] py-16">
         <div className="w-full md:max-w-lg">
           <Image
             src={Logo}
             alt="Lumajang Foodie"
             className="h-[56px] w-auto lg:h-16"
           />
-          <p className="leading-tight">
+          <p className="mt-3 leading-tight">
             Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eum
             repellendus necessitatibus corrupti soluta sed recusandae ipsum ipsa
             nulla deleniti nisi?

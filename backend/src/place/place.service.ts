@@ -25,6 +25,7 @@ export class PlaceService {
       longitude,
       latitude,
       sort,
+      subdistrict,
     }: {
       perPage: number;
       page: number;
@@ -39,6 +40,7 @@ export class PlaceService {
       longitude: number;
       latitude: number;
       sort: string;
+      subdistrict: string;
     },
     // popularSort: number,
   ) {
@@ -73,6 +75,13 @@ export class PlaceService {
       $match: {
         name: query ? { $regex: query, $options: 'i' } : undefined,
         ...filterOptions,
+        ...(subdistrict && {
+          subdistrictId: {
+            $eq: {
+              $oid: subdistrict,
+            },
+          },
+        }),
         ...(openNow === 1 && {
           openingHours: {
             $elemMatch: {

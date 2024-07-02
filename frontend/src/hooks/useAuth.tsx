@@ -27,9 +27,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     queryFn: async () => {
       const user = (await axiosInstance.post("/auth/is-auth")).data;
       if(user.isAuth === false) return null;
-      user.image = imageFromBackend(
-        user.image ?? "public/img/user/default.png",
-      );
+      user.image = user.image ? imageFromBackend(
+        user.image,
+      ): "/assets/avatar.png";
       return user;
     },
     retry: false,

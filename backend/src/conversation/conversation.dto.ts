@@ -1,5 +1,6 @@
-import { IsBoolean, IsString } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 export class ConversationDto {
+  @IsOptional()
   @IsBoolean({ message: 'Group tidak valid' })
   isGroup: boolean;
 

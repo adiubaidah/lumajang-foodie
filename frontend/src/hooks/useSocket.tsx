@@ -3,8 +3,9 @@ import { useEffect, useState, createContext, useContext } from "react";
 import io, { Socket } from "socket.io-client";
 import toast from "react-hot-toast";
 import { useAuth } from "~/hooks";
-import { ConversationUpdate } from "~/app/(chat)/chat/components/conversation-update";
+import { ConversationUpdate } from "~/app/(social)/chat/components/conversation-update";
 import { usePathname } from "next/navigation";
+import { axiosInstance } from "~/lib/utils";
 
 export const socket = io(`${process.env.NEXT_PUBLIC_SERVER_URL}/message`, {
   autoConnect: false,
@@ -21,6 +22,10 @@ export const SocketContext = createContext<SocketProviderType>({
   isConnected: false,
 });
 
+const unregister = async () => {
+  return (await axiosInstance.delete("/user/online")).data;
+};
+
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const { user } = useAuth();
@@ -34,7 +39,8 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     return () => {
-      socket.off("connect", () => setIsConnected(false));
+      socket.off("connect");
+      socket.off("disconnect");
     };
   }, []);
 
@@ -44,25 +50,8 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
       console.log("registered");
     });
 
-    // if (path !== "/chat") {
-    //   socket.on("conversation:update", (data) => {
-    //     toast.custom((t) => (
-    //       <ConversationUpdate
-    //         callback={() => toast.dismiss(t.id)}
-    //         isVisible={t.visible}
-    //         message={data.messages[data.messages.length - 1]}
-    //         user={data.messages.seen[0]}
-    //       />
-    //     ));
-    //   });
-    // }
-
     return () => {
       socket.off("registered");
-      // if (path !== "/chat") {
-      //   socket.off("conversation:update");
-      // }
-      // socket.emit("unregister", { userId: user && user.id });
     };
   }, [user]);
   return (
