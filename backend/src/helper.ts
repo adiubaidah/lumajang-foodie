@@ -48,3 +48,25 @@ export function makeid(length: number) {
 export function sumArray(arr: number[]) {
   return arr.reduce((a, b) => a + b, 0);
 }
+
+type DayHours = {
+  day: string;
+  openTime: string | null;
+  closeTime: string | null;
+};
+
+export const parseWeekdayDescriptions = (
+  descriptions: string[],
+): DayHours[] => {
+  return descriptions.map((desc) => {
+    const [day, time] = desc.split(': ');
+    if (time === 'Buka 24 jam') {
+      return { day, openTime: '00:00', closeTime: '23:59' };
+    } else if (time === 'Tutup') {
+      return { day, openTime: null, closeTime: null };
+    } else {
+      const [openTime, closeTime] = time.split('–');
+      return { day, openTime, closeTime };
+    }
+  });
+};

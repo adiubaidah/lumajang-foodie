@@ -1,5 +1,4 @@
 import { Pagination as PaginationType } from "~/types";
-
 import {
   Pagination,
   PaginationContent,
@@ -20,36 +19,74 @@ const PaginationComponent = ({
   path: string;
 }) => {
   if (!data.pageCount) return null;
-  const getPageNumbers = () => {
-    const pageNumbers = [];
-    let startPage, endPage;
 
-    if (data.pageCount <= 10) {
-      // Tampilkan semua nomor halaman jika jumlah halaman total 10 atau kurang
-      startPage = 1;
-      endPage = data.pageCount;
-    } else {
-      // Jika halaman saat ini kurang dari 6, maka 10 halaman dari awal.
-      if (data.page < 6) {
-        startPage = 1;
-        endPage = 10;
-      } else if (data.page + 4 >= data.pageCount) {
-        startPage = data.pageCount - 9;
-        endPage = data.pageCount;
-      } else {
-        startPage = data.page - 5;
-        endPage = data.page + 4;
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    let startPage = Math.max(1, data.page - 1);
+    let endPage = Math.min(data.pageCount, data.page + 2);
+
+    if (data.page > 2) {
+      pageNumbers.push(
+        <PaginationItem>
+          <PaginationLink
+            href={!!query ? `${path}?${exceptPage()}&page=1` : `${path}?page=1`}
+            isActive={data.page === 1}
+          >
+            1
+          </PaginationLink>
+        </PaginationItem>,
+      );
+      if (data.page > 3) {
+        pageNumbers.push(
+          <PaginationItem>
+            <PaginationEllipsis />
+          </PaginationItem>,
+        );
       }
     }
-
     for (let i = startPage; i <= endPage; i++) {
-      pageNumbers.push(i);
+      pageNumbers.push(
+        <PaginationItem key={i}>
+          <PaginationLink
+            href={
+              !!query
+                ? `${path}?${exceptPage()}&page=${i}`
+                : `${path}?page=${i}`
+            }
+            isActive={data.page === i}
+          >
+            {i}
+          </PaginationLink>
+        </PaginationItem>,
+      );
+    }
+
+    if (data.page < data.pageCount - 2) {
+      if (data.page < data.pageCount - 3) {
+        pageNumbers.push(
+          <PaginationItem>
+            <PaginationEllipsis />
+          </PaginationItem>,
+        );
+      }
+      pageNumbers.push(
+        <PaginationItem>
+          <PaginationLink
+            href={
+              !!query
+                ? `${path}?${exceptPage()}&page=${data.pageCount}`
+                : `${path}?page=${data.pageCount}`
+            }
+            isActive={data.page === data.pageCount}
+          >
+            {data.pageCount}
+          </PaginationLink>
+        </PaginationItem>,
+      );
     }
 
     return pageNumbers;
   };
-
-  const pageNumbers = getPageNumbers();
 
   const exceptPage = () => {
     const url = new URLSearchParams(query);
@@ -71,39 +108,7 @@ const PaginationComponent = ({
             />
           </PaginationItem>
         )}
-        {pageNumbers.map((number, index) => (
-          <PaginationItem key={index}>
-            <PaginationLink
-              href={
-                !!query
-                  ? `${path}?${exceptPage()}&page=${number}`
-                  : `${path}?page=${number}`
-              }
-              isActive={data.page === number}
-            >
-              {number}
-            </PaginationLink>
-          </PaginationItem>
-        ))}
-        {data.pageCount > 10 && data.page < data.pageCount - 4 && (
-          <PaginationItem>
-            <PaginationEllipsis />
-          </PaginationItem>
-        )}
-        {data.pageCount > 10 && (
-          <PaginationItem>
-            <PaginationLink
-              href={
-                !!query
-                  ? `${path}${exceptPage()}&page=${data.pageCount}`
-                  : `${path}?page=${data.pageCount}`
-              }
-              isActive={data.page === data.pageCount}
-            >
-              {data.pageCount}
-            </PaginationLink>
-          </PaginationItem>
-        )}
+        {renderPageNumbers()}
         {data.next && (
           <PaginationItem>
             <PaginationNext

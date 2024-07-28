@@ -28,15 +28,17 @@ function Follower() {
         : data && data.length > 0
           ? data.map((follower: FollowerType) => (
               <div key={follower.id} className="flex items-center gap-x-3">
+                <div className="h-12 w-12 rounded-full">
                 <SkeletonImage
-                  src={imageFromBackend(
-                    follower.follower.image ?? "public/img/user/default.png",
-                  )}
+                  src={ follower.follower.image ? imageFromBackend(
+                    follower.follower.image,
+                  ) : "/assets/avatar.png"}
                   alt={follower.follower.name}
                   width={100}
                   height={100}
-                  className="h-12 w-12 rounded-full"
+                  skeletonStyle={{ borderRadius: "50%" }}
                 />
+                </div>
                 <div>
                   <p className="font-semibold">{follower.follower.name}</p>
                   <div className="flex items-center">

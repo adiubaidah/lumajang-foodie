@@ -69,8 +69,13 @@ export const userSchema = z.object({
 
 export const openingHourSchema = z.object({
   day: z.enum(days),
-  openHours: z.string(),
-  closeHours: z.string(),
+  openTime: z.string().optional(),
+  closeTime: z.string().optional(),
+});
+
+export const placePreferenceSchema = z.object({
+  label: z.string().min(2, { message: "Label diperlukan" }),
+  value: z.string().min(2, { message: "Value diperlukan" }),
 });
 
 export const placeSchema = z.object({
@@ -80,13 +85,8 @@ export const placeSchema = z.object({
     .min(2, { message: "Deskripsi terlalu singkat" })
     .optional(),
   address: z.string().min(3, { message: "Alamat tempat makan harus ada" }),
+  preferences: z.array(z.string()).optional(),
   websiteUri: z.string().optional(),
-  takeout: z.boolean().default(true),
-  delivery: z.boolean().default(false),
-  liveMusic: z.boolean().default(false),
-  restRoom: z.boolean().default(false),
-  cashOnly: z.boolean().default(true),
-  servesCoffee: z.boolean().default(true),
   location: z.object({
     latitude: z.number().gte(-90).lte(90),
     longitude: z.number().gte(-180).lte(180),
@@ -94,7 +94,7 @@ export const placeSchema = z.object({
   phoneNumber: z
     .string()
     .min(10, { message: "No Telepon terlalu singkat" })
-    .max(13, { message: "No telepon terlalu banyak" }),
+    .max(20, { message: "No telepon terlalu banyak" }),
   subdistrictId: z.string().min(5, { message: "Kecamatan harus ada" }),
   openingHours: z.array(openingHourSchema).refine((data) => {
     const days = data.map((item) => item.day);
@@ -114,7 +114,7 @@ export const placeReviewSchema = z.object({
 
 export const menuSchema = z.object({
   name: z.string().min(3, { message: "Nama menu diperlukan" }),
-  type: z.enum(['food', 'drink']),
+  type: z.enum(["food", "drink"]),
   price: z.number().min(100, { message: "Harga diperlukan" }),
   placeId: z.string().min(4, { message: "Tempat makan diperlukan" }),
 });

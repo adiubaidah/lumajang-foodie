@@ -6,6 +6,7 @@ import Logo from "~/../public/assets/logo.png";
 import Subdistricts from "./subdistricts";
 import { InstagramCircle, YoutubeCircle } from "~/icons";
 import SearchInput from "~/components/ready-use/search-input";
+import SkeletonImage from "~/components/ready-use/skeleton-image";
 
 function Home() {
   return (
@@ -34,11 +35,54 @@ function Home() {
           </div>
         </section>
 
+        <section className="container mt-7 grid grid-cols-2 gap-5">
+          <Link
+            href={"/tempat-makan"}
+            className="flex flex-col rounded-2xl p-2 hover:scale-105 transition duration-200 shadow-md"
+          >
+            <div className="h-[134px] md:h-[192px]">
+              <SkeletonImage
+                src="/assets/restaurant.jpg"
+                width={600}
+                height={600}
+                alt="restaurant"
+                className="h-full w-full object-cover rounded-tr-2xl rounded-tl-2xl"
+              />
+            </div>
+            <div className="z-10 ms-auto w-full bg-white p-2 md:p-4 text-gray-800 border-gray-500">
+              <h2 className="font-product-sans text-[17px] md:text-[20px] font-medium">
+                Tempat Makan
+              </h2>
+              <p className="text-sm">Cari tempat makan sesuai kesukaan kamu</p>
+            </div>
+          </Link>
+          <Link
+            href={"/menu"}
+            className="flex flex-col rounded-2xl p-2 hover:scale-105 transition duration-200 shadow-md"
+          >
+            <div className="h-[134px] md:h-[192px]">
+              <SkeletonImage
+                src="/assets/food.jpg"
+                width={600}
+                height={600}
+                alt="food"
+                className="h-full w-full object-cover rounded-tr-2xl rounded-tl-2xl"
+              />
+            </div>
+            <div className="z-10 ms-auto w-full bg-white p-2 md:p-4 text-gray-800 border-gray-500">
+              <h2 className="font-product-sans text-[17px] md:text-[20px] font-medium">
+                Makanan
+              </h2>
+              <p className="text-sm">Cari menu favoritmu</p>
+            </div>
+          </Link>
+        </section>
+
         <section className="container max-w-full py-5 font-helvetica">
           <h2 className="font-product-sans text-2xl font-light text-[#363636] md:text-4xl">
             Tersebar ke berbagai Kecamatan
           </h2>
-          {/* <Subdistricts /> */}
+          <Subdistricts />
         </section>
       </main>
       <footer className="container flex max-w-full flex-col justify-between gap-y-5 bg-[#EEEEEE] py-16 md:flex-row">

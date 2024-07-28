@@ -50,6 +50,11 @@ export const createQueryString = (params: Object) => {
     .join("&");
 };
 
+export function camelToKebabCase(str: string) {
+  return str.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+}
+
+
 export function isOpen(openingHours: OpeningHours[]) {
   const now = moment();
   const dayIndex = now.day(); // 0 (Minggu) - 6 (Sabtu)
@@ -59,8 +64,8 @@ export function isOpen(openingHours: OpeningHours[]) {
 
   if (!todayOpeningHours) return false;
 
-  const openTime = moment(todayOpeningHours.openHours, "HH:mm");
-  const closeTime = moment(todayOpeningHours.closeHours, "HH:mm");
+  const openTime = moment(todayOpeningHours.openTime, "HH:mm");
+  const closeTime = moment(todayOpeningHours.closeTime, "HH:mm");
 
   return now.isBetween(openTime, closeTime);
 }
@@ -74,7 +79,7 @@ export function getOpeningTime(openingHours: OpeningHours[]) {
 
   if (!todayOpeningHours) return null;
 
-  return todayOpeningHours.openHours;
+  return todayOpeningHours.openTime;
 }
 
 export function getClosingTime(openingHours: OpeningHours[]) {
@@ -86,7 +91,7 @@ export function getClosingTime(openingHours: OpeningHours[]) {
 
   if (!todayOpeningHours) return null;
 
-  return todayOpeningHours.closeHours;
+  return todayOpeningHours.closeTime;
 }
 
 export const betterToKm = (distance: number): string => {

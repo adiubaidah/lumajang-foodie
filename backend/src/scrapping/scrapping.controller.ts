@@ -1,13 +1,4 @@
-import { EventEmitter } from 'events';
-import {
-  Controller,
-  Delete,
-  Get,
-  OnModuleInit,
-  Post,
-  Put,
-  Query,
-} from '@nestjs/common';
+import { Controller, Delete, Get, Post, Put, Query } from '@nestjs/common';
 import { ScrappingService } from './scrapping.service';
 
 @Controller('scrapping')
@@ -25,8 +16,21 @@ export class ScrappingController {
   }
 
   @Put('modify')
-  async modify() {
-    return await this.scrappingService.modify();
+  async modify(@Query('name-file') nameFile: string) {
+    return await this.scrappingService.modify({ nameFile });
+  }
+
+  @Put('partialize')
+  async partialize(
+    @Query('name-file') nameFile: string,
+    @Query('slice') slice: number,
+  ) {
+    return await this.scrappingService.partialize({ nameFile, slice });
+  }
+
+  @Put('add-atribute')
+  async addAtribute(@Query('name-file') nameFile: string) {
+    return await this.scrappingService.addAtribute({ nameFile });
   }
 
   @Put('group-subdistrict')
@@ -35,7 +39,7 @@ export class ScrappingController {
   }
 
   @Post('insert')
-  async insert() {
-    return await this.scrappingService.insert();
+  async insert(@Query('name-file') nameFile: string) {
+    return await this.scrappingService.insert({ nameFile });
   }
 }

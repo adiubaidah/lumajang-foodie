@@ -32,15 +32,19 @@ function Following() {
         : data && data.length > 0
           ? data.map((following: FollowerType) => (
               <div key={following.id} className="flex items-center gap-x-3">
-                <SkeletonImage
-                  src={imageFromBackend(
-                    following.following.image ?? "public/img/user/default.png",
-                  )}
-                  alt={following.following.name}
-                  width={100}
-                  height={100}
-                  className="h-12 w-12 rounded-full"
-                />
+                <div className="h-12 w-12 rounded-full">
+                  <SkeletonImage
+                    src={
+                      following.following.image
+                        ? imageFromBackend(following.following.image)
+                        : "/assets/avatar.png"
+                    }
+                    alt={following.following.name}
+                    width={100}
+                    height={100}
+                    skeletonStyle={{ borderRadius: "50%" }}
+                  />
+                </div>
                 <div>
                   <p className="font-semibold">{following.following.name}</p>
                   <div className="flex items-center">

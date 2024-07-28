@@ -15,44 +15,26 @@ export class PlaceService {
       perPage,
       page,
       query,
-      takeout,
-      delivery,
-      liveMusic,
-      restRoom,
-      cashOnly,
-      servesCoffe,
       openNow,
       longitude,
       latitude,
       sort,
       subdistrict,
+      preferences,
     }: {
       perPage: number;
       page: number;
       query: string;
-      takeout: number;
-      delivery: number;
-      liveMusic: number;
-      restRoom: number;
-      cashOnly: number;
-      servesCoffe: number;
       openNow: number;
       longitude: number;
       latitude: number;
       sort: string;
       subdistrict: string;
+      preferences: string[];
     },
     // popularSort: number,
   ) {
     const skip = (page - 1) * perPage;
-    const filterOptions = {};
-
-    if (takeout === 1) filterOptions['takeout'] = true;
-    if (delivery === 1) filterOptions['delivery'] = true;
-    if (liveMusic === 1) filterOptions['liveMusic'] = true;
-    if (restRoom === 1) filterOptions['restRoom'] = true;
-    if (cashOnly === 1) filterOptions['cashOnly'] = true;
-    if (servesCoffe === 1) filterOptions['servesCoffe'] = true;
 
     const now = moment().locale('id');
     const dayName = now.format('dddd'); // Contoh output: "Senin"
@@ -71,36 +53,23 @@ export class PlaceService {
       });
     }
 
-    const match = {
-      $match: {
-        name: query ? { $regex: query, $options: 'i' } : undefined,
-        ...filterOptions,
-        ...(subdistrict && {
-          subdistrictId: {
-            $eq: {
-              $oid: subdistrict,
-            },
-          },
-        }),
-        ...(openNow === 1 && {
-          openingHours: {
-            $elemMatch: {
-              day: dayName,
-              openHours: {
-                $lte: currentTime,
-              },
-              closeHours: {
-                $gte: currentTime,
-              },
-            },
-          },
-        }),
-      },
-    };
-
-    pipeline.push(match);
-
     const lookupClause = [
+      {
+        $lookup: {
+          from: 'PlacePreferencesOnPlace',
+          localField: '_id',
+          foreignField: 'placeId',
+          as: 'preferences',
+        },
+      },
+      {
+        $lookup: {
+          from: 'PlacePreferences',
+          localField: 'preferences.placePreferencesId',
+          foreignField: '_id',
+          as: 'preferencesDetails',
+        },
+      },
       {
         $lookup: {
           from: 'Subdistrict',
@@ -137,7 +106,6 @@ export class PlaceService {
           as: 'photoForThumbnail',
         },
       },
-
       {
         $lookup: {
           from: 'PlaceReview',
@@ -171,6 +139,45 @@ export class PlaceService {
     ];
 
     pipeline.push(...lookupClause);
+    const match = {
+      $match: {
+        name: query ? { $regex: query, $options: 'i' } : undefined,
+        ...(subdistrict && {
+          subdistrictId: {
+            $eq: {
+              $oid: subdistrict,
+            },
+          },
+        }),
+        ...(preferences.length > 0 && {
+          'preferencesDetails.value': {
+            $all: preferences,
+          },
+        }),
+        ...(openNow === 1 && {
+          openingHours: {
+            $elemMatch: {
+              day: dayName,
+              openTime: {
+                $lte: currentTime,
+              },
+              closeTime: {
+                $gte: currentTime,
+              },
+            },
+          },
+        }),
+      },
+    };
+
+    pipeline.push(match);
+
+    pipeline.push({
+      $project: {
+        preferences: 0,
+        preferencesDetails: 0,
+      },
+    });
 
     const sortOptions = {
       'name:asc': { name: 1 },
@@ -186,16 +193,16 @@ export class PlaceService {
     );
     // return pipeline;
 
+    // console.log(JSON.stringify(pipeline, null, 2));
+
     const result = await this.prismaService.place.aggregateRaw({
       pipeline,
     });
+
+    //pipeline for count
+    pipeline.splice(-3);
     const count = (await this.prismaService.place.aggregateRaw({
-      pipeline: [
-        match,
-        {
-          $count: 'total',
-        },
-      ],
+      pipeline: [...pipeline, { $count: 'total' }],
     })) as unknown as CountResult[];
 
     const total = !!count[0] ? count[0].total : 0;
@@ -248,6 +255,11 @@ export class PlaceService {
         menus: true,
         photos: true,
         subdistrict: true,
+        preferences: {
+          include: {
+            placePreferences: true,
+          },
+        },
         owner: {
           select: {
             id: true,
@@ -283,12 +295,14 @@ export class PlaceService {
   }
 
   async create(body: PlaceDto) {
-    const { subdistrictId, location, ownerId, ...rest } = body;
+    const { subdistrictId, location, ownerId, preferences, ...rest } = body;
     // console.log(slugify(body.name))
     // return slugify(body.name);
+
     return await this.prismaService.place.create({
       data: {
         ...rest,
+        placeGoogleId: null,
         slug: slugify(body.name),
         location: {
           type: 'Point',
@@ -304,13 +318,67 @@ export class PlaceService {
             id: subdistrictId,
           },
         },
+        preferences: {
+          create: preferences.map((preferenceId) => ({
+            placePreferences: {
+              connect: {
+                id: preferenceId,
+              },
+            },
+          })),
+        },
       },
     });
   }
 
   async put(id: string, body: PlaceDto) {
-    const { subdistrictId, location, ownerId, ...rest } = body;
+    const { subdistrictId, location, ownerId, preferences, ...rest } = body;
     const check = await this.find({ id });
+    const currentPreferences =
+      await this.prismaService.placePreferencesOnPlace.findMany({
+        where: { placeId: id },
+      });
+
+    // Determine preferences to delete
+    const preferencesToDelete = currentPreferences.filter(
+      (currentPref) =>
+        !preferences.some(
+          (newPref) => newPref === currentPref.placePreferencesId,
+        ),
+    );
+
+    // Determine preferences to create
+    const preferencesToCreate = preferences.filter(
+      (newPref) =>
+        !currentPreferences.some(
+          (currentPref) => currentPref.placePreferencesId === newPref,
+        ),
+    );
+
+    // Delete old preferences
+    if (preferencesToDelete.length > 0) {
+      await this.prismaService.placePreferencesOnPlace.deleteMany({
+        where: {
+          id: { in: preferencesToDelete.map((pref) => pref.id) },
+        },
+      });
+    }
+
+    if (preferencesToDelete.length > 0) {
+      await this.prismaService.placePreferencesOnPlace.deleteMany({
+        where: {
+          id: { in: preferencesToDelete.map((pref) => pref.id) },
+        },
+      });
+    }
+    if (preferencesToCreate.length > 0) {
+      await this.prismaService.placePreferencesOnPlace.createMany({
+        data: preferencesToCreate.map((pref) => ({
+          placePreferencesId: pref,
+          placeId: id,
+        })),
+      });
+    }
 
     return await this.prismaService.place.update({
       where: {

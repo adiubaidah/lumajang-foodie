@@ -147,36 +147,16 @@ export default function Overview() {
 
             <ul>
               <h5 className="mb-1 text-xl">Info lebih lanjut</h5>
-              {detail.servesCoffee && (
-                <li className="flex items-center text-lg font-light text-davy">
-                  <EiCheck width={30} fill="#31af62" />
-                  <span>Kopi</span>
-                </li>
-              )}
-              {detail.takeout && (
-                <li className="flex items-center text-lg font-light text-davy">
-                  <EiCheck width={30} fill="#31af62" />
-                  <span>Takeout</span>
-                </li>
-              )}
-              {detail.liveMusic && (
-                <li className="flex items-center text-lg font-light text-davy">
-                  <EiCheck width={30} fill="#31af62" />
-                  <span>Live Musik</span>
-                </li>
-              )}
-              {detail.restRoom && (
-                <li className="flex items-center text-lg font-light text-davy">
-                  <EiCheck width={30} fill="#31af62" />
-                  <span>Ruang Istirahat</span>
-                </li>
-              )}
-              {detail.cashOnly && (
-                <li className="flex items-center text-lg font-light text-davy">
-                  <EiCheck width={30} fill="#31af62" />
-                  <span>Hanya menerima Cash</span>
-                </li>
-              )}
+              {detail.preferences.length > 0 &&
+                detail.preferences.map((preference: any, index: string) => (
+                  <li
+                    className="flex items-center text-lg font-light text-davy"
+                    key={index}
+                  >
+                    <EiCheck width={30} fill="#31af62" />
+                    <span>{preference.placePreferences.label}</span>
+                  </li>
+                ))}
             </ul>
             <h5 className="text-[20px]">Jam Operasional</h5>
             <table>
@@ -184,9 +164,15 @@ export default function Overview() {
                 {detail.openingHours.map((hour: OpeningHours) => (
                   <tr key={hour.day} className="flex items-center gap-x-2">
                     <td width={70}> {hour.day} </td>
-                    <td> {hour.openHours} </td>
-                    <td>-</td>
-                    <td> {hour.closeHours} </td>
+                    {!hour.openTime && !hour.closeTime ? (
+                      <span className="text-red-500">Tutup</span>
+                    ) : (
+                      <React.Fragment>
+                        <td> {hour.openTime} </td>
+                        <td>-</td>
+                        <td> {hour.closeTime} </td>
+                      </React.Fragment>
+                    )}
                   </tr>
                 ))}
               </tbody>

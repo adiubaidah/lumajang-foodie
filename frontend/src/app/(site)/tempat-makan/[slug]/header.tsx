@@ -31,48 +31,23 @@ function Header({ imagePreview, detail }: { imagePreview: any; detail: any }) {
     <div className="py-3">
       {imagePreview && imagePreview.result && (
         <>
-          {!isDesktop ? (
+          {!isDesktop && !(imagePreview.result.length === 4) ? (
             <Carousel>
               <CarouselContent className="h-[300px]">
-                <CarouselItem>
-                  <SkeletonImage
-                    src={imageFromBackend(imagePreview.result[0].url)}
-                    height={500}
-                    width={500}
-                    className="h-full w-full object-cover"
-                    alt="preview-1"
-                  />
-                </CarouselItem>
-                <CarouselItem>
-                  <SkeletonImage
-                    src={imageFromBackend(imagePreview.result[1].url)}
-                    height={500}
-                    width={500}
-                    className="h-full w-full object-cover"
-                    alt="preview-2"
-                  />
-                </CarouselItem>
-                <CarouselItem>
-                  <SkeletonImage
-                    src={imageFromBackend(imagePreview.result[2].url)}
-                    height={500}
-                    width={500}
-                    className="h-full w-full object-cover"
-                    alt="preview-3"
-                  />
-                </CarouselItem>
-                <CarouselItem>
-                  <SkeletonImage
-                    src={imageFromBackend(imagePreview.result[3].url)}
-                    height={500}
-                    width={500}
-                    className="h-full w-full object-cover"
-                    alt="preview-4"
-                  />
-                </CarouselItem>
+                {imagePreview.result.map((item: any, index: number) => (
+                  <CarouselItem key={index}>
+                    <SkeletonImage
+                      src={imageFromBackend(item.url)}
+                      height={500}
+                      width={500}
+                      className="h-full w-full object-cover"
+                      alt={`preview-${index + 1}`}
+                    />
+                  </CarouselItem>
+                ))}
               </CarouselContent>
             </Carousel>
-          ) : (
+          ) : imagePreview.result.length > 0 ? (
             <div className="flex h-[350px] w-full items-center space-x-2">
               <div className="h-full w-3/5">
                 <SkeletonImage
@@ -113,6 +88,16 @@ function Header({ imagePreview, detail }: { imagePreview: any; detail: any }) {
                 </div>
               </div>
             </div>
+          ) : (
+            <div className="h-[400px]">
+              <SkeletonImage
+                src={"/assets/restaurant_default.png"}
+                height={1000}
+                width={1000}
+                className="h-full w-full object-cover"
+                alt={`preview-default`}
+              />
+            </div>
           )}
         </>
       )}
@@ -146,7 +131,13 @@ function Header({ imagePreview, detail }: { imagePreview: any; detail: any }) {
         </div>
 
         <div className="flex items-center gap-x-2">
-          <Link className={cn(buttonVariants({variant: "outline"}), 'flex items-center gap-x-2')} href={"#"}>
+          <Link
+            className={cn(
+              buttonVariants({ variant: "outline" }),
+              "flex items-center gap-x-2",
+            )}
+            href={"#"}
+          >
             <IconsDistance width={27} fill="#A65F5F" height={27} />
             <span>Petunjuk</span>
           </Link>

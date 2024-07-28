@@ -13,40 +13,29 @@ import { Label } from "~/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { Separator } from "~/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { cn, createQueryString } from "~/lib/utils";
+import {
+  axiosInstance,
+  camelToKebabCase,
+  cn,
+  createQueryString,
+} from "~/lib/utils";
 import { Checkbox } from "~/components/ui/checkbox";
-import { useUserLocation } from "~/hooks";
+import { usePlacePreference, useUserLocation } from "~/hooks";
 import { CheckedState } from "@radix-ui/react-checkbox";
-import { Location as LocationType } from "~/types";
+import { PreferenceCommand } from "~/components/ready-use/preference-command";
+import { Location as LocationType, PlacePreference } from "~/types";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { ReadonlyURLSearchParams } from "next/navigation";
-
-type OtherFilter = {
-  openNow: number;
-  servesCoffee: number;
-  cashOnly: number;
-  liveMusic: number;
-  delivery: number;
-  restRoom: number;
-  takeout: number;
-};
-
-export const filterOther: { id: keyof OtherFilter; label: string }[] = [
-  { id: "takeout", label: "Takeout" },
-  { id: "delivery", label: "Pengantaran" },
-  { id: "liveMusic", label: "Live Music" },
-  { id: "cashOnly", label: "Hanya Cash" },
-  { id: "servesCoffee", label: "Kopi" },
-  { id: "openNow", label: "Buka sekarang" },
-];
+import { useIsFetching, useQuery } from "@tanstack/react-query";
 
 export type FilterData = {
   sort: string;
-  other: OtherFilter;
+  other: Record<string, number>;
 };
 
 type FilterProps = {
   filter: FilterData;
+  setFilter: React.Dispatch<SetStateAction<FilterData>>;
   path: string;
   router: AppRouterInstance;
   location: LocationType | null;
@@ -54,53 +43,54 @@ type FilterProps = {
 
 // const
 
-function Filter({ filter, path, router, location }: FilterProps) {
+function Filter({ filter, setFilter, path, router, location }: FilterProps) {
+  const preferences = usePlacePreference();
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedPreference, setSelectedPreference] = useState<
+    PlacePreference[]
+  >([]);
   const [filterData, setFilterData] = useState<FilterData>({
     sort: "name:asc",
-    other: {
-      cashOnly: 0,
-      delivery: 0,
-      liveMusic: 0,
-      openNow: 0,
-      restRoom: 0,
-      servesCoffee: 0,
-      takeout: 0,
-    },
+    other: {},
   });
 
   useEffect(() => {
     setFilterData(filter);
-  }, [filter]);
+    if (filter.other && preferences) {
+      const selected = Object.entries(filter.other)
+        .filter(([, value]) => value === 1)
+        .map(([key]) => preferences.find((pref) => pref.value === key))
+        .filter((pref) => pref);
+      console.log(selected);
+      setSelectedPreference(selected as PlacePreference[]);
+    }
+  }, [filter, preferences]);
 
   const handleSort = (value: string) => {
     // console.log(value);
     setFilterData({ ...filterData, sort: value });
   };
 
-  const handleOther = (key: keyof OtherFilter) => {
-    setFilterData({
-      ...filterData,
-      other: {
-        ...filterData.other,
-        [key]: filterData.other[key] === 1 ? 0 : 1,
-      },
-    });
-  };
+  // const handleOther = (key: string) => {
+  //   setFilterData({
+  //     ...filterData,
+  //     other: {
+  //       ...filterData.other,
+  //       [key]: filterData.other[key] === 1 ? 0 : 1,
+  //     },
+  //   });
+  // };
 
   const handleSubmit = () => {
-    //ambil semua nilai state
-    const filteredOther = Object.entries(filterData.other)
-      .filter(([key, value]) => value !== 0)
-      .reduce<Record<string, number>>((obj, [key, value]) => {
-        obj[key] = value;
-        return obj;
-      }, {});
+    setFilter(filterData);
 
     // Merge the filtered 'other' object with 'sort'
     const queryData: Record<string, any> = {
       sort: filterData.sort,
-      ...filteredOther,
+      ...selectedPreference.reduce(
+        (acc, preference) => ({ ...acc, [preference.value]: 1 }),
+        {},
+      ),
     };
     const query = createQueryString(queryData);
     router.replace(query ? `${path}?${query}` : path);
@@ -183,16 +173,10 @@ function Filter({ filter, path, router, location }: FilterProps) {
               </div>
             </TabsContent>
             <TabsContent value="other" className="space-y-3">
-              {filterOther.map((fto) => (
-                <div key={fto.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={fto.id}
-                    checked={filterData.other[fto.id] === 1}
-                    onCheckedChange={() => handleOther(fto.id)}
-                  />
-                  <Label htmlFor={fto.id}>{fto.label}</Label>
-                </div>
-              ))}
+              <PreferenceCommand
+                values={selectedPreference}
+                setValues={setSelectedPreference}
+              />
             </TabsContent>
           </div>
         </Tabs>

@@ -23,7 +23,9 @@ export default function Provider({ children }: { children: ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-left" />
       <Toaster />
-      <AuthProvider>{children}</AuthProvider>
+      <AuthProvider>
+        {children}
+        </AuthProvider>
     </QueryClientProvider>
   );
 }

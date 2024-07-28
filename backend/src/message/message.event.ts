@@ -42,7 +42,6 @@ export class MessageEvent {
     @MessageBody('userId') userId: string,
     @ConnectedSocket() client: Socket,
   ) {
-    console.log(this.users[userId]);
     delete this.users[userId];
     // Mark the user as offline
     this.server.to(client.id).disconnectSockets();

@@ -3,22 +3,24 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { X } from "lucide-react";
-
+import { BottomNavbar } from "../components";
 import SearchNotFound from "~/../public/assets/search-not-found.svg";
 import PaginationComponent from "~/components/ready-use/pagination-link";
 
-import { useUserLocation } from "~/hooks";
-import { PlaceComplete } from "~/types";
+import { usePlacePreference, useUserLocation } from "~/hooks";
+import { PlaceComplete, PlacePreference } from "~/types";
 import { CardPlace } from "./components";
 import { axiosInstance, cn, createQueryString, isOpen } from "~/lib/utils";
 import { Filter } from "./components";
 
-import { FilterData, filterOther } from "./components/filter";
+import { FilterData } from "./components/filter";
 import { Button } from "~/components/ui/button";
 import Loader from "~/components/ready-use/loader";
+import SearchInput from "~/components/ready-use/search-input";
 
 function Client() {
   const { location } = useUserLocation();
+  const preferences = usePlacePreference();
   const searchParams = useSearchParams();
   const path = usePathname();
   const router = useRouter();
@@ -30,38 +32,34 @@ function Client() {
   const [filter, setFilter] = useState<FilterData>({
     sort: "name:asc",
     other: {
-      cashOnly: 0,
-      delivery: 0,
-      liveMusic: 0,
       openNow: 0,
-      restRoom: 0,
-      servesCoffee: 0,
-      takeout: 0,
     },
   });
 
   useEffect(() => {
-    const cashOnly = parseInt(searchParams.get("cashOnly") || "0", 10);
-    const delivery = parseInt(searchParams.get("delivery") || "0", 10);
-    const liveMusic = parseInt(searchParams.get("liveMusic") || "0", 10);
-    const openNow = parseInt(searchParams.get("openNow") || "0", 10);
-    const restRoom = parseInt(searchParams.get("restRoom") || "0", 10);
-    const servesCoffee = parseInt(searchParams.get("servesCoffee") || "0", 10);
-    const takeout = parseInt(searchParams.get("takeout") || "0", 10);
+    let newFilter = { ...filter, sort }; // Start with current filter and update sort
+    if (preferences)
+      for (const [key, value] of searchParams.entries()) {
+        if (value === "1") {
+          if (key === "openNow") {
+            newFilter.other.openNow = 1;
+          } else {
+            const preferenceExists = preferences.some(
+              (preference) => preference.value === key,
+            );
+            if (preferenceExists) {
+              newFilter.other[key] = 1;
+            }
+          }
+        }
+      }
 
-    setFilter({
-      sort,
-      other: {
-        cashOnly,
-        delivery,
-        liveMusic,
-        openNow,
-        restRoom,
-        servesCoffee,
-        takeout,
-      },
-    });
-  }, [searchParams, sort, query]);
+    setFilter(newFilter); // Update the filter state once with the new filter object
+  }, [searchParams, sort, preferences]);
+
+  useEffect(() => {
+    console.log(filter.other);
+  }, [filter]);
 
   const { data, isLoading } = useQuery({
     queryKey: ["places", subdistrict, query, filter, page, location],
@@ -71,50 +69,63 @@ function Client() {
         latitude: location.latitude,
         sort: filter.sort,
         q: query,
-        subdistrict,
         ...filter.other,
+        subdistrict,
         page,
       });
       return (await axiosInstance.get(`/place?${queryString}`)).data;
     },
   });
 
-  const handleRemoveFilter = (id: string) => {
+  const handleRemoveFilter = (value: string) => {
     const query = new URLSearchParams(searchParams.toString());
-    query.delete(id);
+    query.delete(value);
+    //remove filter from filter state
+    const newFilter = { ...filter };
+    delete newFilter.other[value];
+    setFilter(newFilter);
     router.replace(`${path}?${query}`);
   };
 
   return (
     <>
+      <div className="shadow-sm md:hidden">
+        <SearchInput />
+      </div>
+      <BottomNavbar />
+
       <div className="flex items-center gap-x-3">
         <Filter
           filter={filter}
+          setFilter={setFilter}
           router={router}
           path={path}
           location={location}
         />
         {Object.entries(filter.other)
           .filter(([key, value]) => value === 1)
-          .map(([key]) => key)
-          .map((active, index) => (
-            <Button
-              key={`${active}-${index}`}
-              className="flex items-center space-x-2"
-              onClick={() => handleRemoveFilter(active)}
-            >
-              <span>
-                {filterOther.find((flto) => flto.id === active)?.label}
-              </span>
-              <X size={15} />
-            </Button>
-          ))}
+          .map(([key]) =>
+            preferences?.find((preference) => preference.value === key),
+          )
+          .map(
+            (active, index) =>
+              active && (
+                <Button
+                  key={`${active}-${index}`}
+                  className="flex items-center space-x-2"
+                  onClick={() => handleRemoveFilter(active.value)}
+                >
+                  <span>{active.label}</span>
+                  <X size={15} />
+                </Button>
+              ),
+          )}
       </div>
 
       <div
         className={cn(
           "grid w-full gap-x-10 gap-y-11 py-3",
-          !isLoading && data.result.length > 0
+          !isLoading && data.result && data.result.length > 0
             ? "md:grid-cols-3"
             : "place-items-center",
         )}
@@ -128,11 +139,7 @@ function Client() {
             <CardPlace
               key={place.id}
               slug={place.slug}
-              srcImage={
-                place.photoForThumbnail
-                  ? place.photoForThumbnail.url
-                  : "public/img/place/default.PNG"
-              }
+              srcImage={place.photoForThumbnail?.url}
               title={place.name}
               rate={place.averageStar}
               subdistrict={place.subdistrict}

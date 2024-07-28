@@ -69,6 +69,7 @@ export function SubdistrictComboBox({
                 <CommandItem
                   key={subdistrict.id}
                   value={subdistrict.id}
+                  keywords={[subdistrict.name]}
                   onSelect={(currentValue) => {
                       setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);

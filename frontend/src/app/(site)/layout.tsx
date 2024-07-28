@@ -41,7 +41,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </button>
       <main className="container max-w-full py-5">
         <Breadcrumb />
-        <BottomNavbar />
         {children}
       </main>
 

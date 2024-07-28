@@ -1,5 +1,5 @@
 import {
-  IsBoolean,
+  IsArray,
   IsOptional,
   IsString,
   ValidateNested,
@@ -14,10 +14,10 @@ export class OpeningHoursDto {
   day: string;
 
   @IsString()
-  openHours: string;
+  openTime: string;
 
   @IsString()
-  closeHours: string;
+  closeTime: string;
 }
 
 export class LocationDto {
@@ -55,23 +55,9 @@ export class PlaceDto {
   @IsString({ message: 'Website url tidak valid' })
   websiteUri: string;
 
-  @IsBoolean()
-  takeout: boolean;
-
-  @IsBoolean()
-  delivery: boolean;
-
-  @IsBoolean()
-  liveMusic: boolean;
-
-  @IsBoolean()
-  restRoom: boolean;
-
-  @IsBoolean()
-  cashOnly: boolean;
-
-  @IsBoolean()
-  servesCoffee: boolean;
+  @IsArray({ message: 'Preferences harus berupa array' })
+  @IsString({ each: true, message: 'Setiap preferensi harus berupa string' })
+  preferences: string[];
 
   @IsString({ message: 'Nomor telepon tidak valid' })
   phoneNumber: string;

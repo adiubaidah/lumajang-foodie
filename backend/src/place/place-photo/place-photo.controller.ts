@@ -51,10 +51,12 @@ export class PlacePhotoController {
     @Query('perPage') perPage: number,
     @Query('page') page: number,
     @Query('type') type: PlacePhotoType,
+    @Query('preview') preview: number,
   ) {
     return await this.placePhotoService.all({
       perPage: perPage || 5,
       page: page || 1,
+      preview,
       type,
       placeId,
     });

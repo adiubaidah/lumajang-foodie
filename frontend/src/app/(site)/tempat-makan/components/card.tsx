@@ -11,7 +11,7 @@ import { rateColor } from "~/constant";
 import { BadgeRate } from "~/components/ready-use/badge-rate";
 
 interface CardPlaceProps {
-  srcImage: string;
+  srcImage?: string;
   title: string;
   slug: string;
   rate: number;
@@ -46,7 +46,7 @@ function CardPlace({
       <div>
         <div className="h-[248px]">
           <SkeletonImage
-            src={imageFromBackend(srcImage)}
+            src={srcImage ? imageFromBackend(srcImage): "/assets/restaurant_default.png"}
             alt={title}
             height={200}
             width={200}

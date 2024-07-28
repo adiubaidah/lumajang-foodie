@@ -62,7 +62,7 @@ async function Layout({
     queryKey: ["place-photo", { place: data.id }, "preview"],
     queryFn: async () => {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/place-photo?place=${data.id}&perPage=4`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/place-photo?place=${data.id}&perPage=4&preview=1`,
       );
       const result = await response.json();
       return result;

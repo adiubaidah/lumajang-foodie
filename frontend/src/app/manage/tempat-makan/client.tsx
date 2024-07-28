@@ -73,7 +73,7 @@ function Client() {
               <TableCell className="block md:table-cell">
                 {place.photos.length > 0 && (
                   <SkeletonImage
-                    src={imageFromBackend(place.photos[0].url)}
+                    src={place.photos ? imageFromBackend(place.photos[0].url) : "/assets/restaurant_default.png"}
                     alt={place.name}
                     skeletonStyle={{ width: 128, height: "auto" }}
                     className="w-64 object-cover"

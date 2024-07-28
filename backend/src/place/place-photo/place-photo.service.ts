@@ -25,11 +25,13 @@ export class PlacePhotoService {
     placeId,
     perPage,
     page,
+    preview,
     type,
   }: {
     placeId: string;
     perPage: number;
     page: number;
+    preview;
     type?: PlacePhotoType;
   }) {
     const skip = (page - 1) * perPage;
@@ -39,8 +41,18 @@ export class PlacePhotoService {
         ...(type && {
           type,
         }),
+        ...(preview === 1 && {
+          thumbnailPosition: {
+            not: null,
+          },
+        }),
       },
       skip,
+      ...(preview === 1 && {
+        orderBy: {
+          thumbnailPosition: 'asc',
+        },
+      }),
       take: perPage,
     });
 

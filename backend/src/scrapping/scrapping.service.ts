@@ -4,9 +4,8 @@ import { join } from 'path';
 import * as _ from 'lodash';
 
 import { PrismaService } from 'src/prisma.service';
-import { indoDays } from 'src/constant';
 import { SubdistrictService } from 'src/subdistrict/subdistrict.service';
-import { slugify } from 'src/helper';
+import { parseWeekdayDescriptions, slugify } from 'src/helper';
 
 @Injectable()
 export class ScrappingService {
@@ -15,13 +14,45 @@ export class ScrappingService {
     private subdistrictService: SubdistrictService,
   ) {}
   async scrap(query: string) {
-    const filePath = join(__dirname, '../../data.json');
-    const allResults: object[] = JSON.parse(
+    const filePath =
+      'C:/Users/adiof/Documents/Mahasiswa Adi/PKM/json/raw/all-result.json';
+    const allResults: any = JSON.parse(
       await readFile(filePath, { encoding: 'utf-8' }),
     ); // Initialize an array to store all results
     let nextPageToken = null; // Initialize nextPageToken
     const url =
-      'https://places.googleapis.com/v1/places:searchText?textQuery=' + query;
+      'https://places.googleapis.com/v1/places:searchText?languageCode=id&textQuery=' +
+      query;
+    const headers = [
+      'places.id',
+      'places.displayName',
+      'places.formattedAddress',
+      'places.rating',
+      'places.addressComponents',
+      'places.location',
+      'places.regularOpeningHours',
+      'places.websiteUri',
+      'places.nationalPhoneNumber',
+      'places.parkingOptions',
+      'places.accessibilityOptions',
+      'places.liveMusic',
+      'places.servesCoffee',
+      'places.restroom',
+      'places.reservable',
+      'places.servesVegetarianFood',
+      'places.servesCocktails',
+      'places.allowsDogs',
+      'places.curbsidePickup',
+      'places.delivery',
+      'places.goodForGroups',
+      'places.menuForChildren',
+      'places.outdoorSeating',
+      'places.servesCoffee',
+      'places.dineIn',
+      'places.photos',
+      'places.paymentOptions',
+      'nextPageToken',
+    ];
 
     try {
       do {
@@ -34,26 +65,21 @@ export class ScrappingService {
             Accept: 'application/json',
             'X-Goog-Api-Key': process.env.GOOGLE_API_KEY,
             'Content-Type': 'application/json',
-            'X-Goog-FieldMask':
-              'places.id,places.displayName,places.formattedAddress,places.addressComponents,places.location,places.regularOpeningHours,places.delivery,places.takeout,places.websiteUri,places.parkingOptions,places.liveMusic,places.servesCoffee,places.restroom,places.reservable,places.nationalPhoneNumber,places.photos,places.paymentOptions,nextPageToken',
+            'X-Goog-FieldMask': headers.join(','),
           },
           method: 'POST',
         });
         const result = await response.json();
 
-        //check if the result is exists in the data.json
-        const data = JSON.parse(
-          await readFile(filePath, { encoding: 'utf-8' }),
-        );
-
-        //filter result from data.json
-        const filterResult = _.filter(result.places, (place) => {
-          return !_.find(data.places, (dataPlace) => {
-            return dataPlace.id === place.id;
-          });
+        result.places.forEach((place) => {
+          // Check if the place already exists in allResults
+          if (
+            !allResults.some((existingPlace) => existingPlace.id === place.id)
+          ) {
+            // If not, push it into allResults
+            allResults.push(place);
+          }
         });
-
-        allResults.push(...filterResult); // Merge current page's results into allResults
         nextPageToken = result.nextPageToken; // Update nextPageToken for the next iteration
       } while (nextPageToken); // Continue if there's a nextPageToken
 
@@ -67,7 +93,8 @@ export class ScrappingService {
   }
 
   async removeDuplicate() {
-    const filePath = join(__dirname, '../../data.json');
+    const filePath =
+      'C:/Users/adiof/Documents/Mahasiswa Adi/PKM/json/raw/all-result.json';
     const allResults: object[] = JSON.parse(
       await readFile(filePath, { encoding: 'utf-8' }),
     );
@@ -75,36 +102,37 @@ export class ScrappingService {
     await writeFile(filePath, JSON.stringify(uniqueResults, null, 2));
   }
 
-  async modify() {
+  async modify({ nameFile }: { nameFile: string }) {
+    const preferences = [
+      'allowDogs',
+      'curbsidePickup',
+      'dineIn',
+      'goodForGroups',
+      'menuForChildren',
+      'outdoorSeating',
+      'servesCocktails',
+      'servesVegetarianFood',
+      'wifi',
+      'takeout',
+      'delivery',
+      'liveMusic',
+      'restRoom',
+      'servesCoffee',
+      'smokingArea',
+      'reservable',
+    ];
     try {
-      const filePath =
-        'C:/Users/adiof/Documents/Mahasiswa Adi/PKM/json/raw/Candipuro.json';
-      const filePathDestination =
-        'C:/Users/adiof/Documents/Mahasiswa Adi/PKM/json/prettier-subdistrict/Candipuro.json';
+      const filePath = `C:/Users/adiof/Documents/Mahasiswa Adi/PKM/json/raw/${nameFile}.json`;
+      const filePathDestination = `C:/Users/adiof/Documents/Mahasiswa Adi/PKM/json/modified/${nameFile}.json`;
       const contents = JSON.parse(
         await readFile(filePath, { encoding: 'utf-8' }),
       );
       const processContent = await Promise.all(
         _.map(contents, async (place) => {
-          const formatPeriods = !!place.regularOpeningHours
-            ? _.map(place.regularOpeningHours.periods, ({ open, close }) => {
-                const formatHour = (hour: number) =>
-                  hour < 10 ? `0${hour}` : hour;
-                const formatMinute = (minute: number) =>
-                  minute < 10 ? `0${minute}` : minute;
+          if (!place.regularOpeningHours) {
+            return;
+          }
 
-                const openTime = `${formatHour(open.hour)}:${formatMinute(open.minute)}`;
-                const closeTime = close
-                  ? `${formatHour(close.hour)}:${formatMinute(close.minute)}`
-                  : null;
-
-                return {
-                  day: indoDays[open.day],
-                  openHours: openTime,
-                  closeHours: closeTime,
-                };
-              })
-            : undefined;
           const subdistrict = _.find(place.addressComponents, (component) => {
             return component.types[0] === 'administrative_area_level_3';
           }).longText.split(' ')[1];
@@ -116,8 +144,8 @@ export class ScrappingService {
                   async (image) =>
                     await this.getPlaceImage({
                       placeImage: image.name,
-                      maxWidthPx: 1280,
-                      maxHeightPx: 1280,
+                      maxWidth: image.widthPx,
+                      maxHeight: image.heightPx,
                     }),
                 ),
               )
@@ -125,55 +153,192 @@ export class ScrappingService {
           return {
             address: place.formattedAddress,
             location: place.location,
+            placeGoogleId: place.id,
+            googleRating: place.rating,
             name: place.displayName.text,
             phoneNumber: place.nationalPhoneNumber,
             subdistrict: subdistrictId,
             images: images,
-            operational: formatPeriods,
+            operational: parseWeekdayDescriptions(
+              place.regularOpeningHours.weekdayDescriptions,
+            ),
+            website: place.websiteUri,
+            preferences: {
+              ..._.pickBy(
+                _.mapValues(place, (value, key) => {
+                  return preferences.includes(key) && value;
+                }),
+              ),
+              ...(place.paymentOptions &&
+              'acceptsCashOnly' in place.paymentOptions
+                ? !place.paymentOptions.acceptsCashOnly
+                  ? _.pickBy(
+                      _.mapValues(place.paymentOptions, (value, key) => {
+                        return (
+                          (key === 'acceptsDebitCards' ||
+                            key === 'acceptsCreditCards') &&
+                          value
+                        );
+                      }),
+                    )
+                  : { acceptsCashOnly: true }
+                : { acceptsCashOnly: true }),
+            },
           };
         }),
       );
-      return [...processContent];
+      await writeFile(
+        filePathDestination,
+        JSON.stringify(processContent, null, 2),
+      );
     } catch (err) {
       console.log(err);
       return err;
     }
   }
 
-  async insert() {
+  async partialize({ nameFile, slice }: { nameFile: string; slice: number }) {
     try {
-      const filePath = join(__dirname, '../../data-pkm.json');
+      const filePath = `C:/Users/adiof/Documents/Mahasiswa Adi/PKM/json/raw/${nameFile}.json`;
       const contents = JSON.parse(
         await readFile(filePath, { encoding: 'utf-8' }),
       );
+      // Calculate chunk size for exactly 3 parts
+      const chunkSize = Math.ceil(contents.length / slice);
+      // Partialize the content to 3 files
+      const partializeContent = _.chunk(contents, chunkSize);
+      // Create a file for each partialized content ending with an index
+      await Promise.all(
+        _.map(partializeContent, async (partialContent, index) => {
+          const filePathDestination = `C:/Users/adiof/Documents/Mahasiswa Adi/PKM/json/raw/${nameFile}-${index}.json`;
+          await writeFile(
+            filePathDestination,
+            JSON.stringify(partialContent, null, 2),
+          );
+        }),
+      );
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+  }
+
+  async addAtribute({ nameFile }: { nameFile: string }) {
+    try {
+      const filePath = `C:/Users/adiof/Documents/Mahasiswa Adi/PKM/json/modified/${nameFile}.json`;
+      const sourceOrigin = `C:/Users/adiof/Documents/Mahasiswa Adi/PKM/json/raw/all-result.json`;
+      const contents = JSON.parse(
+        await readFile(filePath, { encoding: 'utf-8' }),
+      );
+      const sourceContent = JSON.parse(
+        await readFile(sourceOrigin, { encoding: 'utf-8' }),
+      );
+
+      contents.forEach((place: any) => {
+        const source = _.find(sourceContent, (placeOrigin: any) => {
+          return placeOrigin.id === place.placeGoogleId;
+        });
+        if (!source.regularOpeningHours) {
+          //if source doesn't have regularOpeningHours then remove place from contents
+          _.remove(contents, (placeToRemove: any) => {
+            return placeToRemove.placeGoogleId === source.id;
+          });
+        } else {
+          place.operational = source.regularOpeningHours.weekdayDescriptions;
+        }
+      });
+      await writeFile(filePath, JSON.stringify(contents, null, 2));
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+  }
+
+  async insert({ nameFile }: { nameFile: string }) {
+    try {
+      const filePath = `C:/Users/adiof/Documents/Mahasiswa Adi/PKM/json/modified/${nameFile}.json`;
+      const contents = JSON.parse(
+        await readFile(filePath, { encoding: 'utf-8' }),
+      );
+      const dataPreferenceHeap =
+        await this.prismaService.placePreferences.findMany();
       const processContent = await Promise.all(
         _.forEach(contents, async (item) => {
+          //check if item have phoneNumber or not, if not then skip it to next iteration
+          if (!item || !item.phoneNumber) {
+            return;
+          }
+          //check if item is exist in database or not, if exist then skip it to next iteration
+          const isExist = await this.prismaService.place.findFirst({
+            where: {
+              placeGoogleId: item.placeGoogleId,
+            },
+          });
+          if (isExist) {
+            return;
+          }
+
           const resultInsert = await this.prismaService.place.create({
             data: {
+              slug: slugify(item.name),
+              placeGoogleId: item.placeGoogleId,
+              googleRating: item.googleRating,
+              name: item.name,
               address: item.address,
               location: {
                 type: 'Point',
-                coordinates: item.location.coordinates.reverse(),
+                coordinates: [item.location.longitude, item.location.latitude],
               },
-              name: item.name,
-              slug: slugify(item.name),
+              openingHours: item.operational,
+              websiteUri: item.website,
               phoneNumber: item.phoneNumber,
               subdistrictId: item.subdistrict.id,
-              openingHours: item.operational,
             },
           });
 
+          //get all key of preference
+          const preferences = Object.keys(item.preferences);
           await Promise.all(
-            _.forEach(item.images, async (image, index: number) => {
-              await this.prismaService.placePhoto.create({
-                data: {
-                  type: index === 1 ? 'thumbnail' : 'gallery',
-                  url: image,
-                  placeId: resultInsert.id,
+            Array.from(preferences).map(async (preference) => {
+              const preferenceFind = _.find(
+                dataPreferenceHeap,
+                (preferenceHeap) => {
+                  return preferenceHeap.value === preference;
                 },
-              });
+              );
+              if (preferenceFind) {
+                await this.prismaService.placePreferencesOnPlace.create({
+                  data: {
+                    placeId: resultInsert.id,
+                    placePreferencesId: preferenceFind.id,
+                  },
+                });
+              }
             }),
           );
+
+          if (!!item.images) {
+            await Promise.all(
+              _.forEach(item.images, async (image, index: number) => {
+                //if image is null then skip to next iteration
+                if (!image) {
+                  return;
+                }
+                await this.prismaService.placePhoto.create({
+                  data: {
+                    thumbnailPosition: index < 4 ? index + 1 : undefined,
+                    type: index === 0 ? 'thumbnail' : 'gallery',
+                    url: image,
+                    place: {
+                      connect: {
+                        id: resultInsert.id,
+                      },
+                    },
+                  },
+                });
+              }),
+            );
+          }
         }),
       );
       return processContent;
@@ -184,7 +349,8 @@ export class ScrappingService {
 
   async groupingBySubdistrict() {
     try {
-      const filePath = join(__dirname, '../../data.json');
+      const filePath =
+        'C:/Users/adiof/Documents/Mahasiswa Adi/PKM/json/raw/all-result.json';
       const contents = JSON.parse(
         await readFile(filePath, { encoding: 'utf-8' }),
       );
@@ -216,16 +382,16 @@ export class ScrappingService {
 
   async getPlaceImage({
     placeImage,
-    maxHeightPx,
-    maxWidthPx,
+    maxWidth,
+    maxHeight,
   }: {
     placeImage: string;
-    maxHeightPx: number;
-    maxWidthPx: number;
+    maxWidth: number;
+    maxHeight: number;
   }) {
     const image = (
       await fetch(
-        `https://places.googleapis.com/v1/${placeImage}/media?key=${process.env.GOOGLE_API_KEY}&maxHeightPx=${maxHeightPx}&maxWidthPx=${maxWidthPx}&skipHttpRedirect=true`,
+        `https://places.googleapis.com/v1/${placeImage}/media?key=${process.env.GOOGLE_API_KEY}&maxHeightPx=${maxHeight}&maxWidthPx=${maxWidth}&skipHttpRedirect=true`,
       )
     ).json();
     return image.then((data) => data.photoUri);

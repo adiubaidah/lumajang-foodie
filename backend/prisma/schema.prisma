@@ -19,13 +19,13 @@ enum Gender {
 }
 
 model User {
-  id        String  @id @default(auto()) @map("_id") @db.ObjectId
-  email     String  @unique
-  password  String
-  isActive  Boolean @default(true)
-  isPrivate Boolean @default(false)
-  role      Role    @default(foodie)
-  name      String
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  email       String  @unique
+  password    String
+  isActive    Boolean @default(true)
+  isPrivate   Boolean @default(false)
+  role        Role    @default(foodie)
+  name        String
 
   gender          Gender?
   subdistrictId   String?      @db.ObjectId
@@ -47,10 +47,11 @@ model User {
 
   messages Message[]
 
-  following    UserFollow[]   @relation("UserFollowing")
-  followers    UserFollow[]   @relation("UserFollowers")
-  placeArchive PlaceArchive[]
-  menuArchive  MenuArchive[]
+  following          UserFollow[]         @relation("UserFollowing")
+  followers          UserFollow[]         @relation("UserFollowers")
+  placeArchive       PlaceArchive[]
+  menuArchive        MenuArchive[]
+  publicConversation PublicConversation[]
 }
 
 model UserFollow {
@@ -70,38 +71,49 @@ model Subdistrict {
   User  User[]
 }
 
+model PlacePreferences {
+  id     String                    @id @default(auto()) @map("_id") @db.ObjectId
+  label  String
+  value  String                    @unique
+  places PlacePreferencesOnPlace[]
+}
+
+model PlacePreferencesOnPlace {
+  id                 String           @id @default(auto()) @map("_id") @db.ObjectId
+  placeId            String           @db.ObjectId
+  placePreferencesId String           @db.ObjectId
+  place              Place            @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  placePreferences   PlacePreferences @relation(fields: [placePreferencesId], references: [id], onDelete: Cascade)
+}
+
 model Place {
   id            String         @id @default(auto()) @map("_id") @db.ObjectId
   slug          String         @unique
-  placeGoogleId String         @unique
+  placeGoogleId String?       
+  googleRating  Float?
   name          String
   description   String?
   address       String
   location      Json
   openingHours  OpeningHours[]
   websiteUri    String?
-  takeout       Boolean        @default(true)
-  delivery      Boolean        @default(false)
-  liveMusic     Boolean        @default(false)
-  restRoom      Boolean        @default(false)
-  cashOnly      Boolean        @default(true)
-  servesCoffee  Boolean        @default(true)
   phoneNumber   String
   subdistrict   Subdistrict    @relation(fields: [subdistrictId], references: [id])
   subdistrictId String         @db.ObjectId
   owner         User?          @relation(fields: [ownerId], references: [id])
   ownerId       String?        @db.ObjectId
 
-  photos   PlacePhoto[]
-  menus    Menu[]
-  reviews  PlaceReview[]
-  archives PlaceArchive[]
+  photos      PlacePhoto[]
+  menus       Menu[]
+  reviews     PlaceReview[]
+  archives    PlaceArchive[]
+  preferences PlacePreferencesOnPlace[]
 }
 
 type OpeningHours {
   day        String
-  openHours  String
-  closeHours String
+  openTime  String?
+  closeTime String?
 }
 
 model PlaceReview {
@@ -111,7 +123,7 @@ model PlaceReview {
   userId    String             @db.ObjectId
   user      User               @relation(fields: [userId], references: [id])
   placeId   String             @db.ObjectId
-  place     Place              @relation(fields: [placeId], references: [id])
+  place     Place              @relation(fields: [placeId], references: [id], onDelete: Cascade)
   createdAt DateTime           @default(now())
   updatedAt DateTime           @updatedAt
   photos    PlaceReviewPhoto[]
@@ -122,7 +134,7 @@ model PlaceReview {
 model PlaceReviewPhoto {
   id            String      @id @default(auto()) @map("_id") @db.ObjectId
   url           String
-  placeReview   PlaceReview @relation(fields: [placeReviewId], references: [id])
+  placeReview   PlaceReview @relation(fields: [placeReviewId], references: [id], onDelete: Cascade)
   placeReviewId String      @db.ObjectId
 }
 
@@ -136,8 +148,8 @@ model PlacePhoto {
   id                String         @id @default(auto()) @map("_id") @db.ObjectId
   url               String
   type              PlacePhotoType
-  // thumbnailPosition Int?
-  place             Place          @relation(fields: [placeId], references: [id])
+  thumbnailPosition Int?
+  place             Place          @relation(fields: [placeId], references: [id], onDelete: Cascade)
   placeId           String         @db.ObjectId
 }
 
@@ -161,29 +173,22 @@ model Menu {
   slug    String   @unique
   name    String
   photo   String
+  promo   String?
   type    MenuType
   price   Int
-  place   Place    @relation(fields: [placeId], references: [id])
+  place   Place    @relation(fields: [placeId], references: [id], onDelete: Cascade)
   placeId String   @db.ObjectId
 
   reviews  MenuReview[]
-  // photos   MenuPhoto[]
   archives MenuArchive[]
 }
-
-// model MenuPhoto {
-//   id     String @id @default(auto()) @map("_id") @db.ObjectId
-//   url    String
-//   menuId String @db.ObjectId
-//   menu   Menu   @relation(fields: [menuId], references: [id])
-// }
 
 model MenuReview {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   star      Int
   review    String
   menuId    String   @db.ObjectId
-  menu      Menu     @relation(fields: [menuId], references: [id])
+  menu      Menu     @relation(fields: [menuId], references: [id], onDelete: Cascade)
   userId    String   @db.ObjectId
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
@@ -195,11 +200,19 @@ model MenuReview {
 model MenuArchive {
   id     String @id @default(auto()) @map("_id") @db.ObjectId
   menuId String @db.ObjectId
-  menu   Menu   @relation(fields: [menuId], references: [id])
+  menu   Menu   @relation(fields: [menuId], references: [id], onDelete: Cascade)
   userId String @db.ObjectId
   user   User   @relation(fields: [userId], references: [id])
 
   @@unique([menuId, userId])
+}
+
+model PublicConversation {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  body      String
+  createdAt DateTime @default(now())
+  senderId  String   @db.ObjectId
+  sender    User     @relation(fields: [senderId], references: [id])
 }
 
 model Conversation {

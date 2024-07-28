@@ -2,13 +2,13 @@ export const Role = ["admin", "foodie", "owner"] as const;
 export const PlacePhotoType = ["gallery", "menu", "thumbnail"] as const;
 
 export const days = [
+  "Minggu",
   "Senin",
   "Selasa",
   "Rabu",
   "Kamis",
   "Jumat",
   "Sabtu",
-  "Minggu",
 ] as const;
 
 export const placeFeature = {

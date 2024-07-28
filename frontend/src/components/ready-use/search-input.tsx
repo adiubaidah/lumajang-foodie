@@ -13,15 +13,6 @@ import React, {
 import { MapPin, Search } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { SubdistrictComboBox } from "./subdistrict-combobox";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "~/components/ui/form";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 
 interface SearchInputProps {
   className?: ClassValue;
@@ -34,11 +25,6 @@ function SearchInput({ className, formClassName }: SearchInputProps) {
   const router = useRouter();
   const search = searchParams.get("q") || "";
   const subdistrict = searchParams.get("subdistrict") || "";
-  // const [subdistrictValue, setSubdistrictValue] = useState("")
-  // useEffect(() => {
-  //   form.setValue("search", search);
-  //   form.setValue("subdistrict", subdistrict);
-  // }, [search, subdistrict]);
 
   const handleSubdistrictChange = useDebouncedCallback((value: string) => {
     const params = new URLSearchParams(searchParams.toString());

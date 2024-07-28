@@ -1,4 +1,5 @@
 "use client";
+import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -6,6 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useForm, useFieldArray } from "react-hook-form";
 import { Loader2 } from "lucide-react";
 
+import { PreferenceCommand } from "~/components/ready-use/preference-command";
 import {
   Form,
   FormField,
@@ -17,17 +19,21 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
-import { Switch } from "~/components/ui/switch";
 import { axiosInstance } from "~/lib/utils";
 import { placeSchema } from "~/schema";
 import { days } from "~/constant";
-import { NewPlace, Location as LocationType } from "~/types";
+import { NewPlace, Location as LocationType, PlacePreference } from "~/types";
 import Tiptap from "~/components/ui/tiptap";
 import { SubdistrictComboBox } from "~/components/ready-use/subdistrict-combobox";
 import { Button } from "~/components/ui/button";
 import MapMarker from "~/components/ready-use/map-marker";
+import OpeningHour from "./openingHour";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
 // import { LngLat, ViewState } from "react-map-gl";
-import toast from "react-hot-toast";
 
 function Tambah() {
   const router = useRouter();
@@ -36,24 +42,18 @@ function Tambah() {
     defaultValues: {
       name: "",
       address: "",
-      cashOnly: true,
-      delivery: false,
       description: "",
-      liveMusic: false,
       phoneNumber: "",
-      restRoom: false,
-      servesCoffee: true,
       location: {
         latitude: 0,
         longitude: 0,
       },
       openingHours: days.map((day) => ({
         day,
-        openHours: "07:00",
-        closeHours: "19:00",
+        openTime: "07:00",
+        closeTime: "20:00",
       })),
       subdistrictId: "",
-      takeout: true,
       websiteUri: "",
     },
   });
@@ -63,12 +63,16 @@ function Tambah() {
     name: "openingHours",
     control: form.control,
   });
+  const [selectedPreferences, setSelectedPreferences] = useState<
+    PlacePreference[]
+  >([]);
+
 
   // useEffect(() => {
   //   console.log(form.formState.errors);
   // }, [form.formState.errors]);
   const placeMutation = useMutation({
-    mutationFn: async (payload: NewPlace) => {
+    mutationFn: async (payload: object) => {
       return axiosInstance.post("/place", payload);
     },
     onSuccess: () => {
@@ -81,12 +85,15 @@ function Tambah() {
   });
 
   const onSubmit = (values: NewPlace) => {
-    placeMutation.mutate(values);
-    // console.log(values);
+    const preferenceIds = selectedPreferences.map(
+      (preference) => preference.id,
+    );
+    const payload = { ...values, preferences: preferenceIds };
+    placeMutation.mutate(payload);
   };
 
   return (
-    <div>
+    <div className="">
       <h1>Tambah Tempat Makan</h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="mt-4 space-y-5">
@@ -124,119 +131,15 @@ function Tambah() {
               </FormItem>
             )}
           />
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6">
-            <FormField
-              control={form.control}
-              name="cashOnly"
-              render={({ field }) => (
-                <FormItem className="flex items-center space-x-3">
-                  <FormLabel className="mt-2">Cash Only</FormLabel>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="delivery"
-              render={({ field }) => (
-                <FormItem className="flex items-center space-x-3">
-                  <FormLabel className="mt-2">Pengantaran</FormLabel>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="liveMusic"
-              render={({ field }) => (
-                <FormItem className="flex items-center space-x-3">
-                  <FormLabel className="mt-2">Live Music</FormLabel>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="restRoom"
-              render={({ field }) => (
-                <FormItem className="flex items-center space-x-3">
-                  <FormLabel className="mt-2">Ruang Istirahat</FormLabel>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="servesCoffee"
-              render={({ field }) => (
-                <FormItem className="flex items-center space-x-3">
-                  <FormLabel className="mt-2">Kopi</FormLabel>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="takeout"
-              render={({ field }) => (
-                <FormItem className="flex items-center space-x-3">
-                  <FormLabel className="mt-2">Takeout</FormLabel>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-          </div>
+
+          <PreferenceCommand
+            values={selectedPreferences}
+            setValues={setSelectedPreferences}
+          />
+
           <div>
             {fields.map((field, index) => (
-              <div key={field.id} className="mt-4 flex">
-                <input
-                  {...form.register(`openingHours.${index}.day`)}
-                  className="focus:outline-none"
-                  readOnly
-                />
-                <div className="md:2/3 flex w-1/3 space-x-3">
-                  <Input
-                    {...form.register(`openingHours.${index}.openHours`)}
-                    placeholder="Open Hours"
-                    type="time"
-                  />
-                  <Input
-                    {...form.register(`openingHours.${index}.closeHours`)}
-                    type="time"
-                    placeholder="Close Hours"
-                  />
-                </div>
-              </div>
+              <OpeningHour key={field.id} form={form} index={index} />
             ))}
           </div>
           <FormField

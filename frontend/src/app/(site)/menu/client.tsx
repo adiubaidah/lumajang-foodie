@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import CardMenu from "./components/card";
 
+import { BottomNavbar } from "../components";
 import { axiosInstance, createQueryString, cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import Loader from "~/components/ready-use/loader";
@@ -19,6 +20,7 @@ function Client() {
 
   return (
     <>
+      <BottomNavbar />
       <div
         className={cn(
           "grid gap-x-10 gap-y-11 py-3",

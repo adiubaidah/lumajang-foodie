@@ -10,7 +10,8 @@ import {
   registerSchema,
   userSchema,
   editPasswordSchema,
-  menuReviewSchema
+  menuReviewSchema,
+  placePreferenceSchema,
 } from "./schema";
 
 export type Login = z.infer<typeof loginSchema>;
@@ -48,6 +49,9 @@ export type PlacePhoto = NewPlacePhoto & {
   id: string;
   url: string;
 };
+
+export type NewPlacePreference = z.infer<typeof placePreferenceSchema>;
+export type PlacePreference = {id: string} & NewPlacePreference;
 
 export type NewPlaceReview = z.infer<typeof placeReviewSchema>;
 export type PlaceReview = NewPlaceReview & { id: string };

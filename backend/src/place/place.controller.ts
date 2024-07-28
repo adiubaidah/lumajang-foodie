@@ -19,43 +19,56 @@ import { Role } from 'src/role/role.decorator';
 import { PlaceService } from './place.service';
 import { PlaceDto } from './place.dto';
 import { Request as RequestExpress } from 'express';
+import { PrismaService } from 'src/prisma.service';
 
 @Controller('place')
 export class PlaceController {
-  constructor(private placeService: PlaceService) {}
+  constructor(
+    private placeService: PlaceService,
+    private prismaService: PrismaService,
+  ) {}
 
   @Get()
   async all(
     @Query('perPage') perPage: number,
     @Query('page') page: number,
     @Query('q') q: string,
-    @Query('takeout') takeout: number,
-    @Query('delivery') delivery: number,
-    @Query('liveMusic') liveMusic: number,
-    @Query('restRoom') restRoom: number,
-    @Query('cashOnly') cashOnly: number,
-    @Query('servesCoffe') servesCoffe: number,
-    @Query('openNow') openNow: number,
     @Query('sort') sort: string,
     @Query('longitude') longitude: number,
     @Query('latitude') latitude: number,
     @Query('subdistrict') subdistrict: string,
+    @Query('open-now') openNow: number,
+    @Query() preference: object,
   ) {
+    const validPreference = [];
+    //validate preference key by check in database
+    const preferenceKey = Object.keys(preference);
+
+    for (const key of preferenceKey) {
+      if (preference[key] === '1') {
+        const findPreference =
+          await this.prismaService.placePreferences.findUnique({
+            where: {
+              value: key,
+            },
+          });
+
+        if (!!findPreference) {
+          validPreference.push(key);
+        }
+      }
+    }
+    // return validPreference;
     return await this.placeService.all({
       page: page || 1,
-      perPage: perPage || 9,
-      cashOnly,
-      delivery,
+      perPage: perPage || 15,
       latitude,
-      liveMusic,
       longitude,
-      restRoom,
       openNow,
-      takeout,
       query: q,
       sort,
-      servesCoffe,
       subdistrict,
+      preferences: validPreference,
     });
   }
 
@@ -81,6 +94,7 @@ export class PlaceController {
     // if(user.role ===)
     if (user.role === 'owner') {
       if (body.ownerId) {
+        // if owner id is exist
         throw new ForbiddenException('Tindakan hanya untuk admin');
       }
       body.ownerId = user.id;

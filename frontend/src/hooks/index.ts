@@ -9,3 +9,4 @@ export { default as useSocket } from "./useSocket";
 export { default as useActiveList } from "./useActiveList";
 export { default as useActiveUser } from "./useActiveUser";
 export { default as useRoutesChat } from "./useRoutesChat";
+export { default as usePlacePreference } from "./usePlacePreference";
