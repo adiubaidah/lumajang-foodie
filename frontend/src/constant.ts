@@ -1,4 +1,5 @@
 export const Role = ["admin", "foodie", "owner"] as const;
+export type Role = typeof Role[number];
 export const PlacePhotoType = ["gallery", "menu", "thumbnail"] as const;
 
 export const days = [

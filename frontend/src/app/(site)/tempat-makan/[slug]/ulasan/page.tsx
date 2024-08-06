@@ -83,7 +83,7 @@ function Ulasan() {
   return (
     <div className="bg-white p-7 shadow-lg">
       {!isLoadingCurrentUserReview && !currentUserReview && (
-        <ReviewModal placeId={params.slug} />
+        <ReviewModal placeId={detail.id} />
       )}
       <div className="flex flex-col gap-y-7">
         {!data || isLoading ? (

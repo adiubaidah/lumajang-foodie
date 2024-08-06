@@ -31,7 +31,7 @@ function Header({ imagePreview, detail }: { imagePreview: any; detail: any }) {
     <div className="py-3">
       {imagePreview && imagePreview.result && (
         <>
-          {!isDesktop && !(imagePreview.result.length === 4) ? (
+          {!isDesktop || !(imagePreview.result.length === 4) ? (
             <Carousel>
               <CarouselContent className="h-[300px]">
                 {imagePreview.result.map((item: any, index: number) => (
@@ -104,7 +104,7 @@ function Header({ imagePreview, detail }: { imagePreview: any; detail: any }) {
 
       <div className="mt-4 space-y-2">
         <div className="flex items-center justify-between">
-          <h1 className="text-4xl font-normal">{detail.name}</h1>
+          <h1 className="text-2xl font-normal md:text-4xl">{detail.name}</h1>
           <div className="flex items-center gap-x-2">
             <BadgeRate rate={detail.rate._avg.star} />
             {detail.rate._count.id > 0 && (
@@ -115,7 +115,9 @@ function Header({ imagePreview, detail }: { imagePreview: any; detail: any }) {
             )}
           </div>
         </div>
-        <p className="text-2xl font-light text-davy">{detail.address}</p>
+        <p className="text-xl font-light text-davy md:text-2xl">
+          {detail.address}
+        </p>
         <div className="flex gap-x-2 font-light text-davy">
           {isOpen(detail.openingHours) ? (
             <>
@@ -136,7 +138,8 @@ function Header({ imagePreview, detail }: { imagePreview: any; detail: any }) {
               buttonVariants({ variant: "outline" }),
               "flex items-center gap-x-2",
             )}
-            href={"#"}
+            href={`https://www.google.com/maps/dir/?api=1&destination=${detail.location.coordinates[1]},${detail.location.coordinates[0]}`}
+            target="_blank"
           >
             <IconsDistance width={27} fill="#A65F5F" height={27} />
             <span>Petunjuk</span>

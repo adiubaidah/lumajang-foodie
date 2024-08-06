@@ -4,6 +4,7 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
+import Link from "next/link";
 
 import { BadgeRate } from "~/components/ready-use/badge-rate";
 import SkeletonImage from "~/components/ready-use/skeleton-image";
@@ -36,7 +37,7 @@ async function Page({ params }: { params: { slug: string } }) {
   return (
     <div>
       <div className="flex flex-col items-center gap-x-3 py-3 md:flex-row">
-        <div className="h-[300px] w-full md:w-1/2 shadow-md">
+        <div className="h-[300px] w-full shadow-md md:w-1/2">
           <SkeletonImage
             className="h-full w-full object-cover"
             height={600}
@@ -58,8 +59,30 @@ async function Page({ params }: { params: { slug: string } }) {
               )}
             </div>
           </div>
-          <p className="text-2xl font-light text-davy">{data.address}</p>
-
+          <Link
+            href={`/tempat-makan/${data.place.slug}`}
+            className="group block w-full border-b-[1px] border-b-gray-300 py-3"
+          >
+            <div className="flex items-center gap-x-3">
+              <div className="h-12 w-12">
+                <SkeletonImage
+                  src={imageFromBackend(data.place.photos[0].url)}
+                  width={150}
+                  height={150}
+                  alt={data.name}
+                  className=" rounded-lg object-cover"
+                />
+              </div>
+              <div className="font-helvetica">
+                <p className="text-[16px] group-hover:text-orange">
+                  {data.place.name}
+                </p>
+                <span className="text-[14px] text-gray-400">
+                  {data.place.address}
+                </span>
+              </div>
+            </div>
+          </Link>
           <div className="flex items-center gap-x-2">
             <ArchiveButton menu={data.id} />
           </div>

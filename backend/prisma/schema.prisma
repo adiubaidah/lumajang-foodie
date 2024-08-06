@@ -19,13 +19,13 @@ enum Gender {
 }
 
 model User {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
-  email       String  @unique
-  password    String
-  isActive    Boolean @default(true)
-  isPrivate   Boolean @default(false)
-  role        Role    @default(foodie)
-  name        String
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  email     String  @unique
+  password  String
+  isActive  Boolean @default(true)
+  isPrivate Boolean @default(false)
+  role      Role    @default(foodie)
+  name      String
 
   gender          Gender?
   subdistrictId   String?      @db.ObjectId
@@ -89,7 +89,7 @@ model PlacePreferencesOnPlace {
 model Place {
   id            String         @id @default(auto()) @map("_id") @db.ObjectId
   slug          String         @unique
-  placeGoogleId String?       
+  placeGoogleId String?
   googleRating  Float?
   name          String
   description   String?
@@ -103,15 +103,17 @@ model Place {
   owner         User?          @relation(fields: [ownerId], references: [id])
   ownerId       String?        @db.ObjectId
 
-  photos      PlacePhoto[]
-  menus       Menu[]
-  reviews     PlaceReview[]
-  archives    PlaceArchive[]
-  preferences PlacePreferencesOnPlace[]
+  photos             PlacePhoto[]
+  menus              Menu[]
+  reviews            PlaceReview[]
+  archives           PlaceArchive[]
+  preferences        PlacePreferencesOnPlace[]
+  Message            Message[]
+  publicConversation PublicConversation[]
 }
 
 type OpeningHours {
-  day        String
+  day       String
   openTime  String?
   closeTime String?
 }
@@ -208,8 +210,11 @@ model MenuArchive {
 }
 
 model PublicConversation {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  body      String
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  body      String?
+  placeId   String?  @db.ObjectId
+  place     Place?   @relation(fields: [placeId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   senderId  String   @db.ObjectId
   sender    User     @relation(fields: [senderId], references: [id])
@@ -226,12 +231,14 @@ model Conversation {
 
 model Message {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  body      String
+  body      String?
   createdAt DateTime @default(now())
 
   seenIds String[] @db.ObjectId
   seen    User[]   @relation("Seen", fields: [seenIds], references: [id])
 
+  placeId        String?      @db.ObjectId
+  place          Place?       @relation(fields: [placeId], references: [id], onDelete: Cascade)
   conversationId String       @db.ObjectId
   conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 

@@ -17,15 +17,12 @@ import { PlaceArchiveService } from './place-archive.service';
 export class PlaceArchiveController {
   constructor(private placeArchiveService: PlaceArchiveService) {}
 
-  @Role([RoleEnum.foodie, RoleEnum.owner])
-  @UseGuards(JwtGuard, RoleGuard)
   @Get()
   async all(
     @Query('perPage') perPage: number,
     @Query('page') page: number,
-    @Req() req: RequestExpress,
+    @Query('user') user: string,
   ) {
-    const user = req['user'].id;
     return await this.placeArchiveService.all({
       perPage: perPage || 5,
       page: page || 1,

@@ -41,6 +41,12 @@ export const imageFromBackend = (url: string) => {
     : backSlashtoSlash;
 };
 
+export const getHostName = (url: string) => {
+  const hostName = new URL(url).hostname;
+  return hostName;
+}
+
+
 export const createQueryString = (params: Object) => {
   return Object.entries(params)
     .map(

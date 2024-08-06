@@ -54,7 +54,7 @@ function Filter({ filter, setFilter, path, router, location }: FilterProps) {
     other: {},
   });
 
-  useEffect(() => {
+  useEffect(() => { 
     setFilterData(filter);
     if (filter.other && preferences) {
       const selected = Object.entries(filter.other)

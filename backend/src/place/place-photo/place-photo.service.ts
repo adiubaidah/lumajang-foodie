@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { PlacePhotoDto } from './place-photo.dto';
@@ -10,8 +11,9 @@ export class PlacePhotoService {
   async create(payload: PlacePhotoDto, path: string) {
     return await this.prismaService.placePhoto.create({
       data: {
-        type: payload.type,
+        type: payload.type as PlacePhotoType,
         url: path,
+        thumbnailPosition: payload.thumbnailPosition || null,
         place: {
           connect: {
             id: payload.placeId,
@@ -84,5 +86,25 @@ export class PlacePhotoService {
         id,
       },
     });
+  }
+
+  // Hypothetical file upload function
+  async uploadFile(file: Express.Multer.File): Promise<string> {
+    // Implement your file upload logic here, e.g., saving to a local directory or cloud storage
+    // For simplicity, let's assume we're saving the file to a local directory
+
+    const uploadDir = 'public/place';
+    const fileName = `${Date.now()}-${file.originalname}`;
+    const filePath = `${uploadDir}/${fileName}`;
+
+    // Ensure the upload directory exists
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+
+    // Save the file
+    await fs.promises.writeFile(filePath, file.buffer);
+
+    return filePath;
   }
 }

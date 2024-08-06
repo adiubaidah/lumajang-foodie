@@ -13,7 +13,9 @@ import {
   menuReviewSchema,
   placePreferenceSchema,
 } from "./schema";
+import { Role as RoleConstant } from "./constant";
 
+export type Role = typeof RoleConstant[number];
 export type Login = z.infer<typeof loginSchema>;
 export type Register = z.infer<typeof registerSchema>;
 export type NewUser = z.infer<typeof userSchema>;
@@ -36,6 +38,8 @@ export type Location = { latitude: number; longitude: number };
 export type NewPlace = z.infer<typeof placeSchema>;
 export type Place = NewPlace & { id: string; slug: string };
 export type PlaceComplete = Place & {
+  googleRating?: number;
+  promotedMenus: Menu[];
   photoForThumbnail?: PlacePhoto;
   averageStar: number;
   subdistrict: string;

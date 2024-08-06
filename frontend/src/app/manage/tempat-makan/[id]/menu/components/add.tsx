@@ -38,6 +38,7 @@ import { Button } from "~/components/ui/button";
 import { menuSchema } from "~/schema";
 import toast from "react-hot-toast";
 import { ScrollArea } from "~/components/ui/scroll-area";
+import { Textarea } from "~/components/ui/textarea";
 function Add({
   body,
   isOpen,
@@ -53,6 +54,7 @@ function Add({
       type: "food",
       placeId: "",
       price: 0,
+      promo: undefined,
     },
   });
   useEffect(() => {
@@ -63,11 +65,13 @@ function Add({
 
   const menuMutation = useMutation({
     mutationFn: async (payload: FormData) => {
-      return (await axiosInstance.post("/menu", payload, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })).data;
+      return (
+        await axiosInstance.post("/menu", payload, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+      ).data;
     },
     onSuccess: () => {
       toast.success("Menu berhasil ditambahkan");
@@ -87,6 +91,7 @@ function Add({
   };
 
   function onSubmit(values: NewMenu) {
+    console.log(values)
     const formData = new FormData();
     Object.entries(values).forEach(([key, value]) => {
       formData.append(key, value.toString());
@@ -162,6 +167,21 @@ function Add({
                       />
                     </FormControl>
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="promo"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Promo</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} placeholder="Deskripsi Promo" />
+                    </FormControl>
+                    <FormMessage />
+                    <FormDescription>Isi field ini jika ada promo</FormDescription>
                   </FormItem>
                 )}
               />

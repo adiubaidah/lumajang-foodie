@@ -29,10 +29,10 @@ function Review() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="place">
-          {/* <ReviewPlace /> */}
+          <ReviewPlace />
         </TabsContent>
         <TabsContent value="menu">
-          {/* <ReviewMenu /> */}
+          <ReviewMenu />
         </TabsContent>
       </Tabs>
     </>

@@ -156,7 +156,14 @@ export class MenuService {
           select: {
             id: true,
             name: true,
+            slug: true,
             address: true,
+            photos: {
+              where: {
+                thumbnailPosition: 1,
+                type: 'thumbnail',
+              },
+            },
           },
         },
         _count: {

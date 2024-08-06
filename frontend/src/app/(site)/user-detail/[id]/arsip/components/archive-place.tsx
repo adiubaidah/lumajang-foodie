@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
 import { imageFromBackend } from "~/lib/utils";
 
 import SkeletonImage from "~/components/ready-use/skeleton-image";
@@ -19,13 +20,13 @@ type ArchivePlaceType = {
 };
 
 function ArchivePlace() {
-  const { user } = useAuth();
+  const params = useParams<{ id: string }>();
   const { data, isLoading } = useQuery({
-    queryKey: ["place-archive", { user: user && user.id }],
+    queryKey: ["place-archive", { user: params.id}],
     queryFn: async () => {
-      return (await axiosInstance.get(`/place-archive`)).data;
+      return (await axiosInstance.get(`/place-archive?user=${params.id}`)).data;
     },
-    enabled: user && !!user.id,
+    enabled: !!params.id,
   });
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

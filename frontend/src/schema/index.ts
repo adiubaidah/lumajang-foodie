@@ -105,6 +105,7 @@ export const placeSchema = z.object({
 export const placePhotoSchema = z.object({
   type: z.enum(PlacePhotoType),
   placeId: z.string().min(3, { message: "Tempat dibutuhkan" }),
+  thumbnailPosition: z.number().max(4, "Posisi maksimuma adalah 4").optional(),
 });
 export const placeReviewSchema = z.object({
   star: z.number().min(1, { message: "Rating bintang tidak valid" }),
@@ -116,6 +117,7 @@ export const menuSchema = z.object({
   name: z.string().min(3, { message: "Nama menu diperlukan" }),
   type: z.enum(["food", "drink"]),
   price: z.number().min(100, { message: "Harga diperlukan" }),
+  promo: z.string().optional(),
   placeId: z.string().min(4, { message: "Tempat makan diperlukan" }),
 });
 

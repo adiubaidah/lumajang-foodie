@@ -63,9 +63,10 @@ function Image() {
         <Table>
           <TableHeader className="hidden md:table-header-group">
             <TableRow>
-              <TableHead>Foto</TableHead>
-              <TableHead>Tipe</TableHead>
-              <TableHead>Aksi</TableHead>
+              <TableHead className="text-center">Foto</TableHead>
+              <TableHead className="text-center">Tipe</TableHead>
+              <TableHead className="text-center">Posisi Gambar</TableHead>
+              <TableHead className="text-center">Aksi</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -81,7 +82,7 @@ function Image() {
             ) : data.result && data.result.length > 0 ? (
               data.result.map((photo: PlacePhoto) => (
                 <TableRow key={photo.id} className="flex flex-col items-center md:table-row">
-                  <TableCell className="block  md:table-cell">
+                  <TableCell className="block md:table-cell">
                     <SkeletonImage
                       src={imageFromBackend(photo.url)}
                       alt="photo"
@@ -92,6 +93,7 @@ function Image() {
                     />
                   </TableCell>
                   <TableCell className="block w-full text-center md:w-fit md:table-cell">{photo.type}</TableCell>
+                  <TableCell className="text-center">{photo.thumbnailPosition ?? "-"}</TableCell>
                   <TableCell className="block space-x-3  md:table-cell">
                     <Button size={"icon"}>
                       <Pencil />

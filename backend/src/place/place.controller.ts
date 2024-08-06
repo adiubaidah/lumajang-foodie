@@ -4,6 +4,7 @@ import {
   Query,
   Post,
   Put,
+  Delete,
   Body,
   UseGuards,
   Param,
@@ -38,6 +39,7 @@ export class PlaceController {
     @Query('latitude') latitude: number,
     @Query('subdistrict') subdistrict: string,
     @Query('open-now') openNow: number,
+    @Query('promo') promo: number,
     @Query() preference: object,
   ) {
     const validPreference = [];
@@ -66,6 +68,7 @@ export class PlaceController {
       longitude,
       openNow,
       query: q,
+      promo,
       sort,
       subdistrict,
       preferences: validPreference,
@@ -121,5 +124,14 @@ export class PlaceController {
       body.ownerId = user.id;
     }
     return await this.placeService.put(id, body);
+  }
+
+  @Role([RoleEnum.owner, RoleEnum.admin])
+  @UseGuards(JwtGuard, RoleGuard)
+  @Delete(':id')
+  async delete(@Param('id') id: string, @Req() req: RequestExpress) {
+    const user = req['user'];
+
+    return await this.placeService.delete(id);
   }
 }

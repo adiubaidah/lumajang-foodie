@@ -30,9 +30,9 @@ function Follower() {
           ? data.map((follower: FollowerType) => (
               <div key={follower.id} className="flex items-center gap-x-3">
                 <SkeletonImage
-                  src={imageFromBackend(
-                    follower.follower.image ?? "public/img/user/default.png",
-                  )}
+                  src={follower.follower.image ? imageFromBackend(
+                    follower.follower.image,
+                  ): "/assets/avatar.png"}
                   alt={follower.follower.name}
                   width={100}
                   height={100}

@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsEnum } from 'class-validator';
+import { IsString, IsNumber, IsEnum, IsOptional } from 'class-validator';
 import { MenuType } from '@prisma/client';
 import { Transform } from 'class-transformer';
 export class MenuDto {
@@ -11,6 +11,10 @@ export class MenuDto {
 
   @IsEnum(MenuType)
   type: MenuType;
+
+  @IsOptional()
+  @IsString({ message: 'Promo tidak valid' })
+  promo: string;
 
   @IsString({ message: 'Tempat makan diperlukan' })
   placeId: string;

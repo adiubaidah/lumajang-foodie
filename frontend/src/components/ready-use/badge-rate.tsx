@@ -25,7 +25,7 @@ export function BadgeRate({ rate }: BadgeRateProps) {
         <React.Fragment>
           <Star width={17} height={17} fill="white" />
           <span className="font-helvetica text-[12px] font-semibold leading-4">
-            {Math.ceil(rate).toFixed(1)}
+            {rate.toFixed(1)}
           </span>
         </React.Fragment>
       ) : (

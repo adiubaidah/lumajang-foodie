@@ -23,12 +23,12 @@ function ArchivePlace() {
   const { data, isLoading } = useQuery({
     queryKey: ["place-archive", { user: user && user.id }],
     queryFn: async () => {
-      return (await axiosInstance.get(`/place-archive`)).data;
+      return (await axiosInstance.get(`/place-archive?user=${user.id}`)).data;
     },
     enabled: user && !!user.id,
   });
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
       {isLoading
         ? "Loading"
         : data.result && data.result.length > 0

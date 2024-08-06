@@ -24,6 +24,7 @@ import Link from "next/link";
 import { ButtonFollow } from "~/components/ready-use/button-follow";
 import { OpeningHours, PlacePhoto } from "~/types";
 import { useAuth } from "~/hooks";
+import toast from "react-hot-toast";
 
 export default function Overview() {
   const { slug } = useParams();
@@ -107,9 +108,12 @@ export default function Overview() {
                       className="h-[120px] w-[120px] rounded-full border-2 border-soft-red outline-2 outline-soft-red"
                     />
                     <span>
-                      <p className="text-lg font-bold text-davy">
+                      <Link
+                        href={`/user-detail/${detail.owner.id}`}
+                        className="text-lg font-bold text-davy"
+                      >
                         {detail.owner.name}
-                      </p>
+                      </Link>
                       <p className="space-x-2 font-normal text-davy">
                         <span>{detail.owner._count.followers}</span>
                         <span>Follower</span>
@@ -243,7 +247,7 @@ export default function Overview() {
               <p>{detail.phoneNumber}</p>
             </div>
             <div>
-              <h5 className="mb-2 text-xl font-black text-davy">Petunjuk</h5>
+              <h5 className="mb-2 text-xl font-black text-davy">Lokasi</h5>
               <MapComponent
                 latitude={viewport.latitude}
                 longitude={viewport.longitude}
@@ -256,12 +260,20 @@ export default function Overview() {
                   buttonVariants({ variant: "outline" }),
                   "flex items-center gap-x-2",
                 )}
-                href={"/#"}
+                href={`https://www.google.com/maps/dir/?api=1&destination=${detail.location.coordinates[1]},${detail.location.coordinates[0]}`}
+                target="_blank"
               >
                 <IconsDistance width={27} fill="#A65F5F" height={27} />
                 <span>Petunjuk</span>
               </Link>
-              <Button variant={"outline"} className="flex items-center gap-x-2">
+              <Button
+                variant={"outline"}
+                className="flex items-center gap-x-2"
+                onClick={() => {
+                  navigator.clipboard.writeText(detail.address);
+                  toast.success("Alamat berhasil disalin")
+                }}
+              >
                 <Copy size={27} color="#A65F5F" />
                 <span>Salin</span>
               </Button>

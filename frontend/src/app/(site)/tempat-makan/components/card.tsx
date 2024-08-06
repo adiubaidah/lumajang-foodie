@@ -17,6 +17,7 @@ interface CardPlaceProps {
   rate: number;
   subdistrict: string;
   isOpen: boolean;
+  promo: boolean;
   distance?: number;
 }
 
@@ -27,6 +28,7 @@ function CardPlace({
   subdistrict,
   slug,
   isOpen,
+  promo,
   distance,
 }: CardPlaceProps) {
   // const ref = useRef(null);
@@ -41,17 +43,22 @@ function CardPlace({
     // >
     <a
       href={`/tempat-makan/${slug}`}
-      className="block rounded-2xl p-2.5 shadow-[0px_4px_7.3px_0px_rgba(0,0,0,0.2)] transition duration-200"
+      className="block relative overflow-hidden rounded-2xl p-2.5 shadow-[0px_4px_7.3px_0px_rgba(0,0,0,0.2)] transition duration-200"
     >
       <div>
+        {promo && <div className="ribbon">Promo</div>}
         <div className="h-[248px]">
           <SkeletonImage
-            src={srcImage ? imageFromBackend(srcImage): "/assets/restaurant_default.png"}
+            src={
+              srcImage
+                ? imageFromBackend(srcImage)
+                : "/assets/restaurant_default.png"
+            }
             alt={title}
             height={200}
             width={200}
-            className="w-full h-full rounded-2xl object-cover"
-            skeletonStyle={{ borderRadius: 12}}
+            className="h-full w-full rounded-2xl object-cover"
+            skeletonStyle={{ borderRadius: 12 }}
           />
         </div>
         <div className="mt-1.5 flex items-center justify-between">
@@ -65,18 +72,17 @@ function CardPlace({
         </p>
       </div>
       <div className="flex items-center justify-between">
-      {isOpen ? (
-              <span className="text-islamic">Buka</span>
-          ) : (
-              <span className="text-puce">Tutup</span>
-             
-          )}
+        {isOpen ? (
+          <span className="text-islamic">Buka</span>
+        ) : (
+          <span className="text-puce">Tutup</span>
+        )}
 
-      {!!distance && (
-        <span className="inline-block text-right font-thin text-davy">
-          {betterToKm(distance)}
-        </span>
-      )}
+        {!!distance && (
+          <span className="inline-block text-right font-thin text-davy">
+            {betterToKm(distance)}
+          </span>
+        )}
       </div>
     </a>
     // </motion.div>

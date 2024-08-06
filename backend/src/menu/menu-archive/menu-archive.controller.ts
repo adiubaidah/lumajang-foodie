@@ -19,15 +19,12 @@ import { MenuArchiveService } from './menu-archive.service';
 export class MenuArchiveController {
   constructor(private menuService: MenuArchiveService) {}
 
-  @Role([RoleEnum.foodie, RoleEnum.owner])
-  @UseGuards(JwtGuard, RoleGuard)
   @Get()
   async all(
     @Query('perPage') perPage: number,
     @Query('page') page: number,
-    @Req() req: RequestExpress,
+    @Query('user') user: string,
   ) {
-    const user = req['user'].id;
     return await this.menuService.all({
       perPage: perPage || 6,
       page: page || 1,

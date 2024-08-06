@@ -37,6 +37,7 @@ export class MessageController {
     return await this.messageService.create(
       {
         body: payload.body,
+        placeId: payload.placeId,
         conversationId: payload.conversationId,
       },
       user.id,

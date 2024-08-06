@@ -17,6 +17,7 @@ import { FilterData } from "./components/filter";
 import { Button } from "~/components/ui/button";
 import Loader from "~/components/ready-use/loader";
 import SearchInput from "~/components/ready-use/search-input";
+import { set } from "lodash";
 
 function Client() {
   const { location } = useUserLocation();
@@ -87,6 +88,21 @@ function Client() {
     router.replace(`${path}?${query}`);
   };
 
+  const handleTogglePromo = () => {
+    const query = new URLSearchParams(searchParams.toString());
+
+    //if promo is active, remove it
+    if (filter.other.promo === 1) {
+      query.delete("promo");
+      setFilter({ ...filter, other: { ...filter.other, promo: 0 } });
+    } else {
+      //if promo is not active, add it
+      query.set("promo", "1");
+      setFilter({ ...filter, other: { ...filter.other, promo: 1 } });
+    }
+    router.replace(`${path}?${query}`);
+  };
+
   return (
     <>
       <div className="shadow-sm md:hidden">
@@ -102,6 +118,19 @@ function Client() {
           path={path}
           location={location}
         />
+        <Button
+          variant={"outline"}
+          className={cn(
+            "flex items-center space-x-2",
+            "hover:text-white hover:bg-orange",
+            filter.other.promo === 1
+              ? "bg-orange text-white"
+              : "border-orange bg-white text-black",
+          )}
+          onClick={handleTogglePromo}
+        >
+          <span>Promo</span>
+        </Button>
         {Object.entries(filter.other)
           .filter(([key, value]) => value === 1)
           .map(([key]) =>
@@ -141,7 +170,8 @@ function Client() {
               slug={place.slug}
               srcImage={place.photoForThumbnail?.url}
               title={place.name}
-              rate={place.averageStar}
+              rate={place.googleRating || place.averageStar}
+              promo={place.promotedMenus.length > 0}
               subdistrict={place.subdistrict}
               isOpen={isOpen(place.openingHours)}
               distance={place.distance}

@@ -2,17 +2,17 @@ import { unlink } from 'node:fs/promises';
 import { join } from 'node:path';
 import {
   Controller,
+  BadRequestException,
   Post,
   Get,
   Delete,
   UseGuards,
-  UseInterceptors,
   Body,
   UploadedFile,
   Query,
   Param,
+  UseInterceptors,
 } from '@nestjs/common';
-import { diskStorage } from 'multer';
 import { PlacePhotoType, Role as RoleEnum } from '@prisma/client';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PlacePhotoService } from './place-photo.service';
@@ -20,29 +20,53 @@ import { Role } from 'src/role/role.decorator';
 import { JwtGuard } from 'src/auth/jwt.guard';
 import { RoleGuard } from 'src/role/role.guard';
 import { PlacePhotoDto } from './place-photo.dto';
+import { PrismaService } from 'src/prisma.service';
 
 @Controller('place-photo')
 export class PlacePhotoController {
-  constructor(private placePhotoService: PlacePhotoService) {}
+  constructor(
+    private placePhotoService: PlacePhotoService,
+    private prismaService: PrismaService,
+  ) {}
 
   @Role([RoleEnum.owner])
   @UseGuards(JwtGuard, RoleGuard)
-  @UseInterceptors(
-    FileInterceptor('photo', {
-      storage: diskStorage({
-        destination: 'public/img/place',
-        filename: (req, file, cb) => {
-          cb(null, Date.now() + '-' + file.originalname.replace(/\//g, '/'));
-        },
-      }),
-    }),
-  )
   @Post()
+  @UseInterceptors(FileInterceptor('photo'))
   async create(
     @UploadedFile() file: Express.Multer.File,
     @Body() payload: PlacePhotoDto,
   ) {
-    return await this.placePhotoService.create(payload, file.path);
+    //check is thumbnail or not, if thumnail, then must unique
+
+    if (payload.type === PlacePhotoType.thumbnail) {
+      const isThumbnailExist = await this.prismaService.placePhoto.findFirst({
+        where: {
+          placeId: payload.placeId,
+          type: PlacePhotoType.thumbnail,
+        },
+      });
+
+      if (isThumbnailExist) {
+        throw new BadRequestException('Thumbnail sudah ada');
+      }
+    }
+
+    if (payload.thumbnailPosition) {
+      const isPhotoPositionExist =
+        await this.prismaService.placePhoto.findFirst({
+          where: {
+            placeId: payload.placeId,
+            thumbnailPosition: payload.thumbnailPosition,
+          },
+        });
+      if (isPhotoPositionExist) {
+        throw new BadRequestException('Posisi foto sudah ada');
+      }
+    }
+
+    const filePath = await this.placePhotoService.uploadFile(file);
+    return await this.placePhotoService.create(payload, filePath);
   }
 
   @Get()

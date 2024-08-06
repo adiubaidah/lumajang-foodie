@@ -19,6 +19,7 @@ export class PlaceService {
       longitude,
       latitude,
       sort,
+      promo,
       subdistrict,
       preferences,
     }: {
@@ -28,6 +29,7 @@ export class PlaceService {
       openNow: number;
       longitude: number;
       latitude: number;
+      promo: number;
       sort: string;
       subdistrict: string;
       preferences: string[];
@@ -129,6 +131,25 @@ export class PlaceService {
         },
       },
       {
+        $lookup: {
+          from: 'Menu',
+          let: { placeId: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ['$placeId', '$$placeId'] },
+                    { $ne: ['$promo', null] },
+                  ],
+                },
+              },
+            },
+          ],
+          as: 'promotedMenus',
+        },
+      },
+      {
         $addFields: {
           photoForThumbnail: { $arrayElemAt: ['$photoForThumbnail', 0] },
           // averageStar: '$reviews.averageStar'
@@ -149,6 +170,7 @@ export class PlaceService {
             },
           },
         }),
+        ...(promo === 1 && { 'promotedMenus.0': { $exists: true } }),
         ...(preferences.length > 0 && {
           'preferencesDetails.value': {
             $all: preferences,

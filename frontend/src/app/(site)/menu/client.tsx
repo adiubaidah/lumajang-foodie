@@ -39,6 +39,7 @@ function Client() {
               title={menu.name}
               slug={menu.slug}
               srcImage={menu.photo}
+              promo={!!menu.promo}
               rate={menu.averageStar}
             />
           ))

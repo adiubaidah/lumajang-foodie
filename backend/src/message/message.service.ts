@@ -14,6 +14,13 @@ export class MessageService {
     const newMessage = await this.prismaService.message.create({
       data: {
         body: payload.body,
+        ...(payload.placeId && {
+          place: {
+            connect: {
+              id: payload.placeId,
+            },
+          },
+        }),
         conversation: {
           connect: {
             id: payload.conversationId,
@@ -48,7 +55,6 @@ export class MessageService {
           },
         },
       },
-
       include: {
         users: {
           select: {
@@ -101,6 +107,17 @@ export class MessageService {
             id: true,
             name: true,
             image: true,
+          },
+        },
+        place: {
+          select: {
+            id: true,
+            name: true,
+            photos: {
+              where: {
+                thumbnailPosition: 1,
+              },
+            },
           },
         },
       },

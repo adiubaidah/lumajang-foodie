@@ -3,7 +3,10 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        hostname: "localhost",
+        hostname:
+          process.env.NODE_ENV === "development"
+            ? "localhost"
+            : "api.lumajangfoodie.com",
       },
       {
         hostname: "lh3.googleusercontent.com",

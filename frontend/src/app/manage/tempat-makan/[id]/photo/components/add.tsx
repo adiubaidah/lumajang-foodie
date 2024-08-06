@@ -51,6 +51,7 @@ function Add({
     resolver: zodResolver(placePhotoSchema),
     defaultValues: {
       type: "thumbnail",
+      thumbnailPosition: undefined,
       placeId: "",
     },
   });
@@ -99,6 +100,9 @@ function Add({
     const formData = new FormData();
     formData.append("placeId", values.placeId);
     formData.append("type", values.type);
+    if(values.thumbnailPosition) {
+      formData.append("thumbnailPosition", values.thumbnailPosition.toString());
+    }
     if (image instanceof File) {
       formData.append("photo", image);
     }
@@ -138,6 +142,26 @@ function Add({
                       <SelectItem value="thumbnail">Thumbnail</SelectItem>
                     </SelectContent>
                   </Select>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="thumbnailPosition"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Posisi Gambar</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="posisi"
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        field.onChange(Number(value));
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />

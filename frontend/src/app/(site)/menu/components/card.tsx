@@ -10,15 +10,17 @@ interface CardMenuProps {
   title: string;
   slug: string;
   rate: number;
+  promo: boolean;
   price: number;
 }
 
-function CardMenu({ srcImage, title, rate, slug, price }: CardMenuProps) {
+function CardMenu({ srcImage, title, rate, slug, price, promo }: CardMenuProps) {
   return (
     <Link
       href={`/menu/${slug}`}
-      className="block rounded-2xl p-2.5 shadow-[0px_4px_7.3px_0px_rgba(0,0,0,0.2)] transition duration-200"
+      className="block relative overflow-hidden rounded-2xl p-2.5 shadow-[0px_4px_7.3px_0px_rgba(0,0,0,0.2)] transition duration-200"
     >
+      {promo && <div className="ribbon">Promo</div>}
       <div>
         <div className="h-[248px]">
           <SkeletonImage

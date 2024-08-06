@@ -122,6 +122,7 @@ function Menu() {
             >
               {menu.result.map((menu: MenuWithPhoto) => (
                 <CardMenu
+                  promo={!!menu.promo}
                   key={menu.id}
                   title={menu.name}
                   price={menu.price}

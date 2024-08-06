@@ -1,5 +1,5 @@
 "use client";
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import Image from "next/image";
 import { YoutubeCircle, InstagramCircle } from "~/icons";
 import Logo from "~/../public/assets/logo.png";
@@ -12,16 +12,23 @@ import { ChevronRight } from "lucide-react";
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [isToggled, setIsToggled] = useState(false);
   const [broken, setBroken] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   // const isDesktop = false
   return (
     <>
       <Suspense>
         <Navbar />
-        <Sidebar
-          setBroken={setBroken}
-          setToggled={setIsToggled}
-          toggled={isToggled}
-        />
+        {isClient && (
+          <Sidebar
+            setBroken={setBroken}
+            setToggled={setIsToggled}
+            toggled={isToggled}
+          />
+        )}
       </Suspense>
 
       <button
@@ -44,7 +51,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {children}
       </main>
 
-      <footer className="container flex flex-col md:flex-row gap-y-5 max-w-full justify-between bg-[#EEEEEE] py-16">
+      <footer className="container flex max-w-full flex-col justify-between gap-y-5 bg-[#EEEEEE] py-16 md:flex-row">
         <div className="w-full md:max-w-lg">
           <Image
             src={Logo}

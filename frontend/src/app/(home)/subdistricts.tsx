@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import Link from "next/link";
 import { ChevronRight, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "~/lib/utils";
@@ -17,7 +18,8 @@ function Subdistricts() {
         {subdistricts &&
           subdistricts.length > 0 &&
           subdistricts.map((subdistrict: any) => (
-            <div
+            <Link
+              href={`/tempat-makan?subdistrict=${subdistrict.id}`}
               key={subdistrict.id}
               className="flex cursor-pointer items-center justify-between rounded-lg border-[1px] border-gray-200 px-3 py-3.5 shadow-[0_4px_5px_0_rgba(28,28,28,0.08)]"
             >
@@ -28,7 +30,7 @@ function Subdistricts() {
                 </p>
               </span>
               <ChevronRight />
-            </div>
+            </Link>
           ))}
       </div>
     </React.Fragment>

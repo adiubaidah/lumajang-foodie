@@ -17,15 +17,19 @@ function Home() {
             className="absolute left-0 top-0 z-0 h-full w-full bg-black opacity-50"
             style={{ filter: "brightness(50%)" }}
           />
+          
           <Image
-            src="/assets/logo.png"
+            src="/assets/only-logo.png"
             alt="Lumajang Foodie"
             width={800}
             height={400}
             priority
             className="z-10 h-[80px] w-auto"
           />
-          <p className="z-10 mt-4 text-center text-2xl text-white md:text-4xl">
+          <h2 className="z-10 mt-2 text-center text-2xl text-white md:text-4xl font-helvetica">
+            Lumajang Foodie
+          </h2>
+          <p className="z-10 mt-4 text-center text-2xl text-white md:text-2xl font-product-sans">
             Temukan makanan & minuman terbaik di <span>Kabupaten Lumajang</span>
           </p>
           <div className="z-10 w-full max-w-[800px]">
