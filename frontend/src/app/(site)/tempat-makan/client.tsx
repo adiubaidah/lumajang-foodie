@@ -110,7 +110,7 @@ function Client() {
       </div>
       <BottomNavbar />
 
-      <div className="flex items-center gap-x-3">
+      <div className="flex items-center gap-3 flex-wrap">
         <Filter
           filter={filter}
           setFilter={setFilter}

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Sidebar as SidebarComponent, Menu, MenuItem } from "react-pro-sidebar";
@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 
 import { axiosInstance, rgbToHex } from "~/lib/utils";
+import { useAuth } from "~/hooks";
 
 interface SidebarProps {
   toggled: boolean;
@@ -26,6 +27,7 @@ interface SidebarProps {
 function Sidebar({ toggled, setToggled, setBroken }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const { user } = useAuth();
   // const [toggled, setToggled] = useState(false);
 
   const logoutMutation = useMutation({
@@ -128,16 +130,28 @@ function Sidebar({ toggled, setToggled, setBroken }: SidebarProps) {
           },
         }}
       >
-        <MenuItem
-          component={<Link href="/my-profile" />}
-          icon={<UserRound size={20} />}
-          active={pathname === "/my-profile"}
-        >
-          Profile
-        </MenuItem>
-        <MenuItem icon={<Power />} onClick={() => logoutMutation.mutate()}>
-          Logout
-        </MenuItem>
+        {user && !!user.id ? (
+          <React.Fragment>
+            <MenuItem
+              component={<Link href="/my-profile" />}
+              icon={<UserRound size={20} />}
+              active={pathname === "/my-profile"}
+            >
+              Profile
+            </MenuItem>
+            <MenuItem icon={<Power />} onClick={() => logoutMutation.mutate()}>
+              Logout
+            </MenuItem>
+          </React.Fragment>
+        ) : (
+          <MenuItem
+            component={<Link href="/login" />}
+            icon={<UserRound size={20} />}
+            active={pathname === "/login"}
+          >
+            Login
+          </MenuItem>
+        )}
       </Menu>
     </SidebarComponent>
   );

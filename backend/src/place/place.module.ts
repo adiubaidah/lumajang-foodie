@@ -7,6 +7,7 @@ import { PlaceReviewModule } from './place-review/place-review.module';
 import { PlacePhotoModule } from './place-photo/place-photo.module';
 import { PlaceArchiveModule } from './place-archive/place-archive.module';
 import { PlacePreferenceModule } from './place-preference/place-preference.module';
+import { PlaceOtpModule } from './place-otp/place-otp.module';
 
 @Module({
   providers: [PlaceService, PrismaService, JwtService],
@@ -16,6 +17,7 @@ import { PlacePreferenceModule } from './place-preference/place-preference.modul
     PlacePhotoModule,
     PlaceArchiveModule,
     PlacePreferenceModule,
+    PlaceOtpModule,
   ],
 })
 export class PlaceModule {}

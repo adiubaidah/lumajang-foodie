@@ -4,11 +4,12 @@ import { useState } from "react";
 import clsx from "clsx";
 
 import Image from "next/image";
-
+import SkeletonImage from "~/components/ready-use/skeleton-image";
 import Avatar from "../../components/avatar";
 import { FullMessageType } from "~/types";
 import { useAuth } from "~/hooks";
-import { formatTime, cn } from "~/lib/utils";
+import { formatTime, cn, imageFromBackend } from "~/lib/utils";
+import Link from "next/link";
 
 interface MessageBoxProps {
   data: FullMessageType;
@@ -49,7 +50,30 @@ const MessageBox: React.FC<MessageBoxProps> = ({ data, isLast }) => {
             {formatTime(new Date(data.createdAt))}
           </div>
         </div>
-        <div className={message}>{data.body}</div>
+        {data.placeId ? (
+          <div className="bg-red-300">
+            <Link
+              href={`/tempat-makan/${data.place?.slug}`}
+              className="block h-40 w-64 bg-slate-800"
+              target="_blank"
+            >
+              <SkeletonImage
+                src={
+                  data.place?.photos && data.place.photos.length > 0
+                    ? imageFromBackend(data.place?.photos[0].url)
+                    : "/assets/restaurant_default.png"
+                }
+                className="h-full w-full object-cover object-center"
+                width={200}
+                height={200}
+                alt=""
+              />
+            </Link>
+            <div className="mt-2 text-center text-sm">{data.place?.name}</div>
+          </div>
+        ) : (
+          <div className={message}>{data.body}</div>
+        )}
         {isLast && isOwn && seenList.length > 0 && (
           <div className="text-xs font-light text-gray-500">
             {`Seen by ${seenList}`}

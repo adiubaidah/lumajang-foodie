@@ -20,7 +20,7 @@
 }
 
 .hamburger-line {
-  @apply my-2 block h-[2px] w-[30px] bg-black transition duration-500 ease-in-out;
+  @apply my-2 block h-[2px] w-[30px] transition duration-500 ease-in-out;
 }
 
 .hamburger-active > span:nth-child(1) {

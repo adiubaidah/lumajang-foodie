@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://lumajangfoodie.com/</loc>
+        <lastmod>2024-08-14</lastmod>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://lumajangfoodie.com/tempat-makan</loc>
+        <lastmod>2024-08-14</lastmod>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://lumajangfoodie.com/menu</loc>
+        <lastmod>2024-08-14</lastmod>
+        <priority>0.8</priority>
+    </url>
+    <!-- Halaman login dan register -->
+    <url>
+        <loc>https://lumajangfoodie.com/login</loc>
+        <lastmod>2024-08-14</lastmod>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://lumajangfoodie.com/register</loc>
+        <lastmod>2024-08-14</lastmod>
+        <priority>0.5</priority>
+    </url>
+</urlset>

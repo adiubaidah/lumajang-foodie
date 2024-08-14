@@ -129,4 +129,5 @@ export const menuReviewSchema = z.object({
 
 export const messageSchema = z.object({
   body: z.string().min(1, { message: "Pesan diperlukan" }),
+  placeId: z.string().optional()
 });

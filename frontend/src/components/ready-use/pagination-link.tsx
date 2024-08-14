@@ -8,6 +8,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "~/components/ui/pagination";
+import { ChevronsLeft, ChevronsRight } from "lucide-react";
 
 const PaginationComponent = ({
   data,
@@ -97,6 +98,21 @@ const PaginationComponent = ({
   return (
     <Pagination>
       <PaginationContent>
+        {
+          data.page > 1 && (
+            <PaginationItem>
+              <PaginationLink
+                href={
+                  !!query
+                    ? `${path}?${exceptPage()}&page=1`
+                    : `${path}?page=1`
+                }
+              >
+                <ChevronsLeft />
+              </PaginationLink>
+            </PaginationItem>
+          )
+        }
         {data.prev && (
           <PaginationItem>
             <PaginationPrevious
@@ -120,6 +136,21 @@ const PaginationComponent = ({
             />
           </PaginationItem>
         )}
+        {
+          data.page < data.pageCount && (
+            <PaginationItem>
+              <PaginationLink
+                href={
+                  !!query
+                    ? `${path}?${exceptPage()}&page=${data.pageCount}`
+                    : `${path}?page=${data.pageCount}`
+                }
+              >
+                <ChevronsRight />
+              </PaginationLink>
+            </PaginationItem>
+          )
+        }
       </PaginationContent>
     </Pagination>
   );

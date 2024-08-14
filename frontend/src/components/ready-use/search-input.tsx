@@ -43,6 +43,7 @@ function SearchInput({ className, formClassName }: SearchInputProps) {
       const params = new URLSearchParams(searchParams.toString());
       if (value) {
         params.set("q", value);
+        params.delete('page')
       } else {
         params.delete("q");
       }

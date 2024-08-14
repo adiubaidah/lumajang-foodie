@@ -81,6 +81,7 @@ export type Conversation = {
 export type FullMessageType = Message & {
   sender: User;
   seen: User[];
+  place?: Place & {photos: PlacePhoto[]};
 };
 
 export type FullConversationType = Conversation & {

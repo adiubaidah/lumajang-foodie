@@ -2,22 +2,24 @@ import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import Logo from "~/../public/assets/logo.png";
 import Subdistricts from "./subdistricts";
 import { InstagramCircle, YoutubeCircle } from "~/icons";
 import SearchInput from "~/components/ready-use/search-input";
 import SkeletonImage from "~/components/ready-use/skeleton-image";
+import NavbarHome from "./navbar";
+import Footer from "~/components/ready-use/footer";
 
 function Home() {
   return (
     <>
+      <NavbarHome />
       <main>
         <section className="container relative flex h-[420px] max-w-full flex-col items-center justify-center bg-[url('/assets/bg_home.jpg')] bg-cover bg-center bg-no-repeat">
           <div
             className="absolute left-0 top-0 z-0 h-full w-full bg-black opacity-50"
             style={{ filter: "brightness(50%)" }}
           />
-          
+
           <Image
             src="/assets/only-logo.png"
             alt="Lumajang Foodie"
@@ -26,10 +28,10 @@ function Home() {
             priority
             className="z-10 h-[80px] w-auto"
           />
-          <h2 className="z-10 mt-2 text-center text-2xl text-white md:text-4xl font-helvetica">
+          <h2 className="z-10 mt-2 text-center font-helvetica text-2xl text-white md:text-4xl">
             Lumajang Foodie
           </h2>
-          <p className="z-10 mt-4 text-center text-2xl text-white md:text-2xl font-product-sans">
+          <p className="z-10 mt-4 text-center font-product-sans text-2xl text-white md:text-2xl">
             Temukan makanan & minuman terbaik di <span>Kabupaten Lumajang</span>
           </p>
           <div className="z-10 w-full max-w-[800px]">
@@ -42,7 +44,7 @@ function Home() {
         <section className="container mt-7 grid grid-cols-2 gap-5">
           <Link
             href={"/tempat-makan"}
-            className="flex flex-col rounded-2xl p-2 hover:scale-105 transition duration-200 shadow-md"
+            className="flex flex-col rounded-2xl p-2 shadow-md transition duration-200 hover:scale-105"
           >
             <div className="h-[134px] md:h-[192px]">
               <SkeletonImage
@@ -50,11 +52,11 @@ function Home() {
                 width={600}
                 height={600}
                 alt="restaurant"
-                className="h-full w-full object-cover rounded-tr-2xl rounded-tl-2xl"
+                className="h-full w-full rounded-tl-2xl rounded-tr-2xl object-cover"
               />
             </div>
-            <div className="z-10 ms-auto w-full bg-white p-2 md:p-4 text-gray-800 border-gray-500">
-              <h2 className="font-product-sans text-[17px] md:text-[20px] font-medium">
+            <div className="z-10 ms-auto w-full border-gray-500 bg-white p-2 text-gray-800 md:p-4">
+              <h2 className="font-product-sans text-[17px] font-medium md:text-[20px]">
                 Tempat Makan
               </h2>
               <p className="text-sm">Cari tempat makan sesuai kesukaan kamu</p>
@@ -62,7 +64,7 @@ function Home() {
           </Link>
           <Link
             href={"/menu"}
-            className="flex flex-col rounded-2xl p-2 hover:scale-105 transition duration-200 shadow-md"
+            className="flex flex-col rounded-2xl p-2 shadow-md transition duration-200 hover:scale-105"
           >
             <div className="h-[134px] md:h-[192px]">
               <SkeletonImage
@@ -70,11 +72,11 @@ function Home() {
                 width={600}
                 height={600}
                 alt="food"
-                className="h-full w-full object-cover rounded-tr-2xl rounded-tl-2xl"
+                className="h-full w-full rounded-tl-2xl rounded-tr-2xl object-cover"
               />
             </div>
-            <div className="z-10 ms-auto w-full bg-white p-2 md:p-4 text-gray-800 border-gray-500">
-              <h2 className="font-product-sans text-[17px] md:text-[20px] font-medium">
+            <div className="z-10 ms-auto w-full border-gray-500 bg-white p-2 text-gray-800 md:p-4">
+              <h2 className="font-product-sans text-[17px] font-medium md:text-[20px]">
                 Makanan
               </h2>
               <p className="text-sm">Cari menu favoritmu</p>
@@ -89,56 +91,7 @@ function Home() {
           <Subdistricts />
         </section>
       </main>
-      <footer className="container flex max-w-full flex-col justify-between gap-y-5 bg-[#EEEEEE] py-16 md:flex-row">
-        <div className="w-full md:max-w-lg">
-          <Image
-            src={Logo}
-            alt="Lumajang Foodie"
-            className="h-[56px] w-auto lg:h-16"
-          />
-          <p className="mt-2 leading-tight">
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eum
-            repellendus necessitatibus corrupti soluta sed recusandae ipsum ipsa
-            nulla deleniti nisi?
-          </p>
-        </div>
-        <ul className="space-y-2">
-          <li>
-            <h5 className="text-[14px] font-medium uppercase tracking-widest">
-              Useful Links
-            </h5>
-          </li>
-          <li className="flex items-center">
-            <ChevronRight />
-            <Link href="/">Beranda</Link>
-          </li>
-          <li className="flex items-center">
-            <ChevronRight />
-            <Link href="/tempat-makan">Tempat Makan</Link>
-          </li>
-          <li className="flex items-center">
-            <ChevronRight />
-            <Link href="/menu">Menu</Link>
-          </li>
-        </ul>
-        <div>
-          <h5 className="text-[14px] font-medium uppercase tracking-widest">
-            tautan sosial
-          </h5>
-          <ul className="flex items-center gap-x-2">
-            <li>
-              <Link href="https://instagram.com">
-                <InstagramCircle width={30} height={30} />
-              </Link>
-            </li>
-            <li>
-              <Link href="https://youtube.com">
-                <YoutubeCircle width={28} height={28} />
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }

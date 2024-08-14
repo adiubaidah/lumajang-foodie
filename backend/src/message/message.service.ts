@@ -11,6 +11,8 @@ export class MessageService {
   ) {}
 
   async create(payload: MessageDto, senderId: string) {
+    // console.log(payload);
+    // return;
     const newMessage = await this.prismaService.message.create({
       data: {
         body: payload.body,
@@ -39,7 +41,7 @@ export class MessageService {
       },
       include: {
         seen: true,
-        sender: true,
+        place: true,
       },
     });
 
@@ -113,6 +115,7 @@ export class MessageService {
           select: {
             id: true,
             name: true,
+            slug: true,
             photos: {
               where: {
                 thumbnailPosition: 1,

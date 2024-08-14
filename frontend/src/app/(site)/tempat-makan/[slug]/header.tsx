@@ -106,7 +106,7 @@ function Header({ imagePreview, detail }: { imagePreview: any; detail: any }) {
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-normal md:text-4xl">{detail.name}</h1>
           <div className="flex items-center gap-x-2">
-            <BadgeRate rate={detail.rate._avg.star} />
+            <BadgeRate rate={detail.googleRating} />
             {detail.rate._count.id > 0 && (
               <div className="flex flex-col">
                 <span className="text-davy">{detail.rate._count.id}</span>

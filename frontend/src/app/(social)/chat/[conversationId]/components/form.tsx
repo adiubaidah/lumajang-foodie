@@ -2,11 +2,13 @@
 import { useMutation } from "@tanstack/react-query";
 import { Loader2, SendHorizonal } from "lucide-react";
 
+import PlaceSearcher from "./place-searcher";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { useConversation } from "~/hooks";
 import { axiosInstance } from "~/lib/utils";
+import { placeFeature } from "~/constant";
 function Form() {
   const { conversationId } = useConversation();
   const {
@@ -16,32 +18,40 @@ function Form() {
     formState: { errors },
   } = useForm<FieldValues>({
     defaultValues: {
-      message: "",
+      message: undefined,
+      placeId: undefined,
     },
   });
 
-  const messageMutation = useMutation({
-    mutationFn: async (message) => {
-      return (
-        await axiosInstance.post(`/message`, {
-          body: message,
-          conversationId,
-        })
-      ).data;
+  const genericMutation = useMutation({
+    mutationFn: async (data: { message?: string; placeId?: string }) => {
+      const payload = {
+        body: data.message ?? undefined,
+        placeId: data.placeId ?? undefined,
+        conversationId,
+      };
+
+      return (await axiosInstance.post(`/message`, payload)).data;
     },
   });
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     setValue("message", "", { shouldValidate: true });
-    messageMutation.mutate(data.message);
+    genericMutation.mutate({ message: data.message });
+  };
+
+  const handlePlaceSearcherSubmit = (placeId: string) => {
+    setValue("placeId", placeId);
+    genericMutation.mutate({ placeId });
   };
 
   return (
-    <div className="flex h-fit w-full items-center gap-2 border-t-gray bg-white px-4 py-4 lg:gap-4">
+    <div className="border-t-gray flex h-fit w-full items-center gap-2 bg-white px-4 py-4 lg:gap-4">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex w-full items-center gap-2 lg:gap-4"
       >
+        <PlaceSearcher handleSubmit={handlePlaceSearcherSubmit} />
         <Input
           id="message"
           {...register("message", {
@@ -49,13 +59,13 @@ function Form() {
           })}
           required
           placeholder="Tulis pesan..."
-          disabled={messageMutation.isPending}
+          disabled={genericMutation.isPending}
         />
         <Button
           type="submit"
           className="cursor-pointer rounded-full bg-puce p-2"
         >
-          {messageMutation.isPending ? (
+          {genericMutation.isPending ? (
             <Loader2 className="animate-spin text-white" />
           ) : (
             <SendHorizonal width={22} height={20} className="text-white" />

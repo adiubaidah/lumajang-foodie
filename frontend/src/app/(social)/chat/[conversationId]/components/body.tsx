@@ -52,7 +52,6 @@ const Body = () => {
 
     const messageHandler = (message: FullMessageType) => {
       axiosInstance.post(`/conversation/${conversationId}/seen`);
-      console.log(message);
       setMessages((current) => {
         if (find(current, { id: message.id })) {
           return current;

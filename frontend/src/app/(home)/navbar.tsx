@@ -1,24 +1,20 @@
-"use client";
-import { cn } from "~/lib/utils";
+"use client"
+import React from "react";
 import { Suspense, useState, useEffect } from "react";
-import { Navbar } from "./components";
-import Breadcrumb from "~/components/ready-use/breadcrumb";
+import { cn } from "~/lib/utils";
+import { Navbar } from "../(site)/components";
 import Sidebar from "~/components/ready-use/sidebar-1";
-import Footer from "~/components/ready-use/footer";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+function NavbarHome() {
   const [isToggled, setIsToggled] = useState(false);
   const [broken, setBroken] = useState(false);
   const [isClient, setIsClient] = useState(false);
-
   useEffect(() => {
     setIsClient(true);
   }, []);
-  // const isDesktop = false
   return (
     <>
       <Suspense>
-        <Navbar />
         {isClient && (
           <Sidebar
             setBroken={setBroken}
@@ -32,7 +28,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         id="hamburger"
         name="hamburger"
         type="button"
-        className={`fixed right-4 top-1 block md:hidden ${
+        className={`fixed right-4 top-1 z-[999] block md:hidden ${
           isToggled ? "hamburger-active" : ""
         }`}
         onClick={() => {
@@ -40,19 +36,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         }}
       >
         <span
-          className={cn("hamburger-line origin-top-left", "bg-black")}
+          className={cn("hamburger-line origin-top-left", "bg-white")}
         ></span>
-        <span className={cn("hamburger-line", "bg-black")}></span>
+        <span className={cn("hamburger-line", "bg-white")}></span>
         <span
-          className={cn("hamburger-line origin-bottom-left", "bg-black")}
+          className={cn("hamburger-line origin-bottom-left", "bg-white")}
         ></span>
       </button>
-      <main className="container max-w-full py-5">
-        <Breadcrumb />
-        {children}
-      </main>
-
-      <Footer />
     </>
   );
 }
+
+export default NavbarHome;
