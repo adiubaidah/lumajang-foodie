@@ -28,9 +28,9 @@ export class ScrappingController {
     return await this.scrappingService.partialize({ nameFile, slice });
   }
 
-  @Put('add-atribute')
-  async addAtribute(@Query('name-file') nameFile: string) {
-    return await this.scrappingService.addAtribute({ nameFile });
+  @Put('add-preference')
+  async addPreference(@Query('name-file') nameFile: string) {
+    return await this.scrappingService.addPreferences({ nameFile });
   }
 
   @Put('group-subdistrict')

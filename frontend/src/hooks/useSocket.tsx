@@ -22,10 +22,6 @@ export const SocketContext = createContext<SocketProviderType>({
   isConnected: false,
 });
 
-const unregister = async () => {
-  return (await axiosInstance.delete("/user/online")).data;
-};
-
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const { user } = useAuth();
@@ -50,8 +46,23 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
       console.log("registered");
     });
 
+    const handleOnline = () => {
+      socket.emit("register", { userId: user && user.id });
+    };
+
+    const handleOffline = () => {
+      socket.emit("unregister", { userId: user && user.id });
+    };
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+    window.addEventListener("beforeunload", handleOffline);
+
     return () => {
       socket.off("registered");
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+      window.removeEventListener("beforeunload", handleOffline);
     };
   }, [user]);
   return (

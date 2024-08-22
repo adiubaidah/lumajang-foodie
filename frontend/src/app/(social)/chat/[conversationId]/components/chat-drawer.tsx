@@ -8,6 +8,7 @@ import { Conversation, User } from "~/types";
 import { useOtherUser, useActiveList, useConversation } from "~/hooks";
 import { Sheet, SheetContent } from "~/components/ui/sheet";
 import Avatar from "../../components/avatar";
+import Link from "next/link";
 
 interface ProfileDrawerProps {
   isOpen: boolean;
@@ -54,9 +55,9 @@ const ChatDrawer: React.FC<ProfileDrawerProps> = ({
           <div className="flex h-full flex-col py-6">
             <div className="mt-6 flex-1 px-4 sm:px-6">
               <div className="flex flex-col items-center">
-                <div className="mb-2">
+                <Link href={`/user-detail/${otherUser.id}`} className="block mb-2">
                   <Avatar user={otherUser} />
-                </div>
+                </Link>
                 <div>{title}</div>
                 <div className="text-sm text-gray-500">{statusText}</div>
                 <div className="my-8 flex gap-10">

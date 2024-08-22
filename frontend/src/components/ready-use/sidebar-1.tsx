@@ -13,6 +13,7 @@ import {
   Soup,
   GlassWater,
   Home,
+  MessageCircleMore,
 } from "lucide-react";
 
 import { axiosInstance, rgbToHex } from "~/lib/utils";
@@ -139,6 +140,7 @@ function Sidebar({ toggled, setToggled, setBroken }: SidebarProps) {
             >
               Profile
             </MenuItem>
+            <MenuItem component={<Link href={'/chat'}/>} icon={<MessageCircleMore size={20} />}>Chat</MenuItem>
             <MenuItem icon={<Power />} onClick={() => logoutMutation.mutate()}>
               Logout
             </MenuItem>

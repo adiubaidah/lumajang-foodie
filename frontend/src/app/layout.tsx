@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import Head from "next/head";
 import "./globals.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Provider from "~/lib/provider";
@@ -92,6 +93,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <Head>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <body
         className={cn(
           productSans.variable,

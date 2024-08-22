@@ -57,13 +57,6 @@ export class UserController {
     return await this.userService.checkOnline(id);
   }
 
-  @Role([RoleEnum.foodie, RoleEnum.admin, RoleEnum.owner])
-  @UseGuards(JwtGuard, RoleGuard)
-  @Delete('online')
-  async unregister(@Req() req: RequestExpress) {
-    return await this.userService.unregister(req['user'].id);
-  }
-
   @Get(':id')
   async find(@Param('id') id: string) {
     return await this.userService.find(id);

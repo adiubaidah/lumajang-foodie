@@ -40,8 +40,34 @@ export class MessageService {
         },
       },
       include: {
-        seen: true,
-        place: true,
+        seen: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
+        sender: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
+        place: {
+          select: {
+            id: true,
+            slug: true,
+            name: true,
+            photos: {
+              where: {
+                thumbnailPosition: {
+                  equals: 1,
+                },
+              },
+            },
+          },
+        },
       },
     });
 

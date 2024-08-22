@@ -29,9 +29,11 @@ function ConversationBox({ data, selected }: Props) {
   const lastMessageText = useMemo(() => {
     if (lastMessage?.body) {
       return lastMessage.body;
+    } else if (lastMessage?.place) {
+      return "Shared a place";
+    } else {
+      return "Started a Conversations";
     }
-
-    return "Started a Conversations";
   }, [lastMessage]);
 
   const hasSeen = useMemo(() => {

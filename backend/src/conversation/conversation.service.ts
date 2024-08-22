@@ -104,7 +104,14 @@ export class ConversationService {
         },
         messages: {
           include: {
-            sender: true,
+            sender: {
+              select: {
+                id: true,
+                email: true,
+                name: true,
+                image: true,
+              },
+            },
             seen: true,
           },
           orderBy: {

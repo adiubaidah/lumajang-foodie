@@ -104,7 +104,7 @@ export class ScrappingService {
 
   async modify({ nameFile }: { nameFile: string }) {
     const preferences = [
-      'allowDogs',
+      'allowsDogs',
       'curbsidePickup',
       'dineIn',
       'goodForGroups',
@@ -223,7 +223,7 @@ export class ScrappingService {
     }
   }
 
-  async addAtribute({ nameFile }: { nameFile: string }) {
+  async addPreferences({ nameFile }: { nameFile: string }) {
     try {
       const filePath = `C:/Users/adiof/Documents/Mahasiswa Adi/PKM/json/modified/${nameFile}.json`;
       const sourceOrigin = `C:/Users/adiof/Documents/Mahasiswa Adi/PKM/json/raw/all-result.json`;
@@ -238,14 +238,11 @@ export class ScrappingService {
         const source = _.find(sourceContent, (placeOrigin: any) => {
           return placeOrigin.id === place.placeGoogleId;
         });
-        if (!source.regularOpeningHours) {
-          //if source doesn't have regularOpeningHours then remove place from contents
-          _.remove(contents, (placeToRemove: any) => {
-            return placeToRemove.placeGoogleId === source.id;
-          });
-        } else {
-          place.operational = source.regularOpeningHours.weekdayDescriptions;
-        }
+        contents.preferences = {
+          ...contents.preferences,
+          ...(!!source.allowsDogs && { allowsDogs: source.allowsDogs }),
+          ...(!!source.restroom && { restroom: source.restroom }),
+        };
       });
       await writeFile(filePath, JSON.stringify(contents, null, 2));
     } catch (err) {

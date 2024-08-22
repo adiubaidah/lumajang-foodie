@@ -48,7 +48,7 @@ function PlaceSearcher({ handleSubmit }: { handleSubmit: (placeId: string) => vo
               <CommandLoading>Mengambil data</CommandLoading>
             ) : (
               data.result && data.result.map((place: any) => (
-                <CommandItem key={place.id} value={place._id.$oid} onSelect={(value)=> {
+                <CommandItem key={place._id.$oid} value={place._id.$oid} onSelect={(value)=> {
                   handleSubmit(value);
                   setOpen(false);
                 }}> 
